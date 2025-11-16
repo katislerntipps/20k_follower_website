@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konzentrationsmusik - StudyTok Companion</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">🌸</span>
+                <span class="logo-text">StudyTok</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">🏠 Home</a></li>
+                <li><a href="timer.html" class="nav-link">🍅 Timer</a></li>
+                <li><a href="tipps.html" class="nav-link">📚 Lerntipps</a></li>
+                <li><a href="plan.html" class="nav-link">📝 Lernplan</a></li>
+                <li><a href="musik.html" class="nav-link active">🎵 Musik</a></li>
+            </ul>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode">
+                🌙
+            </button>
+            <div class="user-points">
+                <span class="points-icon">
+                    <svg class="coin-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Outer rim (3D effect) -->
+                        <ellipse cx="50" cy="50" rx="45" ry="45" fill="url(#coinGradient)"/>
+                        <!-- Inner circle -->
+                        <circle cx="50" cy="50" r="38" fill="url(#coinInnerGradient)"/>
+                        <!-- Highlight -->
+                        <ellipse cx="35" cy="35" rx="15" ry="12" fill="rgba(255, 255, 255, 0.4)"/>
+                        <!-- Decorative circle -->
+                        <circle cx="50" cy="50" r="30" fill="none" stroke="#DAA520" stroke-width="2" opacity="0.6"/>
+                        <!-- Star symbol in center -->
+                        <path d="M50 25 L54 40 L70 40 L58 50 L62 65 L50 55 L38 65 L42 50 L30 40 L46 40 Z"
+                              fill="#FFF8DC" opacity="0.8"/>
+
+                        <!-- Gradients -->
+                        <defs>
+                            <radialGradient id="coinGradient">
+                                <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#FFA500;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
+                            </radialGradient>
+                            <radialGradient id="coinInnerGradient">
+                                <stop offset="0%" style="stop-color:#FFE55C;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+                            </radialGradient>
+                        </defs>
+                    </svg>
+                </span>
+                <span class="points-value">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="page-title" style="text-align: center; font-size: 2.5rem; margin-bottom: 1rem;">
+                🎵 Konzentrationsmusik
+            </h1>
+            <p class="page-subtitle" style="text-align: center; font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                Kuratierte Playlists für maximalen Fokus beim Lernen
+            </p>
+        </div>
+    </section>
+
+    <!-- Playlists Section -->
+    <section class="dashboard" style="padding-top: 2rem;">
+        <div class="container">
+            <h2 class="section-title">🎧 Spotify Playlists</h2>
+            <div class="stats-grid">
+                <!-- Placeholder für Spotify Playlists -->
+                <div class="stat-card" style="flex-direction: column; text-align: center; cursor: pointer;">
+                    <div class="stat-icon">🎹</div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" style="font-size: 1.5rem;">Lofi Beats</h3>
+                        <p class="stat-label">Entspannte Beats für konzentriertes Lernen</p>
+                    </div>
+                    <button class="btn btn-outline" style="margin-top: 1rem;">▶ Playlist öffnen</button>
+                </div>
+
+                <div class="stat-card" style="flex-direction: column; text-align: center; cursor: pointer;">
+                    <div class="stat-icon">🎻</div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" style="font-size: 1.5rem;">Klassik</h3>
+                        <p class="stat-label">Klassische Musik für Tiefenkonzentration</p>
+                    </div>
+                    <button class="btn btn-outline" style="margin-top: 1rem;">▶ Playlist öffnen</button>
+                </div>
+
+                <div class="stat-card" style="flex-direction: column; text-align: center; cursor: pointer;">
+                    <div class="stat-icon">🌧️</div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" style="font-size: 1.5rem;">Nature Sounds</h3>
+                        <p class="stat-label">Naturgeräusche für eine beruhigende Atmosphäre</p>
+                    </div>
+                    <button class="btn btn-outline" style="margin-top: 1rem;">▶ Playlist öffnen</button>
+                </div>
+
+                <div class="stat-card" style="flex-direction: column; text-align: center; cursor: pointer;">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" style="font-size: 1.5rem;">Elektronik</h3>
+                        <p class="stat-label">Elektronische Musik für intensive Sessions</p>
+                    </div>
+                    <button class="btn btn-outline" style="margin-top: 1rem;">▶ Playlist öffnen</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- YouTube Section -->
+    <section class="features" style="padding-top: 3rem; padding-bottom: 3rem;">
+        <div class="container">
+            <h2 class="section-title">📺 YouTube Playlists</h2>
+            <div class="features-grid">
+                <!-- Placeholder für YouTube Playlists -->
+                <div class="feature-card">
+                    <div class="feature-icon">🎼</div>
+                    <h3 class="feature-title">Study with Me</h3>
+                    <p class="feature-description">Live-Sessions mit anderen Lernenden weltweit</p>
+                    <button class="btn btn-outline">YouTube öffnen</button>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3 class="feature-title">Binaurale Beats</h3>
+                    <p class="feature-description">40 Hz Frequenzen für optimale Gehirnaktivität</p>
+                    <button class="btn btn-outline">YouTube öffnen</button>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3 class="feature-title">Gaming OST</h3>
+                    <p class="feature-description">Epische Soundtracks aus bekannten Videospielen</p>
+                    <button class="btn btn-outline">YouTube öffnen</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tipps Section -->
+    <section class="dashboard" style="background: var(--bg-secondary);">
+        <div class="container">
+            <h2 class="section-title">💡 Tipps zur Musikwahl</h2>
+            <div class="features-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="feature-card" style="text-align: left;">
+                    <div class="feature-icon" style="margin-bottom: 1rem;">🎯</div>
+                    <h3 class="feature-title">Instrumentale Musik bevorzugen</h3>
+                    <p class="feature-description">Musik ohne Gesang hilft, sich besser zu konzentrieren, da keine Worte vom Lernstoff ablenken.</p>
+                </div>
+
+                <div class="feature-card" style="text-align: left;">
+                    <div class="feature-icon" style="margin-bottom: 1rem;">🔊</div>
+                    <h3 class="feature-title">Moderate Lautstärke</h3>
+                    <p class="feature-description">Die Musik sollte im Hintergrund bleiben - nicht zu laut, aber laut genug, um Umgebungsgeräusche zu übertönen.</p>
+                </div>
+
+                <div class="feature-card" style="text-align: left;">
+                    <div class="feature-icon" style="margin-bottom: 1rem;">🔄</div>
+                    <h3 class="feature-title">Gleiche Musik wiederholen</h3>
+                    <p class="feature-description">Bekannte Musik hilft dem Gehirn, in den Flow-Zustand zu kommen, da es nicht von neuen Melodien abgelenkt wird.</p>
+                </div>
+
+                <div class="feature-card" style="text-align: left;">
+                    <div class="feature-icon" style="margin-bottom: 1rem;">⏰</div>
+                    <h3 class="feature-title">Musik mit Timer kombinieren</h3>
+                    <p class="feature-description">Nutze Musik in Kombination mit der Pomodoro-Technik für maximale Produktivität.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>StudyTok Companion</h4>
+                    <p>Dein persönlicher Lern-Buddy für mehr Erfolg im Studium</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#">TikTok</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Datenschutz</a></li>
+                        <li><a href="#">Impressum</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 StudyTok Companion. Made with 💖 for learners.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

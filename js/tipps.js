@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeViewToggle();
     initializeFavorites();
     updatePoints();
+    initializeDarkMode();
 });
 
 // ===================================
@@ -424,3 +425,37 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ===================================
+// DARK MODE FUNCTIONALITY
+// ===================================
+
+function initializeDarkMode() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const savedTheme = localStorage.getItem('studytok_theme') || 'light';
+
+    // Apply saved theme
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+
+    // Toggle event
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('studytok_theme', newTheme);
+    updateThemeIcon(newTheme);
+}
+
+function updateThemeIcon(theme) {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+}
