@@ -14,7 +14,7 @@
    =================================== */
 
 .generator-card {
-    background: white;
+    background: var(--bg-card);
     padding: var(--spacing-xl);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
@@ -48,7 +48,7 @@
 }
 
 .tip-card-flip {
-    background: white;
+    background: var(--bg-card);
     padding: var(--spacing-xl);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
@@ -89,7 +89,7 @@
 
 .filter-section {
     padding: var(--spacing-lg) 0;
-    background: white;
+    background: var(--bg-secondary);
     border-bottom: 1px solid #E2E8F0;
 }
 
@@ -116,7 +116,7 @@
     padding: 0.5rem 1rem;
     border: 2px solid var(--text-light);
     border-radius: var(--radius-md);
-    background: white;
+    background: var(--bg-card);
     color: var(--text-primary);
     font-family: var(--font-primary);
     font-size: 0.95rem;
@@ -186,7 +186,7 @@
 .view-btn {
     padding: 0.5rem 1rem;
     border: 2px solid var(--text-light);
-    background: white;
+    background: var(--bg-card);
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: all 0.3s ease;
@@ -215,7 +215,7 @@
 }
 
 .video-card-item {
-    background: white;
+    background: var(--bg-card);
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
@@ -378,7 +378,7 @@
     flex: 1;
     padding: 0.6rem 1rem;
     border: 2px solid var(--primary);
-    background: white;
+    background: var(--bg-card);
     border-radius: var(--radius-md);
     font-weight: 600;
     font-size: 0.9rem;
