@@ -78,15 +78,19 @@ html {
 
 body {
     font-family: var(--font-primary);
-    background: radial-gradient(circle at 20% 20%, rgba(255, 221, 235, 0.7), transparent 35%),
-                radial-gradient(circle at 80% 0%, rgba(212, 181, 241, 0.35), transparent 30%),
-                linear-gradient(135deg, #fff4f8 0%, #f9fbff 35%, #ffe9f2 100%);
+    background: linear-gradient(135deg, #FAFBFC 0%, #F7FAFC 100%);
     color: var(--text-primary);
     line-height: 1.6;
     overflow-x: hidden;
 }
 
-[data-theme="dark"] body {
+body.sakura-theme {
+    background: radial-gradient(circle at 20% 20%, rgba(255, 221, 235, 0.7), transparent 35%),
+                radial-gradient(circle at 80% 0%, rgba(212, 181, 241, 0.35), transparent 30%),
+                linear-gradient(135deg, #fff4f8 0%, #f9fbff 35%, #ffe9f2 100%);
+}
+
+[data-theme="dark"] body.sakura-theme {
     background: radial-gradient(circle at 20% 20%, rgba(255, 155, 173, 0.35), transparent 32%),
                 radial-gradient(circle at 80% 0%, rgba(192, 159, 232, 0.25), transparent 28%),
                 linear-gradient(135deg, #0f1424 0%, #171c2f 40%, #24162a 100%);

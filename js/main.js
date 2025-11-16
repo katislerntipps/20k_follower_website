@@ -4,12 +4,17 @@
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
+    applySakuraTheme();
     generateBlossomPetals();
     initializeStats();
     animateTreePetals();
     updatePoints();
     initializeDarkMode();
 });
+
+function applySakuraTheme() {
+    document.body.classList.add('sakura-theme');
+}
 
 // ===================================
 // STATS MANAGEMENT
