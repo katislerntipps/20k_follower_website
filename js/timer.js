@@ -166,6 +166,9 @@ function timerComplete() {
         addSession();
         addPoints(10);
 
+        // Add to points history
+        addPointsToHistory('Pomodoro-Session abgeschlossen', 10, '🍅');
+
         // Grow tree
         addBlossom();
 
@@ -475,3 +478,151 @@ function updateThemeIcon(theme) {
         themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 }
+
+// ===================================
+// POINTS HISTORY MODAL
+// ===================================
+
+function initializePointsModal() {
+    const modalOverlay = document.getElementById('points-modal-overlay');
+    const closeBtn = document.getElementById('close-points-modal');
+    const userPoints = document.querySelectorAll('.user-points');
+
+    // Open modal when clicking on coins
+    userPoints.forEach(coin => {
+        coin.addEventListener('click', openPointsModal);
+    });
+
+    // Close modal when clicking close button
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closePointsModal);
+    }
+
+    // Close modal when clicking overlay
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                closePointsModal();
+            }
+        });
+    }
+
+    // Close modal with ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closePointsModal();
+        }
+    });
+}
+
+function openPointsModal() {
+    const modalOverlay = document.getElementById('points-modal-overlay');
+    if (modalOverlay) {
+        modalOverlay.classList.add('active');
+        loadPointsHistory();
+    }
+}
+
+function closePointsModal() {
+    const modalOverlay = document.getElementById('points-modal-overlay');
+    if (modalOverlay) {
+        modalOverlay.classList.remove('active');
+    }
+}
+
+function loadPointsHistory() {
+    const historyList = document.getElementById('points-history-list');
+    const modalTotalPoints = document.getElementById('modal-total-points');
+    const history = getPointsHistory();
+    const currentStats = loadStats();
+
+    if (!historyList) return;
+
+    // Update total points
+    if (modalTotalPoints && currentStats) {
+        modalTotalPoints.textContent = currentStats.points || 0;
+    }
+
+    // Display history
+    if (history.length === 0) {
+        historyList.innerHTML = `
+            <div class="points-history-empty">
+                <div class="points-history-empty-icon">🪙</div>
+                <p>Noch keine Aktivitäten</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Sammle Punkte, indem du Lernsessions abschließt!</p>
+            </div>
+        `;
+    } else {
+        historyList.innerHTML = history.map(item => `
+            <div class="points-history-item">
+                <div class="points-history-icon">${item.icon}</div>
+                <div class="points-history-content">
+                    <div class="points-history-action">${item.action}</div>
+                    <div class="points-history-time">${item.time}</div>
+                </div>
+                <div class="points-history-amount">+${item.points}</div>
+            </div>
+        `).join('');
+    }
+}
+
+function getPointsHistory() {
+    const stored = localStorage.getItem('studytok_points_history');
+    if (stored) {
+        return JSON.parse(stored);
+    }
+    return [];
+}
+
+function addPointsToHistory(action, points, icon = '🎯') {
+    const history = getPointsHistory();
+    const now = new Date();
+
+    const newEntry = {
+        action: action,
+        points: points,
+        icon: icon,
+        time: formatTimeAgo(now),
+        timestamp: now.toISOString()
+    };
+
+    // Add to beginning of array
+    history.unshift(newEntry);
+
+    // Keep only last 8 entries
+    const limitedHistory = history.slice(0, 8);
+
+    // Save to localStorage
+    localStorage.setItem('studytok_points_history', JSON.stringify(limitedHistory));
+
+    // Update points
+    const stats = loadStats();
+    if (stats) {
+        stats.points = (stats.points || 0) + points;
+        saveTimerStats(stats);
+    }
+}
+
+function formatTimeAgo(date) {
+    const now = new Date();
+    const diffMs = now - new Date(date);
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Gerade eben';
+    if (diffMins < 60) return `vor ${diffMins} Min`;
+    if (diffHours < 24) return `vor ${diffHours} Std`;
+    if (diffDays < 7) return `vor ${diffDays} Tag${diffDays > 1 ? 'en' : ''}`;
+
+    return new Date(date).toLocaleDateString('de-DE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+// Initialize modal on page load
+document.addEventListener('DOMContentLoaded', function() {
+    initializePointsModal();
+});

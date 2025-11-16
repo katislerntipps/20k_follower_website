@@ -269,6 +269,27 @@
         </div>
     </footer>
 
+    <!-- Points History Modal -->
+    <div class="points-modal-overlay" id="points-modal-overlay">
+        <div class="points-modal">
+            <div class="points-modal-header">
+                <h2 class="points-modal-title">
+                    <span>💰</span> Punkte-Verlauf
+                </h2>
+                <button class="points-modal-close" id="close-points-modal">✕</button>
+            </div>
+            <div class="points-modal-body">
+                <div class="points-history-list" id="points-history-list">
+                    <!-- History items will be inserted here by JavaScript -->
+                </div>
+                <div class="points-total-summary">
+                    <h3>Gesamtpunkte</h3>
+                    <div class="total-points" id="modal-total-points">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
     <script>
         // Placeholder script for form handling
