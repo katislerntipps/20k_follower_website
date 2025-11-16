@@ -16,7 +16,7 @@
     --accent: #D4B5F1;
     --accent-dark: #C09FE8;
 
-    /* Neutrale Farben */
+    /* Neutrale Farben - Light Mode */
     --bg-primary: #FAFBFC;
     --bg-secondary: #FFFFFF;
     --bg-card: #FFFFFF;
@@ -46,6 +46,30 @@
     /* Typography */
     --font-primary: 'Poppins', sans-serif;
     --font-secondary: 'Quicksand', sans-serif;
+}
+
+/* Dark Mode Theme */
+[data-theme="dark"] {
+    /* Hauptfarben - angepasst für Dark Mode */
+    --primary: #FF9BAD;
+    --primary-dark: #FF7A90;
+    --secondary: #7BC9B5;
+    --accent: #C09FE8;
+    --accent-dark: #A87FD6;
+
+    /* Neutrale Farben - Dark Mode */
+    --bg-primary: #1a1a2e;
+    --bg-secondary: #16213e;
+    --bg-card: #0f3460;
+    --text-primary: #eaeaea;
+    --text-secondary: #b8b8b8;
+    --text-light: #858585;
+
+    /* Shadows & Effects - angepasst für Dark Mode */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --shadow-colored: 0 8px 24px rgba(255, 155, 173, 0.2);
 }
 
 html {
@@ -144,8 +168,37 @@ body {
 }
 
 .points-icon {
+    width: 32px;
+    height: 32px;
+    position: relative;
+    animation: coinFloat 2s ease-in-out infinite;
+}
+
+.coin-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 2px 4px rgba(218, 165, 32, 0.4));
+}
+
+.theme-toggle {
+    background: var(--bg-card);
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-full);
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
     font-size: 1.3rem;
-    animation: pulse 2s ease-in-out infinite;
+    box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle:hover {
+    transform: rotate(180deg);
+    box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
 }
 
 /* ===================================
@@ -599,6 +652,15 @@ body {
     }
     50% {
         transform: scale(1.1);
+    }
+}
+
+@keyframes coinFloat {
+    0%, 100% {
+        transform: translateY(0px) rotateY(0deg);
+    }
+    50% {
+        transform: translateY(-5px) rotateY(180deg);
     }
 }
 
