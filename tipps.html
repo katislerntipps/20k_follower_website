@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lerntipps - StudyTok Companion</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tipps.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">🌸</span>
+                <span class="logo-text">StudyTok</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">🏠 Home</a></li>
+                <li><a href="timer.html" class="nav-link">🍅 Timer</a></li>
+                <li><a href="tipps.html" class="nav-link active">📚 Lerntipps</a></li>
+                <li><a href="plan.html" class="nav-link">📝 Lernplan</a></li>
+                <li><a href="musik.html" class="nav-link">🎵 Musik</a></li>
+            </ul>
+            <div class="user-points">
+                <span class="points-icon">⭐</span>
+                <span class="points-value">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="tipps-hero">
+        <div class="container">
+            <h1 class="page-title">Lerntipps-Bibliothek 📚</h1>
+            <p class="page-subtitle">Bewährte Methoden aus meinen TikTok-Videos</p>
+
+            <!-- Lerntipp Generator -->
+            <div class="generator-card">
+                <div class="generator-content">
+                    <h2>🎲 Zufälliger Lerntipp</h2>
+                    <p>Nicht sicher, wo du anfangen sollst? Lass dir einen zufälligen Tipp generieren!</p>
+                    <button class="btn btn-primary" id="generate-tip-btn">Tipp generieren</button>
+                </div>
+
+                <div class="tip-display" id="tip-display" style="display: none;">
+                    <div class="tip-card-flip">
+                        <div class="tip-card-front">
+                            <div class="tip-icon">💡</div>
+                            <h3 class="tip-title">Die Feynman-Methode</h3>
+                            <p class="tip-category">Lernmethode • Für Anfänger</p>
+                        </div>
+                        <div class="tip-description">
+                            Erkläre das Thema so, als würdest du es einem 5-Jährigen beibringen. Wenn du stecken bleibst, hast du eine Wissenslücke gefunden!
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-secondary">Video ansehen 📱</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Kategorie:</label>
+                    <select class="filter-select" id="category-filter">
+                        <option value="all">Alle</option>
+                        <option value="methode">Lernmethoden</option>
+                        <option value="gedaechtnis">Gedächtnis</option>
+                        <option value="motivation">Motivation</option>
+                        <option value="organisation">Organisation</option>
+                        <option value="verruckt">Verrückte Methoden</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Fach:</label>
+                    <select class="filter-select" id="subject-filter">
+                        <option value="all">Alle Fächer</option>
+                        <option value="mathe">Mathe</option>
+                        <option value="sprachen">Sprachen</option>
+                        <option value="natur">Naturwissenschaften</option>
+                        <option value="allgemein">Allgemein</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Schwierigkeit:</label>
+                    <select class="filter-select" id="difficulty-filter">
+                        <option value="all">Alle Levels</option>
+                        <option value="anfaenger">Anfänger</option>
+                        <option value="fortgeschritten">Fortgeschritten</option>
+                        <option value="profi">Profi</option>
+                    </select>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" placeholder="Suche..." class="search-input" id="search-input">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Grid -->
+    <section class="videos-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Alle Lerntipps</h2>
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="grid">⊞ Grid</button>
+                    <button class="view-btn" data-view="list">☰ Liste</button>
+                </div>
+            </div>
+
+            <div class="videos-grid" id="videos-grid">
+                <!-- Video Card 1 -->
+                <div class="video-card-item" data-category="methode" data-subject="allgemein" data-difficulty="anfaenger">
+                    <div class="video-thumbnail-large">
+                        <div class="placeholder-thumbnail">
+                            <span>🧠</span>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button-large">▶</button>
+                        </div>
+                        <div class="video-badge">NEU</div>
+                        <div class="video-duration">3:24</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title-large">Die Feynman-Methode</h3>
+                        <p class="video-description">Erkläre komplexe Themen einfach und finde deine Wissenslücken</p>
+                        <div class="video-meta-large">
+                            <span class="meta-tag">Lernmethode</span>
+                            <span class="meta-views">12.5K views</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">📱 Ansehen</button>
+                            <button class="action-btn favorite">❤️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Card 2 -->
+                <div class="video-card-item" data-category="gedaechtnis" data-subject="allgemein" data-difficulty="anfaenger">
+                    <div class="video-thumbnail-large">
+                        <div class="placeholder-thumbnail">
+                            <span>🔁</span>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button-large">▶</button>
+                        </div>
+                        <div class="video-badge popular">🔥 BELIEBT</div>
+                        <div class="video-duration">5:12</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title-large">Spaced Repetition Hack</h3>
+                        <p class="video-description">Wie du mit zeitlich versetzten Wiederholungen alles behältst</p>
+                        <div class="video-meta-large">
+                            <span class="meta-tag">Gedächtnis</span>
+                            <span class="meta-views">25.3K views</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">📱 Ansehen</button>
+                            <button class="action-btn favorite">❤️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Card 3 -->
+                <div class="video-card-item" data-category="methode" data-subject="allgemein" data-difficulty="fortgeschritten">
+                    <div class="video-thumbnail-large">
+                        <div class="placeholder-thumbnail">
+                            <span>⚡</span>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button-large">▶</button>
+                        </div>
+                        <div class="video-duration">4:35</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title-large">Active Recall in 5 Minuten</h3>
+                        <p class="video-description">Die mächtigste Lernmethode, die du kennen musst</p>
+                        <div class="video-meta-large">
+                            <span class="meta-tag">Lernmethode</span>
+                            <span class="meta-views">18.7K views</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">📱 Ansehen</button>
+                            <button class="action-btn favorite">❤️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Card 4 -->
+                <div class="video-card-item" data-category="verruckt" data-subject="allgemein" data-difficulty="anfaenger">
+                    <div class="video-thumbnail-large">
+                        <div class="placeholder-thumbnail">
+                            <span>🎯</span>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button-large">▶</button>
+                        </div>
+                        <div class="video-badge crazy">😜 VERRÜCKT</div>
+                        <div class="video-duration">6:18</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title-large">Verrückte Gedächtnistricks</h3>
+                        <p class="video-description">Merkwürdige aber effektive Methoden zum Auswendiglernen</p>
+                        <div class="video-meta-large">
+                            <span class="meta-tag">Verrückt</span>
+                            <span class="meta-views">32.1K views</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">📱 Ansehen</button>
+                            <button class="action-btn favorite">❤️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Card 5 -->
+                <div class="video-card-item" data-category="organisation" data-subject="allgemein" data-difficulty="anfaenger">
+                    <div class="video-thumbnail-large">
+                        <div class="placeholder-thumbnail">
+                            <span>📝</span>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button-large">▶</button>
+                        </div>
+                        <div class="video-duration">7:42</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title-large">Cornell-Notizen System</h3>
+                        <p class="video-description">Strukturiere deine Notizen wie ein Profi</p>
+                        <div class="video-meta-large">
+                            <span class="meta-tag">Organisation</span>
+                            <span class="meta-views">15.4K views</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">📱 Ansehen</button>
+                            <button class="action-btn favorite">❤️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Card 6 -->
+                <div class="video-card-item" data-category="motivation" data-subject="allgemein" data-difficulty="anfaenger">
+                    <div class="video-thumbnail-large">
+                        <div class="placeholder-thumbnail">
+                            <span>💪</span>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button-large">▶</button>
+                        </div>
+                        <div class="video-duration">4:59</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title-large">2-Minuten-Regel</h3>
+                        <p class="video-description">Überwinde Prokrastination in Sekunden</p>
+                        <div class="video-meta-large">
+                            <span class="meta-tag">Motivation</span>
+                            <span class="meta-views">28.9K views</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">📱 Ansehen</button>
+                            <button class="action-btn favorite">❤️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Card 7 -->
+                <div class="video-card-item" data-category="methode" data-subject="sprachen" data-difficulty="fortgeschritten">
+                    <div class="video-thumbnail-large">
+                        <div class="placeholder-thumbnail">
+                            <span>🗣️</span>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button-large">▶</button>
+                        </div>
+                        <div class="video-duration">8:15</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title-large">Shadowing-Technik für Sprachen</h3>
+                        <p class="video-description">Spreche fließend in Rekordzeit</p>
+                        <div class="video-meta-large">
+                            <span class="meta-tag">Sprachen</span>
+                            <span class="meta-views">9.2K views</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">📱 Ansehen</button>
+                            <button class="action-btn favorite">❤️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Card 8 -->
+                <div class="video-card-item" data-category="gedaechtnis" data-subject="mathe" data-difficulty="profi">
+                    <div class="video-thumbnail-large">
+                        <div class="placeholder-thumbnail">
+                            <span>🏛️</span>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button-large">▶</button>
+                        </div>
+                        <div class="video-duration">10:33</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title-large">Memory Palace Methode</h3>
+                        <p class="video-description">Wie Gedächtnis-Weltmeister Formeln merken</p>
+                        <div class="video-meta-large">
+                            <span class="meta-tag">Fortgeschritten</span>
+                            <span class="meta-views">11.8K views</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">📱 Ansehen</button>
+                            <button class="action-btn favorite">❤️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More -->
+            <div class="load-more">
+                <button class="btn btn-outline">Mehr laden</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>StudyTok Companion</h4>
+                    <p>Dein persönlicher Lern-Buddy für mehr Erfolg im Studium</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#">TikTok</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Datenschutz</a></li>
+                        <li><a href="#">Impressum</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 StudyTok Companion. Made with 💖 for learners.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/tipps.js"></script>
+</body>
+</html>

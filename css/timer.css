@@ -1,0 +1,509 @@
+/* ===================================
+   TIMER PAGE SPECIFIC STYLES
+   =================================== */
+
+.timer-hero {
+    background: linear-gradient(135deg,
+        rgba(255, 183, 197, 0.15) 0%,
+        rgba(212, 181, 241, 0.15) 100%);
+    padding: var(--spacing-lg) 0;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+    font-family: var(--font-secondary);
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+}
+
+/* ===================================
+   TIMER GRID LAYOUT
+   =================================== */
+
+.timer-section {
+    padding: var(--spacing-xl) 0;
+}
+
+.timer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    align-items: start;
+}
+
+/* ===================================
+   TIMER PANEL
+   =================================== */
+
+.timer-card {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.timer-display {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 0 auto var(--spacing-lg);
+}
+
+.timer-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.timer-ring-bg {
+    fill: none;
+    stroke: #F7FAFC;
+    stroke-width: 12;
+}
+
+.timer-ring-progress {
+    fill: none;
+    stroke: url(#gradient);
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 534;
+    stroke-dashoffset: 534;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.timer-time {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    font-weight: 700;
+    font-family: var(--font-secondary);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer-time span {
+    min-width: 2ch;
+    text-align: center;
+}
+
+/* ===================================
+   TIMER MODE BUTTONS
+   =================================== */
+
+.timer-mode {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.mode-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--primary);
+    background: white;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+}
+
+.mode-btn:hover {
+    background: rgba(255, 183, 197, 0.1);
+}
+
+.mode-btn.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: white;
+    border-color: transparent;
+}
+
+/* ===================================
+   TIMER CONTROLS
+   =================================== */
+
+.timer-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.control-btn {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-primary);
+}
+
+.btn-start {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+}
+
+.btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+}
+
+.btn-pause {
+    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+    color: white;
+}
+
+.btn-pause:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
+}
+
+.btn-reset {
+    background: white;
+    color: var(--text-secondary);
+    border: 2px solid var(--text-light);
+}
+
+.btn-reset:hover {
+    background: var(--bg-primary);
+    border-color: var(--text-secondary);
+}
+
+/* ===================================
+   TIMER STATS
+   =================================== */
+
+.timer-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: var(--spacing-md);
+    background: var(--bg-primary);
+    border-radius: var(--radius-md);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.stat-item .stat-icon {
+    font-size: 2rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.stat-text {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* ===================================
+   SETTINGS CARD
+   =================================== */
+
+.settings-card {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-top: var(--spacing-md);
+}
+
+.settings-card h3 {
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+}
+
+.setting-item {
+    padding: var(--spacing-sm) 0;
+}
+
+.setting-item label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.setting-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+/* ===================================
+   TREE PANEL
+   =================================== */
+
+.tree-card {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    position: sticky;
+    top: 100px;
+}
+
+.tree-title {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+}
+
+.tree-level-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.level-badge {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+}
+
+.level-progress {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* ===================================
+   TREE CANVAS
+   =================================== */
+
+.tree-canvas {
+    background: linear-gradient(to bottom, #E3F2FD 0%, #F5F5F5 100%);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    min-height: 400px;
+}
+
+#animated-tree {
+    width: 100%;
+    height: auto;
+}
+
+.trunk-main {
+    animation: grow-up 1.5s ease-out;
+}
+
+.branch {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: draw-branch 2s ease-out forwards;
+}
+
+/* ===================================
+   TREE MILESTONES
+   =================================== */
+
+.tree-milestones h4 {
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+}
+
+.milestone-list {
+    list-style: none;
+}
+
+.milestone-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    margin-bottom: 0.5rem;
+    background: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.milestone-icon {
+    font-size: 1.5rem;
+}
+
+/* ===================================
+   ACHIEVEMENTS SECTION
+   =================================== */
+
+.achievements-section {
+    padding: var(--spacing-xl) 0;
+    background: white;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.achievement-card {
+    background: linear-gradient(135deg,
+        rgba(255, 183, 197, 0.1) 0%,
+        rgba(212, 181, 241, 0.1) 100%);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.achievement-card.locked {
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
+.achievement-card.unlocked {
+    border-color: var(--primary);
+    opacity: 1;
+    filter: grayscale(0);
+}
+
+.achievement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.achievement-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.achievement-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.achievement-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ===================================
+   ANIMATIONS
+   =================================== */
+
+@keyframes grow-up {
+    from {
+        stroke-dasharray: 500;
+        stroke-dashoffset: 500;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes draw-branch {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes blossom-appear {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes petal-fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(150px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+
+@media (max-width: 1024px) {
+    .timer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tree-card {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .timer-display {
+        width: 240px;
+        height: 240px;
+    }
+
+    .timer-time {
+        font-size: 3rem;
+    }
+
+    .timer-mode {
+        flex-direction: column;
+    }
+
+    .mode-btn {
+        min-width: 100%;
+    }
+
+    .achievements-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .timer-display {
+        width: 200px;
+        height: 200px;
+    }
+
+    .timer-time {
+        font-size: 2.5rem;
+    }
+
+    .timer-controls {
+        flex-direction: column;
+    }
+
+    .timer-stats {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+}

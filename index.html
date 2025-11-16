@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyTok Companion - Dein Lern-Buddy</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">🌸</span>
+                <span class="logo-text">StudyTok</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">🏠 Home</a></li>
+                <li><a href="timer.html" class="nav-link">🍅 Timer</a></li>
+                <li><a href="tipps.html" class="nav-link">📚 Lerntipps</a></li>
+                <li><a href="plan.html" class="nav-link">📝 Lernplan</a></li>
+                <li><a href="musik.html" class="nav-link">🎵 Musik</a></li>
+            </ul>
+            <div class="user-points">
+                <span class="points-icon">⭐</span>
+                <span class="points-value">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Willkommen zu deinem <br>
+                    <span class="gradient-text">Lern-Adventure</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Verwandle deine Lernzeit in einen Erfolg mit bewährten Methoden aus TikTok
+                </p>
+                <div class="hero-buttons">
+                    <a href="timer.html" class="btn btn-primary">
+                        <span>🍅 Timer starten</span>
+                    </a>
+                    <a href="tipps.html" class="btn btn-secondary">
+                        <span>💡 Tipp des Tages</span>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="tree-container">
+                    <svg class="cherry-tree" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Baumstamm -->
+                        <path d="M140 400 L140 250 Q140 200 150 180" stroke="#8B4513" stroke-width="8" fill="none" class="trunk"/>
+                        <path d="M160 400 L160 250 Q160 200 150 180" stroke="#8B4513" stroke-width="8" fill="none" class="trunk"/>
+
+                        <!-- Äste -->
+                        <path d="M150 280 Q120 260 100 250" stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
+                        <path d="M150 280 Q180 260 200 250" stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
+                        <path d="M150 220 Q110 200 90 180" stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
+                        <path d="M150 220 Q190 200 210 180" stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
+
+                        <!-- Blütenwolken -->
+                        <circle cx="100" cy="250" r="35" fill="#FFB7C5" opacity="0.7" class="blossom"/>
+                        <circle cx="200" cy="250" r="35" fill="#FFB7C5" opacity="0.7" class="blossom"/>
+                        <circle cx="90" cy="180" r="40" fill="#FFC8D3" opacity="0.8" class="blossom"/>
+                        <circle cx="210" cy="180" r="40" fill="#FFC8D3" opacity="0.8" class="blossom"/>
+                        <circle cx="150" cy="160" r="45" fill="#FFD4E0" opacity="0.9" class="blossom"/>
+
+                        <!-- Einzelne Blüten -->
+                        <g class="petals">
+                            <circle cx="95" cy="240" r="6" fill="#FF69B4"/>
+                            <circle cx="110" cy="255" r="5" fill="#FF1493"/>
+                            <circle cx="85" cy="175" r="6" fill="#FF69B4"/>
+                            <circle cx="150" cy="150" r="7" fill="#FF1493"/>
+                            <circle cx="205" cy="245" r="5" fill="#FF69B4"/>
+                            <circle cx="215" cy="190" r="6" fill="#FF1493"/>
+                        </g>
+
+                        <!-- Fallende Blütenblätter -->
+                        <g class="falling-petals">
+                            <circle cx="120" cy="300" r="4" fill="#FFB7C5" class="petal-fall-1"/>
+                            <circle cx="180" cy="320" r="3" fill="#FFC8D3" class="petal-fall-2"/>
+                            <circle cx="160" cy="340" r="4" fill="#FFD4E0" class="petal-fall-3"/>
+                        </g>
+                    </svg>
+                    <div class="tree-info">
+                        <p class="tree-level">Level 1 🌱</p>
+                        <p class="tree-progress">0 / 5 Sessions bis Level 2</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Stats -->
+    <section class="dashboard">
+        <div class="container">
+            <h2 class="section-title">Dein Fortschritt heute</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🍅</div>
+                    <div class="stat-content">
+                        <h3 class="stat-value">0</h3>
+                        <p class="stat-label">Pomodoro Sessions</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-content">
+                        <h3 class="stat-value">0 Min</h3>
+                        <p class="stat-label">Fokuszeit</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-content">
+                        <h3 class="stat-value">1</h3>
+                        <p class="stat-label">Tage Streak</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-content">
+                        <h3 class="stat-value">0</h3>
+                        <p class="stat-label">Achievements</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Features -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Entdecke deine Tools</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎲</div>
+                    <h3 class="feature-title">Lerntipp-Generator</h3>
+                    <p class="feature-description">Lass dir einen zufälligen Lerntipp anzeigen - perfekt wenn du nicht weißt, wie du anfangen sollst!</p>
+                    <button class="btn btn-outline">Tipp generieren</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3 class="feature-title">Lernplan erstellen</h3>
+                    <p class="feature-description">Erstelle deinen persönlichen Lernplan basierend auf deinem Zeitbudget und deinen Zielen.</p>
+                    <a href="plan.html" class="btn btn-outline">Plan erstellen</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎵</div>
+                    <h3 class="feature-title">Focus Playlists</h3>
+                    <p class="feature-description">Kuratierte Playlists für maximale Konzentration - von Lofi bis Klassik.</p>
+                    <a href="musik.html" class="btn btn-outline">Musik entdecken</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TikTok Preview Section -->
+    <section class="tiktok-preview">
+        <div class="container">
+            <h2 class="section-title">Neueste Lerntipps von TikTok</h2>
+            <div class="video-grid">
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <div class="placeholder-thumbnail">
+                            <span>📱</span>
+                            <p>Video-Thumbnail</p>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button">▶</button>
+                        </div>
+                    </div>
+                    <h4 class="video-title">Die Feynman-Methode</h4>
+                    <p class="video-meta">5.2K views • vor 2 Tagen</p>
+                </div>
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <div class="placeholder-thumbnail">
+                            <span>🧠</span>
+                            <p>Video-Thumbnail</p>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button">▶</button>
+                        </div>
+                    </div>
+                    <h4 class="video-title">Spaced Repetition Hack</h4>
+                    <p class="video-meta">8.1K views • vor 4 Tagen</p>
+                </div>
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <div class="placeholder-thumbnail">
+                            <span>⚡</span>
+                            <p>Video-Thumbnail</p>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button">▶</button>
+                        </div>
+                    </div>
+                    <h4 class="video-title">Active Recall in 5 Min</h4>
+                    <p class="video-meta">12.3K views • vor 1 Woche</p>
+                </div>
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <div class="placeholder-thumbnail">
+                            <span>🎯</span>
+                            <p>Video-Thumbnail</p>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button">▶</button>
+                        </div>
+                    </div>
+                    <h4 class="video-title">Verrückte Gedächtnistricks</h4>
+                    <p class="video-meta">15.7K views • vor 1 Woche</p>
+                </div>
+            </div>
+            <div class="section-footer">
+                <a href="tipps.html" class="btn btn-secondary">Alle Tipps anzeigen</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>StudyTok Companion</h4>
+                    <p>Dein persönlicher Lern-Buddy für mehr Erfolg im Studium</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#">TikTok</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Datenschutz</a></li>
+                        <li><a href="#">Impressum</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 StudyTok Companion. Made with 💖 for learners.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
