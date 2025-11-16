@@ -78,10 +78,55 @@ html {
 
 body {
     font-family: var(--font-primary);
-    background: linear-gradient(135deg, #FAFBFC 0%, #F7FAFC 100%);
+    background: radial-gradient(circle at 20% 20%, rgba(255, 221, 235, 0.7), transparent 35%),
+                radial-gradient(circle at 80% 0%, rgba(212, 181, 241, 0.35), transparent 30%),
+                linear-gradient(135deg, #fff4f8 0%, #f9fbff 35%, #ffe9f2 100%);
     color: var(--text-primary);
     line-height: 1.6;
     overflow-x: hidden;
+}
+
+[data-theme="dark"] body {
+    background: radial-gradient(circle at 20% 20%, rgba(255, 155, 173, 0.35), transparent 32%),
+                radial-gradient(circle at 80% 0%, rgba(192, 159, 232, 0.25), transparent 28%),
+                linear-gradient(135deg, #0f1424 0%, #171c2f 40%, #24162a 100%);
+}
+
+.blossom-background {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.blossom-background .petal {
+    position: absolute;
+    top: -10%;
+    left: var(--x);
+    width: var(--size, 14px);
+    height: var(--size, 12px);
+    background: radial-gradient(circle at 30% 30%, #ffe6f0 0%, #ffb7c5 60%, #ff8db0 100%);
+    opacity: 0.9;
+    border-radius: 70% 40% 70% 40%;
+    filter: drop-shadow(0 6px 8px rgba(255, 183, 197, 0.35));
+    transform-origin: center;
+    animation: blossomFall var(--duration) linear infinite;
+    animation-delay: var(--delay);
+}
+
+@keyframes blossomFall {
+    0% {
+        transform: translate3d(0, -10vh, 0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.9;
+    }
+    100% {
+        transform: translate3d(calc(var(--drift, 0px)), 110vh, 0) rotate(320deg);
+        opacity: 0;
+    }
 }
 
 .container {
