@@ -472,6 +472,9 @@ function toggleTheme() {
 function updateThemeIcon(theme) {
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
-        themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        const isDark = theme === 'dark';
+        themeToggle.classList.toggle('is-dark', isDark);
+        themeToggle.setAttribute('aria-pressed', isDark);
+        themeToggle.setAttribute('aria-label', isDark ? 'Light Mode aktivieren' : 'Dark Mode aktivieren');
     }
 }
