@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer - StudyTok Companion</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/timer.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">🌸</span>
+                <span class="logo-text">StudyTok</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">🏠 Home</a></li>
+                <li><a href="timer.html" class="nav-link active">🍅 Timer</a></li>
+                <li><a href="tipps.html" class="nav-link">📚 Lerntipps</a></li>
+                <li><a href="plan.html" class="nav-link">📝 Lernplan</a></li>
+                <li><a href="musik.html" class="nav-link">🎵 Musik</a></li>
+            </ul>
+            <div class="user-points">
+                <span class="points-icon">⭐</span>
+                <span class="points-value" id="total-points">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Timer Hero -->
+    <section class="timer-hero">
+        <div class="container">
+            <h1 class="page-title">Pomodoro Timer 🍅</h1>
+            <p class="page-subtitle">Fokussiere dich für 25 Minuten und sieh deinen Baum wachsen</p>
+        </div>
+    </section>
+
+    <!-- Timer Main Section -->
+    <section class="timer-section">
+        <div class="container">
+            <div class="timer-grid">
+                <!-- Timer Controls -->
+                <div class="timer-panel">
+                    <div class="timer-card">
+                        <div class="timer-display">
+                            <svg class="timer-ring" viewBox="0 0 200 200">
+                                <circle cx="100" cy="100" r="85" class="timer-ring-bg"/>
+                                <circle cx="100" cy="100" r="85" class="timer-ring-progress" id="timer-progress"/>
+                            </svg>
+                            <div class="timer-time">
+                                <span id="timer-minutes">25</span>:<span id="timer-seconds">00</span>
+                            </div>
+                        </div>
+
+                        <div class="timer-mode">
+                            <button class="mode-btn active" data-mode="focus">
+                                🎯 Fokus (25 Min)
+                            </button>
+                            <button class="mode-btn" data-mode="short">
+                                ☕ Kurze Pause (5 Min)
+                            </button>
+                            <button class="mode-btn" data-mode="long">
+                                🌙 Lange Pause (15 Min)
+                            </button>
+                        </div>
+
+                        <div class="timer-controls">
+                            <button class="control-btn btn-start" id="start-btn">
+                                <span>▶ Starten</span>
+                            </button>
+                            <button class="control-btn btn-pause" id="pause-btn" style="display: none;">
+                                <span>⏸ Pause</span>
+                            </button>
+                            <button class="control-btn btn-reset" id="reset-btn">
+                                <span>🔄 Reset</span>
+                            </button>
+                        </div>
+
+                        <div class="timer-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">🍅</span>
+                                <div>
+                                    <div class="stat-number" id="sessions-today">0</div>
+                                    <div class="stat-text">Heute</div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">⏱</span>
+                                <div>
+                                    <div class="stat-number" id="minutes-today">0</div>
+                                    <div class="stat-text">Minuten</div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">🔥</span>
+                                <div>
+                                    <div class="stat-number" id="streak">1</div>
+                                    <div class="stat-text">Streak</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Settings -->
+                    <div class="settings-card">
+                        <h3>Einstellungen</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="auto-start-break">
+                                <span>Pause automatisch starten</span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="sound-enabled" checked>
+                                <span>Sound aktivieren</span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="notifications" checked>
+                                <span>Benachrichtigungen</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tree Visualization -->
+                <div class="tree-panel">
+                    <div class="tree-card">
+                        <h3 class="tree-title">Dein Konzentrationsbaum 🌸</h3>
+                        <div class="tree-level-info">
+                            <span class="level-badge">Level <span id="tree-level">1</span></span>
+                            <span class="level-progress"><span id="blossoms-count">0</span> / 5 Blüten</span>
+                        </div>
+
+                        <div class="tree-canvas">
+                            <svg id="animated-tree" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Boden -->
+                                <ellipse cx="200" cy="480" rx="80" ry="15" fill="#8FBC8F" opacity="0.3"/>
+
+                                <!-- Baumstamm -->
+                                <g id="trunk-group">
+                                    <path d="M185 480 L185 300 Q185 280 200 270"
+                                          stroke="#8B4513" stroke-width="12" fill="none" class="trunk-main"/>
+                                    <path d="M215 480 L215 300 Q215 280 200 270"
+                                          stroke="#8B4513" stroke-width="12" fill="none" class="trunk-main"/>
+                                </g>
+
+                                <!-- Äste - Level 1 -->
+                                <g id="branches-level-1" opacity="0">
+                                    <path d="M200 350 Q160 330 130 320"
+                                          stroke="#A0522D" stroke-width="6" fill="none" class="branch"/>
+                                    <path d="M200 350 Q240 330 270 320"
+                                          stroke="#A0522D" stroke-width="6" fill="none" class="branch"/>
+                                </g>
+
+                                <!-- Äste - Level 2 -->
+                                <g id="branches-level-2" opacity="0">
+                                    <path d="M200 300 Q150 280 120 260"
+                                          stroke="#A0522D" stroke-width="5" fill="none" class="branch"/>
+                                    <path d="M200 300 Q250 280 280 260"
+                                          stroke="#A0522D" stroke-width="5" fill="none" class="branch"/>
+                                </g>
+
+                                <!-- Äste - Level 3 -->
+                                <g id="branches-level-3" opacity="0">
+                                    <path d="M200 250 Q140 220 110 190"
+                                          stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
+                                    <path d="M200 250 Q260 220 290 190"
+                                          stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
+                                    <path d="M200 250 Q200 210 200 180"
+                                          stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
+                                </g>
+
+                                <!-- Blüten Container -->
+                                <g id="blossoms-container"></g>
+
+                                <!-- Fallende Blütenblätter -->
+                                <g id="falling-petals"></g>
+                            </svg>
+                        </div>
+
+                        <div class="tree-milestones">
+                            <h4>Nächste Meilensteine</h4>
+                            <ul class="milestone-list">
+                                <li class="milestone-item">
+                                    <span class="milestone-icon">🌸</span>
+                                    <span>5 Sessions: Neuer Ast</span>
+                                </li>
+                                <li class="milestone-item">
+                                    <span class="milestone-icon">🌺</span>
+                                    <span>10 Sessions: Voller Baum</span>
+                                </li>
+                                <li class="milestone-item">
+                                    <span class="milestone-icon">🎋</span>
+                                    <span>25 Sessions: Baum "ernten" für 100 Bonus-Punkte</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements Section -->
+    <section class="achievements-section">
+        <div class="container">
+            <h2 class="section-title">Achievements 🏆</h2>
+            <div class="achievements-grid">
+                <div class="achievement-card locked">
+                    <div class="achievement-icon">🌱</div>
+                    <h4>Erste Schritte</h4>
+                    <p>Erste Pomodoro-Session abgeschlossen</p>
+                </div>
+                <div class="achievement-card locked">
+                    <div class="achievement-icon">🔥</div>
+                    <h4>On Fire!</h4>
+                    <p>5 Sessions an einem Tag</p>
+                </div>
+                <div class="achievement-card locked">
+                    <div class="achievement-icon">💎</div>
+                    <h4>Fokus-Meister</h4>
+                    <p>10 Sessions ohne Unterbrechung</p>
+                </div>
+                <div class="achievement-card locked">
+                    <div class="achievement-icon">👑</div>
+                    <h4>Studier-König</h4>
+                    <p>7 Tage Streak</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>StudyTok Companion</h4>
+                    <p>Dein persönlicher Lern-Buddy für mehr Erfolg im Studium</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#">TikTok</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Datenschutz</a></li>
+                        <li><a href="#">Impressum</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 StudyTok Companion. Made with 💖 for learners.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/timer.js"></script>
+</body>
+</html>
