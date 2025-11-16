@@ -4,6 +4,7 @@
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
+    generateBlossomPetals();
     initializeStats();
     animateTreePetals();
     updatePoints();
@@ -78,6 +79,25 @@ function updatePoints() {
 // ===================================
 // TREE ANIMATIONS
 // ===================================
+
+function generateBlossomPetals() {
+    const container = document.querySelector('.blossom-background');
+    if (!container) return;
+
+    const petalCount = 24;
+    const randomBetween = (min, max) => Math.random() * (max - min) + min;
+
+    for (let i = 0; i < petalCount; i++) {
+        const petal = document.createElement('span');
+        petal.className = 'petal';
+        petal.style.setProperty('--x', `${Math.round(Math.random() * 100)}%`);
+        petal.style.setProperty('--duration', `${randomBetween(14, 24)}s`);
+        petal.style.setProperty('--delay', `${randomBetween(0, 10)}s`);
+        petal.style.setProperty('--drift', `${randomBetween(-90, 90)}px`);
+        petal.style.setProperty('--size', `${randomBetween(10, 18)}px`);
+        container.appendChild(petal);
+    }
+}
 
 function animateTreePetals() {
     const fallingPetals = document.querySelectorAll('.falling-petals circle');
