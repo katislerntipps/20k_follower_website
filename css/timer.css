@@ -42,7 +42,7 @@
    =================================== */
 
 .timer-card {
-    background: white;
+    background: var(--bg-card);
     padding: var(--spacing-xl);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
@@ -63,7 +63,7 @@
 
 .timer-ring-bg {
     fill: none;
-    stroke: #F7FAFC;
+    stroke: var(--bg-secondary);
     stroke-width: 12;
 }
 
@@ -112,7 +112,7 @@
     min-width: 120px;
     padding: 0.75rem 1rem;
     border: 2px solid var(--primary);
-    background: white;
+    background: var(--bg-card);
     border-radius: var(--radius-md);
     font-weight: 600;
     font-size: 0.9rem;
@@ -174,7 +174,7 @@
 }
 
 .btn-reset {
-    background: white;
+    background: var(--bg-card);
     color: var(--text-secondary);
     border: 2px solid var(--text-light);
 }
@@ -192,7 +192,7 @@
     display: flex;
     justify-content: space-around;
     padding: var(--spacing-md);
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     border-radius: var(--radius-md);
 }
 
