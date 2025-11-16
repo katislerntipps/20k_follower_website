@@ -226,6 +226,13 @@ body.sakura-theme {
     box-shadow: var(--shadow-sm);
 }
 
+[data-theme="dark"] .user-points {
+    background: linear-gradient(135deg, rgba(255, 46, 230, 0.16) 0%, rgba(104, 210, 187, 0.12) 100%);
+    color: var(--text-primary);
+    border: 1px solid rgba(199, 199, 210, 0.16);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 18px rgba(255, 46, 230, 0.22);
+}
+
 .points-icon {
     width: 36px;
     height: 36px;
@@ -239,10 +246,18 @@ body.sakura-theme {
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
+[data-theme="dark"] .coin-svg {
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.35)) drop-shadow(0 0 12px rgba(255, 183, 0, 0.28));
+}
+
 .coin-shine {
     animation: coinShine 2.8s ease-in-out infinite;
     transform-origin: 50% 50%;
     mix-blend-mode: screen;
+}
+
+[data-theme="dark"] .points-value {
+    color: #ffd27f;
 }
 
 .theme-toggle {
