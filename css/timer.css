@@ -312,13 +312,35 @@
 }
 
 .trunk-main {
-    animation: grow-up 1.5s ease-out;
+    animation: grow-trunk 1.4s ease-out, sway 7s ease-in-out infinite;
+    transform-origin: center bottom;
+    filter: drop-shadow(0 8px 18px rgba(0,0,0,0.08));
+}
+
+.timer-canopy {
+    animation: bloom 1.6s ease-out both, canopy-float 5.5s ease-in-out infinite;
+    filter: drop-shadow(0 12px 22px rgba(255, 143, 182, 0.25));
 }
 
 .branch {
-    stroke-dasharray: 200;
-    stroke-dashoffset: 200;
-    animation: draw-branch 2s ease-out forwards;
+    stroke-dasharray: 240;
+    stroke-dashoffset: 240;
+    animation: draw-branch 2s ease-out forwards, sway 8s ease-in-out infinite;
+    transform-origin: center 260px;
+}
+
+.branch-group { transition: opacity 0.6s ease; }
+
+.blossom-group {
+    filter: drop-shadow(0 4px 8px rgba(255, 143, 182, 0.25));
+    animation: blossom-appear 0.7s ease-out both;
+}
+
+.petal-floating {
+    opacity: 0;
+    animation: petal-fall var(--duration, 8s) ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center;
 }
 
 /* ===================================
@@ -413,42 +435,55 @@
    ANIMATIONS
    =================================== */
 
-@keyframes grow-up {
-    from {
-        stroke-dasharray: 500;
-        stroke-dashoffset: 500;
-    }
-    to {
-        stroke-dashoffset: 0;
-    }
+@keyframes grow-trunk {
+    from { opacity: 0; transform: translateY(24px) scaleY(0.85); }
+    to { opacity: 1; transform: translateY(0) scaleY(1); }
 }
 
 @keyframes draw-branch {
-    to {
-        stroke-dashoffset: 0;
-    }
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes bloom {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 0.95; transform: scale(1); }
 }
 
 @keyframes blossom-appear {
-    from {
-        opacity: 0;
-        transform: scale(0);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes petal-fall {
     0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(150px) rotate(360deg);
+        transform: translate(var(--start-x, 0px) var(--start-y, 0px)) rotate(var(--tilt, 0deg)) scale(var(--scale, 1));
         opacity: 0;
     }
+    12% { opacity: 1; }
+    40% {
+        transform: translate(calc(var(--start-x, 0px) - var(--drift, 8px)) calc(var(--start-y, 0px) + var(--float, 70px))) rotate(calc(var(--tilt, 0deg) + 140deg)) scale(var(--scale, 1));
+        opacity: 0.9;
+    }
+    70% {
+        transform: translate(calc(var(--start-x, 0px) + var(--drift, 8px)) calc(var(--start-y, 0px) + calc(var(--float, 70px) * 1.8))) rotate(calc(var(--tilt, 0deg) + 260deg)) scale(calc(var(--scale, 1) * 0.96));
+        opacity: 0.55;
+    }
+    100% {
+        transform: translate(calc(var(--start-x, 0px) + calc(var(--drift, 8px) * 1.4)) calc(var(--start-y, 0px) + calc(var(--float, 70px) * 2.4))) rotate(calc(var(--tilt, 0deg) + 360deg)) scale(calc(var(--scale, 1) * 0.9));
+        opacity: 0;
+    }
+}
+
+@keyframes sway {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(-1.6deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes canopy-float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0px); }
 }
 
 /* ===================================

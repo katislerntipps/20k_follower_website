@@ -230,6 +230,12 @@ function updateStats() {
 // ===================================
 
 function initializeTree() {
+    for (let i = 1; i <= treeState.level; i++) {
+        const branchGroup = document.getElementById(`branches-level-${i}`);
+        if (branchGroup) {
+            branchGroup.style.opacity = '1';
+        }
+    }
     renderTree();
 }
 
@@ -291,17 +297,17 @@ function renderTree() {
 }
 
 function createBlossomElement(cx, cy, index) {
-    const colors = ['#FFB7C5', '#FFC8D3', '#FFD4E0', '#FF69B4', '#FF1493'];
+    const colors = ['#FFB7C5', '#FFC8D3', '#FFD4E0', '#FF9AC4'];
     const color = colors[index % colors.length];
+    const rotation = Math.floor(Math.random() * 360);
 
     return `
-        <g class="blossom-group" style="animation: blossom-appear 0.6s ease-out ${index * 0.2}s both">
-            <circle cx="${cx}" cy="${cy}" r="25" fill="${color}" opacity="0.8"/>
-            <circle cx="${cx - 8}" cy="${cy - 8}" r="8" fill="${color}" opacity="0.9"/>
-            <circle cx="${cx + 8}" cy="${cy - 8}" r="8" fill="${color}" opacity="0.9"/>
-            <circle cx="${cx - 8}" cy="${cy + 8}" r="8" fill="${color}" opacity="0.9"/>
-            <circle cx="${cx + 8}" cy="${cy + 8}" r="8" fill="${color}" opacity="0.9"/>
-            <circle cx="${cx}" cy="${cy}" r="6" fill="#FFE5EC"/>
+        <g class="blossom-group" transform="translate(${cx} ${cy}) rotate(${rotation})">
+            ${[0, 72, 144, 216, 288].map(angle => `
+                <ellipse rx="12" ry="18" fill="${color}" opacity="0.9" transform="rotate(${angle}) translate(0 -16)" />
+            `).join('')}
+            <circle r="8" fill="#FFD9E8" opacity="0.9" />
+            <circle r="4" fill="#FFEFF6" />
         </g>
     `;
 }
@@ -315,13 +321,19 @@ function addFallingPetals() {
     fallingPetalsContainer.innerHTML = '';
 
     for (let i = 0; i < petalCount; i++) {
-        const x = 100 + Math.random() * 200;
-        const y = 200 + Math.random() * 100;
-        const delay = Math.random() * 5;
+        const x = 120 + Math.random() * 160;
+        const y = 190 + Math.random() * 120;
+        const delay = (Math.random() * 4).toFixed(2);
+        const tilt = (Math.random() * 14 - 7).toFixed(1);
+        const drift = (Math.random() * 20 - 10).toFixed(1);
+        const float = (70 + Math.random() * 40).toFixed(1);
+        const duration = (7 + Math.random() * 4).toFixed(2);
+        const scale = (0.82 + Math.random() * 0.35).toFixed(2);
 
         fallingPetalsContainer.innerHTML += `
-            <circle cx="${x}" cy="${y}" r="4" fill="#FFB7C5"
-                    style="animation: petal-fall 6s ease-in-out infinite ${delay}s"/>
+            <path d="M0 0 C8 -6 18 -4 18 8 C10 12 2 12 0 0 Z" fill="#FFC8D3"
+                  class="petal-floating"
+                  style="--start-x:${x}px; --start-y:${y}px; --drift:${drift}px; --float:${float}px; --tilt:${tilt}deg; --scale:${scale}; --duration:${duration}s; animation-delay:${delay}s;" />
         `;
     }
 }

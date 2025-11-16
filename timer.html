@@ -171,41 +171,48 @@
 
                         <div class="tree-canvas">
                             <svg id="animated-tree" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="timerTrunk" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#8B5A2B" />
+                                        <stop offset="100%" stop-color="#6B3E19" />
+                                    </linearGradient>
+                                    <radialGradient id="timerCanopy" cx="50%" cy="35%" r="65%">
+                                        <stop offset="0%" stop-color="#FFE3EE" />
+                                        <stop offset="45%" stop-color="#FFC8D8" />
+                                        <stop offset="100%" stop-color="#F6A6C4" />
+                                    </radialGradient>
+                                </defs>
+
                                 <!-- Boden -->
-                                <ellipse cx="200" cy="480" rx="80" ry="15" fill="#8FBC8F" opacity="0.3"/>
+                                <ellipse cx="200" cy="480" rx="82" ry="18" fill="#9BC39B" opacity="0.3"/>
 
                                 <!-- Baumstamm -->
-                                <g id="trunk-group">
-                                    <path d="M185 480 L185 300 Q185 280 200 270"
-                                          stroke="#8B4513" stroke-width="12" fill="none" class="trunk-main"/>
-                                    <path d="M215 480 L215 300 Q215 280 200 270"
-                                          stroke="#8B4513" stroke-width="12" fill="none" class="trunk-main"/>
-                                </g>
+                                <path d="M190 472 C184 400 188 330 208 284 C216 262 216 236 210 210 C204 182 186 176 182 154 C176 122 204 120 210 148 C218 180 234 208 238 246 C242 282 232 330 218 392 C212 420 206 472 206 472 Z"
+                                      fill="url(#timerTrunk)" class="trunk-main"/>
+
+                                <!-- Blütenwolke Hintergrund -->
+                                <path d="M94 244 C72 202 98 154 140 142 C168 106 232 108 258 140 C308 142 318 196 290 230 C310 266 284 310 240 312 C222 346 168 352 144 320 C114 330 86 304 88 272 C62 264 54 248 94 244 Z"
+                                      fill="url(#timerCanopy)" opacity="0.9" class="timer-canopy"/>
+                                <path d="M134 156 C156 126 204 122 236 152 C268 132 302 152 304 186 C330 192 334 228 312 248 C316 278 284 302 254 292 C232 322 182 324 160 296 C128 306 96 286 100 256 C74 238 84 196 120 194 C106 174 110 160 134 156 Z"
+                                      fill="#FFCEDD" opacity="0.8" class="timer-canopy"/>
 
                                 <!-- Äste - Level 1 -->
-                                <g id="branches-level-1" opacity="0">
-                                    <path d="M200 350 Q160 330 130 320"
-                                          stroke="#A0522D" stroke-width="6" fill="none" class="branch"/>
-                                    <path d="M200 350 Q240 330 270 320"
-                                          stroke="#A0522D" stroke-width="6" fill="none" class="branch"/>
+                                <g id="branches-level-1" class="branch-group" opacity="0">
+                                    <path d="M206 290 C170 274 148 248 126 226" stroke="#7A4523" stroke-width="8" stroke-linecap="round" fill="none" class="branch"/>
+                                    <path d="M206 294 C234 280 256 258 276 232" stroke="#7A4523" stroke-width="8" stroke-linecap="round" fill="none" class="branch"/>
                                 </g>
 
                                 <!-- Äste - Level 2 -->
-                                <g id="branches-level-2" opacity="0">
-                                    <path d="M200 300 Q150 280 120 260"
-                                          stroke="#A0522D" stroke-width="5" fill="none" class="branch"/>
-                                    <path d="M200 300 Q250 280 280 260"
-                                          stroke="#A0522D" stroke-width="5" fill="none" class="branch"/>
+                                <g id="branches-level-2" class="branch-group" opacity="0">
+                                    <path d="M206 250 C164 238 142 214 118 190" stroke="#8B5A2B" stroke-width="6" stroke-linecap="round" fill="none" class="branch"/>
+                                    <path d="M206 254 C244 242 266 220 288 198" stroke="#8B5A2B" stroke-width="6" stroke-linecap="round" fill="none" class="branch"/>
                                 </g>
 
                                 <!-- Äste - Level 3 -->
-                                <g id="branches-level-3" opacity="0">
-                                    <path d="M200 250 Q140 220 110 190"
-                                          stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
-                                    <path d="M200 250 Q260 220 290 190"
-                                          stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
-                                    <path d="M200 250 Q200 210 200 180"
-                                          stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
+                                <g id="branches-level-3" class="branch-group" opacity="0">
+                                    <path d="M206 220 C168 202 142 180 128 158" stroke="#8B5A2B" stroke-width="5" stroke-linecap="round" fill="none" class="branch"/>
+                                    <path d="M206 222 C236 208 262 190 280 170" stroke="#8B5A2B" stroke-width="5" stroke-linecap="round" fill="none" class="branch"/>
+                                    <path d="M206 226 C206 204 206 188 206 172" stroke="#8B5A2B" stroke-width="5" stroke-linecap="round" fill="none" class="branch"/>
                                 </g>
 
                                 <!-- Blüten Container -->

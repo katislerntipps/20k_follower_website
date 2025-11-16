@@ -83,39 +83,87 @@
             </div>
             <div class="hero-visual">
                 <div class="tree-container">
-                    <svg class="cherry-tree" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="cherry-tree" viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="trunkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#8B5A2B" />
+                                <stop offset="100%" stop-color="#6B3E19" />
+                            </linearGradient>
+                            <radialGradient id="canopyLight" cx="50%" cy="35%" r="65%">
+                                <stop offset="0%" stop-color="#FFE3EE" />
+                                <stop offset="45%" stop-color="#FFC8D8" />
+                                <stop offset="100%" stop-color="#F6A6C4" />
+                            </radialGradient>
+                        </defs>
+
                         <!-- Baumstamm -->
-                        <path d="M140 400 L140 250 Q140 200 150 180" stroke="#8B4513" stroke-width="8" fill="none" class="trunk"/>
-                        <path d="M160 400 L160 250 Q160 200 150 180" stroke="#8B4513" stroke-width="8" fill="none" class="trunk"/>
+                        <path d="M168 360 C162 300 168 250 186 210 C195 190 195 170 190 150 C184 130 168 125 164 110 C158 85 180 80 186 104 C194 135 210 160 214 195 C218 230 210 265 200 320 C196 340 192 360 192 360 Z"
+                              fill="url(#trunkGradient)" class="trunk sway"/>
 
-                        <!-- Äste -->
-                        <path d="M150 280 Q120 260 100 250" stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
-                        <path d="M150 280 Q180 260 200 250" stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
-                        <path d="M150 220 Q110 200 90 180" stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
-                        <path d="M150 220 Q190 200 210 180" stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
+                        <!-- Hauptäste -->
+                        <g class="branches sway-slow">
+                            <path d="M184 210 C160 200 136 180 118 156" stroke="#7A4523" stroke-width="8" stroke-linecap="round" fill="none"/>
+                            <path d="M186 215 C205 205 222 192 240 168" stroke="#7A4523" stroke-width="7" stroke-linecap="round" fill="none"/>
+                            <path d="M182 235 C150 230 132 215 112 200" stroke="#8B5A2B" stroke-width="6" stroke-linecap="round" fill="none"/>
+                            <path d="M186 238 C212 235 230 220 252 205" stroke="#8B5A2B" stroke-width="6" stroke-linecap="round" fill="none"/>
+                        </g>
 
-                        <!-- Blütenwolken -->
-                        <circle cx="100" cy="250" r="35" fill="#FFB7C5" opacity="0.7" class="blossom"/>
-                        <circle cx="200" cy="250" r="35" fill="#FFB7C5" opacity="0.7" class="blossom"/>
-                        <circle cx="90" cy="180" r="40" fill="#FFC8D3" opacity="0.8" class="blossom"/>
-                        <circle cx="210" cy="180" r="40" fill="#FFC8D3" opacity="0.8" class="blossom"/>
-                        <circle cx="150" cy="160" r="45" fill="#FFD4E0" opacity="0.9" class="blossom"/>
+                        <!-- Blütenwolke -->
+                        <path d="M82 210 C60 165 88 122 132 112 C158 80 214 78 238 110 C290 110 300 160 274 192 C292 226 268 266 230 268 C214 300 162 304 140 276 C112 284 84 262 88 232 C70 226 62 214 82 210 Z"
+                              fill="url(#canopyLight)" opacity="0.95" class="canopy float"/>
+                        <path d="M116 124 C136 96 180 90 212 116 C244 98 274 116 276 148 C300 154 304 186 286 204 C290 230 262 252 236 244 C218 270 170 272 152 246 C124 254 94 236 96 210 C74 194 82 160 112 158 C100 142 102 128 116 124 Z"
+                              fill="#FFCEDD" opacity="0.8" class="canopy float-delayed"/>
 
                         <!-- Einzelne Blüten -->
-                        <g class="petals">
-                            <circle cx="95" cy="240" r="6" fill="#FF69B4"/>
-                            <circle cx="110" cy="255" r="5" fill="#FF1493"/>
-                            <circle cx="85" cy="175" r="6" fill="#FF69B4"/>
-                            <circle cx="150" cy="150" r="7" fill="#FF1493"/>
-                            <circle cx="205" cy="245" r="5" fill="#FF69B4"/>
-                            <circle cx="215" cy="190" r="6" fill="#FF1493"/>
+                        <g class="petal-bursts">
+                            <g class="flower" transform="translate(120 200) rotate(-8)">
+                                <circle r="22" fill="#FFD9E8" opacity="0.9"/>
+                                <g class="flower-petals">
+                                    <ellipse rx="10" ry="16" fill="#FFB7C5" transform="rotate(0) translate(0 -14)"/>
+                                    <ellipse rx="10" ry="16" fill="#FFB7C5" transform="rotate(72) translate(0 -14)"/>
+                                    <ellipse rx="10" ry="16" fill="#FFB7C5" transform="rotate(144) translate(0 -14)"/>
+                                    <ellipse rx="10" ry="16" fill="#FFB7C5" transform="rotate(216) translate(0 -14)"/>
+                                    <ellipse rx="10" ry="16" fill="#FFB7C5" transform="rotate(288) translate(0 -14)"/>
+                                    <circle r="5" fill="#FFE5EC" />
+                                </g>
+                            </g>
+                            <g class="flower" transform="translate(210 190) rotate(12)">
+                                <circle r="18" fill="#FFD9E8" opacity="0.9"/>
+                                <g class="flower-petals">
+                                    <ellipse rx="9" ry="14" fill="#FFB7C5" transform="rotate(0) translate(0 -12)"/>
+                                    <ellipse rx="9" ry="14" fill="#FFB7C5" transform="rotate(72) translate(0 -12)"/>
+                                    <ellipse rx="9" ry="14" fill="#FFB7C5" transform="rotate(144) translate(0 -12)"/>
+                                    <ellipse rx="9" ry="14" fill="#FFB7C5" transform="rotate(216) translate(0 -12)"/>
+                                    <ellipse rx="9" ry="14" fill="#FFB7C5" transform="rotate(288) translate(0 -12)"/>
+                                    <circle r="4" fill="#FFE5EC" />
+                                </g>
+                            </g>
+                            <g class="flower" transform="translate(160 145) rotate(-16)">
+                                <circle r="16" fill="#FFD9E8" opacity="0.9"/>
+                                <g class="flower-petals">
+                                    <ellipse rx="8" ry="12" fill="#FFB7C5" transform="rotate(0) translate(0 -10)"/>
+                                    <ellipse rx="8" ry="12" fill="#FFB7C5" transform="rotate(72) translate(0 -10)"/>
+                                    <ellipse rx="8" ry="12" fill="#FFB7C5" transform="rotate(144) translate(0 -10)"/>
+                                    <ellipse rx="8" ry="12" fill="#FFB7C5" transform="rotate(216) translate(0 -10)"/>
+                                    <ellipse rx="8" ry="12" fill="#FFB7C5" transform="rotate(288) translate(0 -10)"/>
+                                    <circle r="4" fill="#FFE5EC" />
+                                </g>
+                            </g>
                         </g>
 
                         <!-- Fallende Blütenblätter -->
                         <g class="falling-petals">
-                            <circle cx="120" cy="300" r="4" fill="#FFB7C5" class="petal-fall-1"/>
-                            <circle cx="180" cy="320" r="3" fill="#FFC8D3" class="petal-fall-2"/>
-                            <circle cx="160" cy="340" r="4" fill="#FFD4E0" class="petal-fall-3"/>
+                            <path d="M120 260 C130 250 148 250 152 268 C142 272 128 272 120 260 Z" fill="#FFC8D3" class="petal-fall" style="animation-delay: 0s; animation-duration: 8.8s;"/>
+                            <path d="M190 285 C198 274 210 274 218 288 C206 294 196 294 190 285 Z" fill="#FFB7C5" class="petal-fall" style="animation-delay: 0.8s; animation-duration: 9.4s;"/>
+                            <path d="M160 305 C170 296 186 296 192 312 C176 316 166 316 160 305 Z" fill="#FFD4E0" class="petal-fall" style="animation-delay: 1.4s; animation-duration: 8.2s;"/>
+                            <path d="M138 230 C148 220 166 220 170 238 C158 244 146 244 138 230 Z" fill="#FFD9E8" class="petal-fall" style="animation-delay: 2.1s; animation-duration: 10s;"/>
+                            <path d="M210 250 C220 238 238 238 244 254 C230 260 220 262 210 250 Z" fill="#FFC1D6" class="petal-fall" style="animation-delay: 2.9s; animation-duration: 9s;"/>
+                            <path d="M178 278 C186 268 202 268 210 284 C194 288 184 288 178 278 Z" fill="#FFB7C5" class="petal-fall" style="animation-delay: 3.6s; animation-duration: 10.4s;"/>
+                        </g>
+                        <g class="breeze-petals">
+                            <path d="M0 0 C8 -6 18 -4 18 8 C10 12 2 12 0 0 Z" fill="#FFE3EE" opacity="0.75" transform="translate(104 236) rotate(-6)" class="petal-fall" style="animation-delay: 1.6s; animation-duration: 11s;"/>
+                            <path d="M0 0 C10 -8 22 -4 22 10 C12 14 4 14 0 0 Z" fill="#FFC8D3" opacity="0.82" transform="translate(242 226) rotate(12)" class="petal-fall" style="animation-delay: 0.5s; animation-duration: 10.6s;"/>
+                            <path d="M0 0 C8 -6 18 -4 18 8 C10 12 2 12 0 0 Z" fill="#FFD9E8" opacity="0.7" transform="translate(188 208) rotate(-18)" class="petal-fall" style="animation-delay: 3s; animation-duration: 12s;"/>
                         </g>
                     </svg>
                     <div class="tree-info">
