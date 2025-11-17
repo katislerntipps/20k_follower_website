@@ -175,16 +175,81 @@ body.sakura-theme {
 .logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     font-family: var(--font-secondary);
     font-weight: 700;
     font-size: 1.5rem;
     color: var(--text-primary);
 }
 
-.logo-icon {
-    font-size: 1.8rem;
-    animation: float 3s ease-in-out infinite;
+.logo-home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: var(--radius-md);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.logo-home:hover,
+.logo-home:focus-visible {
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+[data-theme="dark"] .logo-home:hover,
+[data-theme="dark"] .logo-home:focus-visible {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+.logo-image {
+    width: 44px;
+    height: 44px;
+}
+
+.logo-text-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    position: relative;
+    padding: 0.2rem 0.4rem;
+    border-radius: var(--radius-md);
+    transition: color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.logo-text-link::after {
+    content: "";
+    position: absolute;
+    left: 0.4rem;
+    right: 0.4rem;
+    bottom: 0.2rem;
+    height: 2px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    opacity: 0;
+    transform: scaleX(0.8);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.logo-text-link:hover,
+.logo-text-link:focus-visible {
+    color: var(--primary);
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.35);
+    outline: none;
+}
+
+.logo-text-link:hover::after,
+.logo-text-link:focus-visible::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+[data-theme="dark"] .logo-text-link:hover,
+[data-theme="dark"] .logo-text-link:focus-visible {
+    background: rgba(255, 255, 255, 0.08);
+    color: #b2c4ff;
 }
 
 .nav-menu {

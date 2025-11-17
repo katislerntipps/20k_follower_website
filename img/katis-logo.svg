@@ -1,0 +1,49 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Katis Lerntipps Logo</title>
+  <desc id="desc">Eine stilisierte Musiknote mit rosa Kirschblütenzweigen.</desc>
+  <defs>
+    <linearGradient id="noteGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#9b6bff" />
+      <stop offset="100%" stop-color="#ff4d9d" />
+    </linearGradient>
+    <radialGradient id="glow" cx="40%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="240" height="240" fill="none" />
+  <path d="M148 36c0 0-6 74-6 96 0 10-6 18-14 22-16 8-40 6-50-8-10-14-4-34 14-44 14-8 30-8 42-2l6-64z" fill="url(#noteGradient)" stroke="#ffffff" stroke-opacity="0.4" stroke-width="4" stroke-linejoin="round" />
+  <circle cx="120" cy="80" r="64" fill="url(#glow)" />
+  <path d="M142 38c22 0 48 10 62 24-6 4-20 10-32 8-16-2-26-14-30-32z" fill="#2ec5ff" fill-opacity="0.4" />
+  <g stroke="#3c1a0a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M92 122c-12 10-18 22-18 22" />
+    <path d="M110 118c-6 8-8 18-8 18" />
+    <path d="M134 116c6 6 10 12 14 20" />
+    <path d="M148 106c12 4 22 10 30 18" />
+  </g>
+  <g fill="#ffb7d9" stroke="#ff8ec7" stroke-width="2">
+    <circle cx="82" cy="138" r="10" />
+    <circle cx="98" cy="130" r="8" />
+    <circle cx="114" cy="144" r="9" />
+    <circle cx="134" cy="128" r="9" />
+    <circle cx="152" cy="114" r="10" />
+    <circle cx="170" cy="126" r="8" />
+    <circle cx="188" cy="134" r="7" />
+    <circle cx="122" cy="110" r="7" />
+    <circle cx="106" cy="102" r="6" />
+  </g>
+  <g fill="#ffffff" fill-opacity="0.9">
+    <circle cx="84" cy="134" r="3" />
+    <circle cx="100" cy="126" r="3" />
+    <circle cx="118" cy="140" r="3" />
+    <circle cx="136" cy="124" r="3" />
+    <circle cx="154" cy="110" r="3" />
+  </g>
+  <g fill="#55cf9b" stroke="#2f9b68" stroke-width="2" stroke-linecap="round">
+    <path d="M90 132c-6-4-12-8-16-14" />
+    <path d="M108 124c-6-2-12-6-18-12" />
+    <path d="M138 122c8-2 18-4 26-8" />
+    <path d="M154 108c10-4 22-8 30-14" />
+  </g>
+</svg>
