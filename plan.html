@@ -14,8 +14,10 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <span class="logo-icon">🌸</span>
-                <span class="logo-text">StudyTok</span>
+                <a href="index.html" class="logo-home" aria-label="Zur Startseite">
+                    <img src="img/katis-logo.svg" alt="Katis Lerntipps Logo" class="logo-image">
+                </a>
+                <a href="https://www.tiktok.com/@katislerntipps" class="logo-text-link" target="_blank" rel="noreferrer">katislerntipps</a>
             </div>
             <ul class="nav-menu">
                 <li><a href="index.html" class="nav-link">🏠 Home</a></li>
@@ -40,7 +42,7 @@
                 </span>
                 <span class="toggle-thumb" aria-hidden="true"></span>
             </button>
-            <div class="user-points">
+            <div class="user-points" id="points-history-trigger" role="button" tabindex="0" aria-label="Punkteverlauf anzeigen">
                 <span class="points-icon">
                     <svg class="coin-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                         <defs>
@@ -281,6 +283,23 @@
             </div>
         </div>
     </footer>
+
+    <div class="modal-overlay" id="points-history-modal" aria-hidden="true" role="dialog" aria-label="Punkte Historie">
+        <div class="modal" role="document">
+            <div class="modal-header">
+                <div>
+                    <p class="modal-kicker">Belohnungen</p>
+                    <h3>Punkte-Historie</h3>
+                </div>
+                <button class="modal-close" aria-label="Schließen">×</button>
+            </div>
+            <div class="modal-body">
+                <ul class="history-list" aria-live="polite">
+                </ul>
+                <p class="history-empty" hidden>Keine Aktivitäten gefunden. Starte eine Session, um Punkte zu sammeln! 🎉</p>
+            </div>
+        </div>
+    </div>
 
     <script src="js/main.js"></script>
     <script>
