@@ -257,25 +257,38 @@ export class PlanOutput {
             });
         });
 
-        // Session Cards Click
-        const sessionCards = this.container.querySelectorAll('.session-card, .calendar-session');
-        sessionCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const sessionId = card.dataset.sessionId;
-                const session = this.plan.sessions.find(s => s.id === sessionId);
-                if (session) this.showSessionDetails(session);
-            });
-        });
+        // Event Delegation für Session Cards und Buttons
+        this.container.addEventListener('click', (e) => {
+            // Check if clicked on session card
+            const sessionCard = e.target.closest('.session-card, .calendar-session');
+            if (sessionCard) {
+                // Check if it was the action button (don't trigger card click)
+                const isActionButton = e.target.closest('.session-actions button');
+                if (!isActionButton) {
+                    const sessionId = sessionCard.getAttribute('data-session-id');
+                    if (sessionId) {
+                        const session = this.plan.sessions.find(s => s.id === sessionId);
+                        if (session) {
+                            console.log('Opening session details:', session);
+                            this.showSessionDetails(session);
+                        }
+                    }
+                }
+            }
 
-        // Session Action Buttons
-        const actionButtons = this.container.querySelectorAll('.session-actions button');
-        actionButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            // Check if clicked on action button
+            const actionButton = e.target.closest('.session-actions button');
+            if (actionButton) {
                 e.stopPropagation();
-                const sessionId = btn.dataset.sessionId;
-                const session = this.plan.sessions.find(s => s.id === sessionId);
-                if (session) this.showSessionDetails(session);
-            });
+                const sessionId = actionButton.getAttribute('data-session-id');
+                if (sessionId) {
+                    const session = this.plan.sessions.find(s => s.id === sessionId);
+                    if (session) {
+                        console.log('Opening session details from button:', session);
+                        this.showSessionDetails(session);
+                    }
+                }
+            }
         });
 
         // Export Buttons
