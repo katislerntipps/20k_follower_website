@@ -140,27 +140,20 @@ function pauseTimer() {
 function resetTimer() {
     pauseTimer();
 
-    switch(timerState.mode) {
-        case 'focus':
-            timerState.minutes = 25;
-            timerState.totalSeconds = 25 * 60;
-            break;
-        case 'short':
-            timerState.minutes = 5;
-            timerState.totalSeconds = 5 * 60;
-            break;
-        case 'long':
-            timerState.minutes = 15;
-            timerState.totalSeconds = 15 * 60;
-            break;
-    }
-
+    // Reset to focus mode and restart the entire Pomodoro cycle
+    timerState.mode = 'focus';
+    timerState.minutes = 25;
+    timerState.totalSeconds = 25 * 60;
     timerState.seconds = 0;
+    timerState.cycleCount = 0;
     timerState.elapsedWithoutPause = 0;
     timerState.endTime = null;
     timerState.lastTick = null;
+
     updateDisplay();
     updateTreeGrowth();
+    updateModeButtons();
+    updateCycleIndicator();
     saveTimerState();
 }
 
