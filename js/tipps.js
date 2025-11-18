@@ -113,10 +113,16 @@ const lerntipps = [
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== TIPPS.JS DOMContentLoaded ===');
+    console.log('Initializing tip generator...');
     initializeGenerator();
+    console.log('Initializing view toggle...');
     initializeViewToggle();
+    console.log('Updating points...');
     updatePoints();
+    console.log('Initializing dark mode...');
     initializeDarkMode();
+    console.log('=== TIPPS.JS Initialization complete ===');
 });
 
 // ===================================
@@ -127,29 +133,49 @@ function initializeGenerator() {
     const generateBtn = document.getElementById('generate-tip-btn');
     const tipDisplay = document.getElementById('tip-display');
 
+    console.log('initializeGenerator called');
+    console.log('generateBtn:', generateBtn);
+    console.log('tipDisplay:', tipDisplay);
+    console.log('lerntipps length:', lerntipps.length);
+
     if (generateBtn) {
         generateBtn.addEventListener('click', function() {
-            // Get random tip
-            const randomTip = lerntipps[Math.floor(Math.random() * lerntipps.length)];
+            console.log('Button clicked!');
+            try {
+                // Get random tip
+                const randomTip = lerntipps[Math.floor(Math.random() * lerntipps.length)];
+                console.log('Random tip selected:', randomTip);
 
-            // Display tip
-            showRandomTip(randomTip);
+                // Display tip
+                showRandomTip(randomTip);
 
-            // Add points
-            addPoints(2);
+                // Add points
+                addPoints(2);
 
-            // Show notification
-            showNotification('💡 Neuer Lerntipp generiert! +2 Punkte');
+                // Show notification
+                showNotification('💡 Neuer Lerntipp generiert! +2 Punkte');
+            } catch (error) {
+                console.error('Error in tip generator:', error);
+                alert('Fehler beim Generieren des Tipps: ' + error.message);
+            }
         });
+    } else {
+        console.error('Generate button not found!');
     }
 }
 
 function showRandomTip(tip) {
+    console.log('showRandomTip called with:', tip);
     const tipDisplay = document.getElementById('tip-display');
-    if (!tipDisplay) return;
+    if (!tipDisplay) {
+        console.error('tipDisplay element not found!');
+        return;
+    }
 
+    console.log('Setting tipDisplay to visible');
     tipDisplay.style.display = 'block';
 
+    console.log('Creating HTML content');
     tipDisplay.innerHTML = `
         <div class="tip-card-flip">
             <div class="tip-card-front">
@@ -163,8 +189,10 @@ function showRandomTip(tip) {
         </div>
     `;
 
+    console.log('Scrolling to tip');
     // Scroll to tip
     tipDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    console.log('showRandomTip completed');
 }
 
 // ===================================
@@ -326,7 +354,9 @@ function getCategoryName(category) {
         'organisation': 'Organisation',
         'verruckt': 'Verrückt'
     };
-    return names[category] || category;
+    const result = names[category] || category;
+    console.log('getCategoryName(' + category + ') = ' + result);
+    return result;
 }
 
 function getDifficultyName(difficulty) {
@@ -335,7 +365,9 @@ function getDifficultyName(difficulty) {
         'fortgeschritten': 'Fortgeschritten',
         'profi': 'Profi'
     };
-    return names[difficulty] || difficulty;
+    const result = names[difficulty] || difficulty;
+    console.log('getDifficultyName(' + difficulty + ') = ' + result);
+    return result;
 }
 
 function getStats() {
