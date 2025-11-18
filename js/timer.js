@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTimerTreeImage();
     initializeDarkMode();
     initializeNotifications();
+    initializeAchievements();
 });
 
 // ===================================
@@ -134,6 +135,11 @@ function pauseTimer() {
     // Reset tree growth on pause
     timerState.elapsedWithoutPause = 0;
     updateTreeGrowth();
+
+    // Reset consecutive sessions on interruption (pause)
+    const stats = getStats();
+    stats.consecutiveSessions = 0;
+    saveStats(stats);
 
     saveTimerState();
 }
@@ -669,11 +675,23 @@ function getStats() {
         streak: 1,
         achievements: 0,
         points: 0,
-        lastActive: new Date().toDateString()
+        lastActive: new Date().toDateString(),
+        unlockedAchievements: [], // Array of unlocked achievement IDs
+        sessionsToday: 0,
+        lastSessionDate: new Date().toDateString(),
+        consecutiveSessions: 0 // Sessions without interruption
     };
 
     const stored = localStorage.getItem('studytok_stats');
-    return stored ? JSON.parse(stored) : defaultStats;
+    const stats = stored ? JSON.parse(stored) : defaultStats;
+
+    // Ensure new properties exist
+    if (!stats.unlockedAchievements) stats.unlockedAchievements = [];
+    if (!stats.sessionsToday) stats.sessionsToday = 0;
+    if (!stats.lastSessionDate) stats.lastSessionDate = new Date().toDateString();
+    if (!stats.consecutiveSessions) stats.consecutiveSessions = 0;
+
+    return stats;
 }
 
 function saveStats(stats) {
@@ -682,10 +700,29 @@ function saveStats(stats) {
 
 function addSession() {
     const stats = getStats();
+    const today = new Date().toDateString();
+
+    // Update overall sessions
     stats.sessions++;
     stats.focusTime += 25;
+
+    // Update daily sessions
+    if (stats.lastSessionDate === today) {
+        stats.sessionsToday++;
+    } else {
+        // New day, reset daily counter
+        stats.sessionsToday = 1;
+        stats.lastSessionDate = today;
+    }
+
+    // Update consecutive sessions (assuming no interruption during timer)
+    stats.consecutiveSessions++;
+
     saveStats(stats);
     updateStats();
+
+    // Check for achievements after updating stats
+    checkAchievements();
 }
 
 function addPoints(points) {
@@ -1061,4 +1098,218 @@ function updateThemeIcon(theme) {
         themeToggle.setAttribute('aria-pressed', isDark);
         themeToggle.setAttribute('aria-label', isDark ? 'Light Mode aktivieren' : 'Dark Mode aktivieren');
     }
+}
+
+// ===================================
+// ACHIEVEMENTS SYSTEM
+// ===================================
+
+// Achievement definitions
+const ACHIEVEMENTS = [
+    {
+        id: 'first-steps',
+        name: 'Erste Schritte',
+        description: 'Erste Pomodoro-Session abgeschlossen',
+        emoji: '🌱',
+        check: (stats) => stats.sessions >= 1
+    },
+    {
+        id: 'on-fire',
+        name: 'On Fire!',
+        description: '5 Sessions an einem Tag',
+        emoji: '🔥',
+        check: (stats) => stats.sessionsToday >= 5
+    },
+    {
+        id: 'focus-master',
+        name: 'Fokus-Meister',
+        description: '10 Sessions ohne Unterbrechung',
+        emoji: '💎',
+        check: (stats) => stats.consecutiveSessions >= 10
+    },
+    {
+        id: 'study-king',
+        name: 'Studier-König',
+        description: '7 Tage Streak',
+        emoji: '👑',
+        check: (stats) => stats.streak >= 7
+    }
+];
+
+function checkAchievements() {
+    const stats = getStats();
+    let newlyUnlocked = [];
+
+    ACHIEVEMENTS.forEach(achievement => {
+        // Check if achievement is not already unlocked
+        if (!stats.unlockedAchievements.includes(achievement.id)) {
+            // Check if achievement condition is met
+            if (achievement.check(stats)) {
+                unlockAchievement(achievement.id);
+                newlyUnlocked.push(achievement);
+            }
+        }
+    });
+
+    // Show notifications for newly unlocked achievements
+    newlyUnlocked.forEach(achievement => {
+        showAchievementNotification(achievement);
+    });
+}
+
+function unlockAchievement(achievementId) {
+    const stats = getStats();
+
+    // Add to unlocked achievements if not already there
+    if (!stats.unlockedAchievements.includes(achievementId)) {
+        stats.unlockedAchievements.push(achievementId);
+        stats.achievements = stats.unlockedAchievements.length;
+        saveStats(stats);
+        updateAchievementUI();
+        updateStats();
+    }
+}
+
+function updateAchievementUI() {
+    const stats = getStats();
+    const achievementCards = document.querySelectorAll('.achievement-card');
+
+    achievementCards.forEach((card, index) => {
+        if (index < ACHIEVEMENTS.length) {
+            const achievement = ACHIEVEMENTS[index];
+            const isUnlocked = stats.unlockedAchievements.includes(achievement.id);
+
+            if (isUnlocked) {
+                card.classList.remove('locked');
+                card.classList.add('unlocked');
+            } else {
+                card.classList.remove('unlocked');
+                card.classList.add('locked');
+            }
+        }
+    });
+}
+
+function initializeAchievements() {
+    // Update achievement UI on page load
+    updateAchievementUI();
+
+    // Check for any achievements that might have been earned
+    // (useful when streak or other time-based achievements are met)
+    checkAchievements();
+}
+
+function showAchievementNotification(achievement) {
+    // Create achievement unlock popup
+    const popup = document.createElement('div');
+    popup.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.98) 0%, rgba(118, 75, 162, 0.98) 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        z-index: 10001;
+        text-align: center;
+        min-width: 300px;
+        max-width: 400px;
+        animation: achievementPopIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    `;
+
+    popup.innerHTML = `
+        <div style="font-size: 4rem; margin-bottom: 1rem; animation: achievementBounce 0.6s ease-out 0.3s;">${achievement.emoji}</div>
+        <h3 style="
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem 0;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        ">Achievement freigeschaltet!</h3>
+        <h4 style="
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+        ">${achievement.name}</h4>
+        <p style="
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            margin: 0;
+            opacity: 0.95;
+            font-weight: 500;
+        ">${achievement.description}</p>
+    `;
+
+    document.body.appendChild(popup);
+
+    // Add animations if not already present
+    if (!document.getElementById('achievement-animations')) {
+        const style = document.createElement('style');
+        style.id = 'achievement-animations';
+        style.textContent = `
+            @keyframes achievementPopIn {
+                0% {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(0.5);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1);
+                }
+            }
+            @keyframes achievementBounce {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+            }
+            @keyframes achievementFadeOut {
+                from {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(0.8);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Auto-remove after 4 seconds
+    setTimeout(() => {
+        popup.style.animation = 'achievementFadeOut 0.4s ease-out forwards';
+        setTimeout(() => popup.remove(), 400);
+    }, 4000);
+
+    // Play a celebratory sound
+    playCelebrationSound();
+}
+
+function playCelebrationSound() {
+    // Create celebratory sound using Web Audio API
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Play a sequence of notes
+    const notes = [523.25, 659.25, 783.99]; // C, E, G (major chord)
+    notes.forEach((frequency, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+
+        const startTime = audioContext.currentTime + (index * 0.15);
+        gainNode.gain.setValueAtTime(0.2, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.4);
+
+        oscillator.start(startTime);
+        oscillator.stop(startTime + 0.4);
+    });
 }
