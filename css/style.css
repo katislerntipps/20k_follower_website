@@ -999,6 +999,12 @@ body.sakura-theme {
     cursor: pointer;
 }
 
+.video-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
 .video-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--shadow-lg);
@@ -1009,6 +1015,14 @@ body.sakura-theme {
     aspect-ratio: 9/16;
     overflow: hidden;
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+}
+
+.video-thumbnail .tiktok-embed {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    margin: 0 !important;
 }
 
 .placeholder-thumbnail {
