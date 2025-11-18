@@ -63,6 +63,11 @@ function saveStats(stats) {
 }
 
 function updateStatsDisplay(stats) {
+    // Only update stats on the homepage
+    if (!window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
+        return;
+    }
+
     // Update stat cards
     const sessionElement = document.querySelector('.stat-card:nth-child(1) .stat-value');
     const timeElement = document.querySelector('.stat-card:nth-child(2) .stat-value');
