@@ -5,9 +5,9 @@
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     applySakuraTheme();
+    renderCherryTree();
     generateBlossomPetals();
     initializeStats();
-    animateTreePetals();
     updatePoints();
     initializeDarkMode();
     initializePointsHistory();
@@ -185,23 +185,42 @@ function generateBlossomPetals() {
 
     for (let i = 0; i < petalCount; i++) {
         const petal = document.createElement('span');
-        petal.className = 'petal';
+        petal.className = 'petal asset-petal';
         petal.style.setProperty('--x', `${Math.round(Math.random() * 100)}%`);
         petal.style.setProperty('--duration', `${randomBetween(14, 24)}s`);
         petal.style.setProperty('--delay', `${randomBetween(0, 10)}s`);
         petal.style.setProperty('--drift', `${randomBetween(-90, 90)}px`);
-        petal.style.setProperty('--size', `${randomBetween(10, 18)}px`);
+        petal.style.setProperty('--size', `${randomBetween(14, 24)}px`);
         container.appendChild(petal);
     }
 }
 
-function animateTreePetals() {
-    const fallingPetals = document.querySelectorAll('.falling-petals circle');
+function renderCherryTree() {
+    const heroTree = document.querySelector('.home-tree-image');
+    if (!heroTree) return;
 
-    fallingPetals.forEach((petal, index) => {
-        // Random animation delay
-        petal.style.animationDelay = `${index * 1.5}s`;
-    });
+    heroTree.src = 'image/cherry_blossom_tree.svg';
+    heroTree.alt = 'Kirschblütenbaum Illustration';
+    heroTree.classList.add('cherry-tree-asset');
+
+    const wrapper = heroTree.closest('.tree-container');
+    if (!wrapper || wrapper.querySelector('.hero-floating-petals')) return;
+
+    const petalLayer = document.createElement('div');
+    petalLayer.className = 'hero-floating-petals';
+
+    const petalTotal = 8;
+    for (let i = 0; i < petalTotal; i++) {
+        const petal = document.createElement('span');
+        petal.className = 'floating-petal';
+        petal.style.setProperty('--x', `${Math.random() * 90}%`);
+        petal.style.setProperty('--duration', `${12 + Math.random() * 6}s`);
+        petal.style.setProperty('--delay', `${Math.random() * 6}s`);
+        petalLayer.appendChild(petal);
+    }
+
+    wrapper.style.position = 'relative';
+    wrapper.appendChild(petalLayer);
 }
 
 // ===================================

@@ -327,7 +327,7 @@
     height: 100%;
     object-fit: contain;
     object-position: bottom;
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0 22px 40px rgba(200, 130, 160, 0.35)) drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
     transition: filter 0.3s ease;
 }
 
@@ -340,6 +340,15 @@
     background: linear-gradient(to bottom, #E3F2FD 0%, #F5F5F5 100%);
     transition: height 0.5s ease-out;
     pointer-events: none;
+}
+
+.timer-petal-layer {
+    inset: 0;
+}
+
+.timer-floating-petal {
+    width: 32px;
+    height: 28px;
 }
 
 #animated-tree {

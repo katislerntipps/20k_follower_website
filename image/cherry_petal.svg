@@ -1,0 +1,14 @@
+<svg width="36" height="32" viewBox="0 0 36 32" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">Kirschblütenblatt</title>
+  <defs>
+    <linearGradient id="petalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE6F2" />
+      <stop offset="60%" stop-color="#FFB1CE" />
+      <stop offset="100%" stop-color="#FF7FB3" />
+    </linearGradient>
+    <filter id="petalShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#e49cc7" flood-opacity="0.5" />
+    </filter>
+  </defs>
+  <path d="M18 2c6 6 12 12 14 20 2 6 0 12-6 10-4-1-8-4-12-4s-8 3-12 4c-6 2-8-4-6-10C-2 14 6 8 12 2c2-2 4-2 6 0z" fill="url(#petalGradient)" filter="url(#petalShadow)" />
+</svg>
