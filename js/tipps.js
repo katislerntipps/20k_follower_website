@@ -89,9 +89,7 @@ const lerntipps = [
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     initializeGenerator();
-    initializeFilters();
     initializeViewToggle();
-    initializeFavorites();
     updatePoints();
     initializeDarkMode();
 });
@@ -290,19 +288,7 @@ function removeFavorite(title) {
 // VIDEO CARDS INTERACTION
 // ===================================
 
-const videoCards = document.querySelectorAll('.video-card-item');
-videoCards.forEach(card => {
-    card.addEventListener('click', function(e) {
-        // Don't trigger if clicking action buttons
-        if (e.target.closest('.action-btn')) return;
-
-        // Add points for watching
-        addPoints(2);
-
-        // In real app, would open video modal or redirect
-        showNotification('Video wird geladen... +2 Punkte', 'success');
-    });
-});
+// Video cards now have direct TikTok links, so no special click handling needed
 
 // ===================================
 // UTILITY FUNCTIONS

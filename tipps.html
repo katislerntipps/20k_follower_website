@@ -106,50 +106,6 @@
         </div>
     </section>
 
-    <!-- Filter Section -->
-    <section class="filter-section">
-        <div class="container">
-            <div class="filter-bar">
-                <div class="filter-group">
-                    <label>Kategorie:</label>
-                    <select class="filter-select" id="category-filter">
-                        <option value="all">Alle</option>
-                        <option value="methode">Lernmethoden</option>
-                        <option value="gedaechtnis">Gedächtnis</option>
-                        <option value="motivation">Motivation</option>
-                        <option value="organisation">Organisation</option>
-                        <option value="verruckt">Verrückte Methoden</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Fach:</label>
-                    <select class="filter-select" id="subject-filter">
-                        <option value="all">Alle Fächer</option>
-                        <option value="mathe">Mathe</option>
-                        <option value="sprachen">Sprachen</option>
-                        <option value="natur">Naturwissenschaften</option>
-                        <option value="allgemein">Allgemein</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Schwierigkeit:</label>
-                    <select class="filter-select" id="difficulty-filter">
-                        <option value="all">Alle Levels</option>
-                        <option value="anfaenger">Anfänger</option>
-                        <option value="fortgeschritten">Fortgeschritten</option>
-                        <option value="profi">Profi</option>
-                    </select>
-                </div>
-
-                <div class="search-box">
-                    <input type="text" placeholder="Suche..." class="search-input" id="search-input">
-                    <span class="search-icon">🔍</span>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Video Grid -->
     <section class="videos-section">
@@ -163,8 +119,8 @@
             </div>
 
             <div class="videos-grid" id="videos-grid">
-                <!-- Video Card 1 -->
-                <div class="video-card-item" data-category="methode" data-subject="allgemein" data-difficulty="anfaenger">
+                <!-- Video Card 1: Feynman Technik -->
+                <div class="video-card-item">
                     <div class="video-thumbnail-large">
                         <div class="placeholder-thumbnail">
                             <span>🧠</span>
@@ -172,196 +128,167 @@
                         <div class="video-overlay">
                             <button class="play-button-large">▶</button>
                         </div>
-                        <div class="video-badge">NEU</div>
-                        <div class="video-duration">3:24</div>
                     </div>
                     <div class="video-info">
-                        <h3 class="video-title-large">Die Feynman-Methode</h3>
-                        <p class="video-description">Erkläre komplexe Themen einfach und finde deine Wissenslücken</p>
-                        <div class="video-meta-large">
-                            <span class="meta-tag">Lernmethode</span>
-                            <span class="meta-views">12.5K views</span>
-                        </div>
+                        <h3 class="video-title-large">Feynman Technik</h3>
+                        <p class="video-description">Lernen wie ein Lehrer: Erkläre so, als würdest du es einem 5-Jährigen erzählen – merke, wo du stockst und lerne dort nach. Vereinfache und ergänze mit Beispielen.</p>
                         <div class="video-actions">
-                            <button class="action-btn">📱 Ansehen</button>
-                            <button class="action-btn favorite">❤️</button>
+                            <a href="https://www.tiktok.com/@katislerntipps/video/7572200114773658902" target="_blank" rel="noopener noreferrer" class="action-btn">📱 Ansehen</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Video Card 2 -->
-                <div class="video-card-item" data-category="gedaechtnis" data-subject="allgemein" data-difficulty="anfaenger">
+                <!-- Video Card 2: Manipulieren Lehrer -->
+                <div class="video-card-item">
                     <div class="video-thumbnail-large">
                         <div class="placeholder-thumbnail">
-                            <span>🔁</span>
+                            <span>👀</span>
                         </div>
                         <div class="video-overlay">
                             <button class="play-button-large">▶</button>
                         </div>
-                        <div class="video-badge popular">🔥 BELIEBT</div>
-                        <div class="video-duration">5:12</div>
                     </div>
                     <div class="video-info">
-                        <h3 class="video-title-large">Spaced Repetition Hack</h3>
-                        <p class="video-description">Wie du mit zeitlich versetzten Wiederholungen alles behältst</p>
-                        <div class="video-meta-large">
-                            <span class="meta-tag">Gedächtnis</span>
-                            <span class="meta-views">25.3K views</span>
-                        </div>
+                        <h3 class="video-title-large">Manipulieren Lehrer</h3>
+                        <p class="video-description">Der Blickwechsel, der Spiegel-Trick (KI nutzen für gleichen Schreibstil) und Notenanker setzen – psychologische Tricks für bessere Noten.</p>
                         <div class="video-actions">
-                            <button class="action-btn">📱 Ansehen</button>
-                            <button class="action-btn favorite">❤️</button>
+                            <a href="https://www.tiktok.com/@katislerntipps/video/7568594681966185750" target="_blank" rel="noopener noreferrer" class="action-btn">📱 Ansehen</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Video Card 3 -->
-                <div class="video-card-item" data-category="methode" data-subject="allgemein" data-difficulty="fortgeschritten">
+                <!-- Video Card 3: YouTube Kanal Empfehlung -->
+                <div class="video-card-item">
                     <div class="video-thumbnail-large">
                         <div class="placeholder-thumbnail">
-                            <span>⚡</span>
+                            <span>📺</span>
                         </div>
                         <div class="video-overlay">
                             <button class="play-button-large">▶</button>
                         </div>
-                        <div class="video-duration">4:35</div>
                     </div>
                     <div class="video-info">
-                        <h3 class="video-title-large">Active Recall in 5 Minuten</h3>
-                        <p class="video-description">Die mächtigste Lernmethode, die du kennen musst</p>
-                        <div class="video-meta-large">
-                            <span class="meta-tag">Lernmethode</span>
-                            <span class="meta-views">18.7K views</span>
-                        </div>
+                        <h3 class="video-title-large">YouTube Kanal Empfehlung</h3>
+                        <p class="video-description">Entdecke meinen YouTube-Kanal mit noch mehr ausführlichen Lerntipps und Tutorials!</p>
                         <div class="video-actions">
-                            <button class="action-btn">📱 Ansehen</button>
-                            <button class="action-btn favorite">❤️</button>
+                            <a href="https://www.tiktok.com/@katislerntipps/video/7570068510882270486" target="_blank" rel="noopener noreferrer" class="action-btn">📱 Ansehen</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Video Card 4 -->
-                <div class="video-card-item" data-category="verruckt" data-subject="allgemein" data-difficulty="anfaenger">
+                <!-- Video Card 4: Station-Lernen -->
+                <div class="video-card-item">
                     <div class="video-thumbnail-large">
                         <div class="placeholder-thumbnail">
-                            <span>🎯</span>
+                            <span>🏠</span>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button-large">▶</button>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title-large">Station-Lernen</h3>
+                        <p class="video-description">Baue Zuhause kleine Stationen: Video-Ecke, Schreib-Ecke, Gehirn-Jogging (herumlaufen), Podcast-Ecke – für abwechslungsreiches Lernen.</p>
+                        <div class="video-actions">
+                            <a href="https://www.tiktok.com/@katislerntipps/video/7571140675018738966" target="_blank" rel="noopener noreferrer" class="action-btn">📱 Ansehen</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Card 5: Vokabellernhack -->
+                <div class="video-card-item">
+                    <div class="video-thumbnail-large">
+                        <div class="placeholder-thumbnail">
+                            <span>📖</span>
+                        </div>
+                        <div class="video-overlay">
+                            <button class="play-button-large">▶</button>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title-large">Vokabellernhack</h3>
+                        <p class="video-description">Erstelle mit KI Eselsbrücken für schwierige Vokabeln: Finde Klangbrücken, baue Sätze und verbinde die Bedeutung. Optional: Bilder generieren!</p>
+                        <div class="video-actions">
+                            <a href="https://www.tiktok.com/@katislerntipps/video/7567463389102886166" target="_blank" rel="noopener noreferrer" class="action-btn">📱 Ansehen</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Card 6: Verrückte Lernhacks Teil 2 -->
+                <div class="video-card-item">
+                    <div class="video-thumbnail-large">
+                        <div class="placeholder-thumbnail">
+                            <span>🤪</span>
                         </div>
                         <div class="video-overlay">
                             <button class="play-button-large">▶</button>
                         </div>
                         <div class="video-badge crazy">😜 VERRÜCKT</div>
-                        <div class="video-duration">6:18</div>
                     </div>
                     <div class="video-info">
-                        <h3 class="video-title-large">Verrückte Gedächtnistricks</h3>
-                        <p class="video-description">Merkwürdige aber effektive Methoden zum Auswendiglernen</p>
-                        <div class="video-meta-large">
-                            <span class="meta-tag">Verrückt</span>
-                            <span class="meta-views">32.1K views</span>
-                        </div>
+                        <h3 class="video-title-large">Verrückte Lernhacks Teil 2</h3>
+                        <p class="video-description">Iss deine Vokabeln (Esspapier), lass dir von KI wie einem 5-Jährigen erklären, Paper Prison. Emotionen helfen beim Merken!</p>
                         <div class="video-actions">
-                            <button class="action-btn">📱 Ansehen</button>
-                            <button class="action-btn favorite">❤️</button>
+                            <a href="https://www.tiktok.com/@katislerntipps/video/7565592991742561558" target="_blank" rel="noopener noreferrer" class="action-btn">📱 Ansehen</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Video Card 5 -->
-                <div class="video-card-item" data-category="organisation" data-subject="allgemein" data-difficulty="anfaenger">
+                <!-- Video Card 7: Drei-Sinnes-Methode -->
+                <div class="video-card-item">
                     <div class="video-thumbnail-large">
                         <div class="placeholder-thumbnail">
-                            <span>📝</span>
+                            <span>👂👁️👄</span>
                         </div>
                         <div class="video-overlay">
                             <button class="play-button-large">▶</button>
                         </div>
-                        <div class="video-duration">7:42</div>
                     </div>
                     <div class="video-info">
-                        <h3 class="video-title-large">Cornell-Notizen System</h3>
-                        <p class="video-description">Strukturiere deine Notizen wie ein Profi</p>
-                        <div class="video-meta-large">
-                            <span class="meta-tag">Organisation</span>
-                            <span class="meta-views">15.4K views</span>
-                        </div>
+                        <h3 class="video-title-large">Drei-Sinnes-Methode</h3>
+                        <p class="video-description">Phase 1: Lesen (20 Min), Phase 2: Hören (Podcast, 20 Min), Phase 3: Erklären. Nutze Sehen, Hören und Sprechen für besseres Lernen.</p>
                         <div class="video-actions">
-                            <button class="action-btn">📱 Ansehen</button>
-                            <button class="action-btn favorite">❤️</button>
+                            <a href="https://www.tiktok.com/@katislerntipps/video/7562257111296560406" target="_blank" rel="noopener noreferrer" class="action-btn">📱 Ansehen</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Video Card 6 -->
-                <div class="video-card-item" data-category="motivation" data-subject="allgemein" data-difficulty="anfaenger">
+                <!-- Video Card 8: Tipps für das 1.0 Abi -->
+                <div class="video-card-item">
                     <div class="video-thumbnail-large">
                         <div class="placeholder-thumbnail">
-                            <span>💪</span>
+                            <span>🎓</span>
                         </div>
                         <div class="video-overlay">
                             <button class="play-button-large">▶</button>
                         </div>
-                        <div class="video-duration">4:59</div>
+                        <div class="video-badge">🌟 TOP</div>
                     </div>
                     <div class="video-info">
-                        <h3 class="video-title-large">2-Minuten-Regel</h3>
-                        <p class="video-description">Überwinde Prokrastination in Sekunden</p>
-                        <div class="video-meta-large">
-                            <span class="meta-tag">Motivation</span>
-                            <span class="meta-views">28.9K views</span>
-                        </div>
+                        <h3 class="video-title-large">Tipps für das 1.0 Abi</h3>
+                        <p class="video-description">Frag nach dem nächsten Thema, informiere dich kurz mit KI und punkte zu Stundenbeginn. Minimaler Aufwand, maximaler Effekt!</p>
                         <div class="video-actions">
-                            <button class="action-btn">📱 Ansehen</button>
-                            <button class="action-btn favorite">❤️</button>
+                            <a href="https://www.tiktok.com/@katislerntipps/video/7557448876031151383" target="_blank" rel="noopener noreferrer" class="action-btn">📱 Ansehen</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Video Card 7 -->
-                <div class="video-card-item" data-category="methode" data-subject="sprachen" data-difficulty="fortgeschritten">
+                <!-- Video Card 9: Verrückte Lernhacks Teil 1 -->
+                <div class="video-card-item">
                     <div class="video-thumbnail-large">
                         <div class="placeholder-thumbnail">
-                            <span>🗣️</span>
+                            <span>✍️</span>
                         </div>
                         <div class="video-overlay">
                             <button class="play-button-large">▶</button>
                         </div>
-                        <div class="video-duration">8:15</div>
+                        <div class="video-badge crazy">😜 VERRÜCKT</div>
                     </div>
                     <div class="video-info">
-                        <h3 class="video-title-large">Shadowing-Technik für Sprachen</h3>
-                        <p class="video-description">Spreche fließend in Rekordzeit</p>
-                        <div class="video-meta-large">
-                            <span class="meta-tag">Sprachen</span>
-                            <span class="meta-views">9.2K views</span>
-                        </div>
+                        <h3 class="video-title-large">Verrückte Lernhacks Teil 1</h3>
+                        <p class="video-description">Schreiben mit Gewichten am Stift, mit nicht-dominanter Hand kritzeln beim Auswendiglernen, KI für Zusammenfassungen nutzen.</p>
                         <div class="video-actions">
-                            <button class="action-btn">📱 Ansehen</button>
-                            <button class="action-btn favorite">❤️</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Video Card 8 -->
-                <div class="video-card-item" data-category="gedaechtnis" data-subject="mathe" data-difficulty="profi">
-                    <div class="video-thumbnail-large">
-                        <div class="placeholder-thumbnail">
-                            <span>🏛️</span>
-                        </div>
-                        <div class="video-overlay">
-                            <button class="play-button-large">▶</button>
-                        </div>
-                        <div class="video-duration">10:33</div>
-                    </div>
-                    <div class="video-info">
-                        <h3 class="video-title-large">Memory Palace Methode</h3>
-                        <p class="video-description">Wie Gedächtnis-Weltmeister Formeln merken</p>
-                        <div class="video-meta-large">
-                            <span class="meta-tag">Fortgeschritten</span>
-                            <span class="meta-views">11.8K views</span>
-                        </div>
-                        <div class="video-actions">
-                            <button class="action-btn">📱 Ansehen</button>
-                            <button class="action-btn favorite">❤️</button>
+                            <a href="https://www.tiktok.com/@katislerntipps/video/7555455875360640278" target="_blank" rel="noopener noreferrer" class="action-btn">📱 Ansehen</a>
                         </div>
                     </div>
                 </div>
