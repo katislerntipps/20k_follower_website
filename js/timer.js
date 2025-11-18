@@ -21,6 +21,8 @@ let treeState = {
 };
 
 let treeTimeline;
+let treeScrubTween;
+let treeLoopTimelines = [];
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -182,7 +184,9 @@ function timerComplete() {
 
         // Grow tree
         addBlossom();
-        playBloomFinale();
+        if (treeTimeline) {
+            treeTimeline.play('finale');
+        }
 
         // Auto-start break if enabled
         const autoStartBreak = document.getElementById('auto-start-break').checked;
@@ -242,28 +246,62 @@ function setupTreeTimeline() {
 
     const petals = stage.parentElement?.querySelectorAll('#timer-petal-layer .timer-floating-petal');
 
+    gsap.set(stage, { opacity: 0, y: 16, transformPerspective: 800, transformStyle: 'preserve-3d' });
+    gsap.set('.tree-layer-trunk', { z: -10 });
+    gsap.set('.tree-layer-branches', { z: 0 });
+    gsap.set('.tree-layer-blooms', { z: 6 });
+    gsap.set('.tree-layer-glow', { z: -4 });
+
+    const swayLoop = gsap.to('#timer-tree-stage .tree-layer', {
+        rotate: 1.4,
+        yoyo: true,
+        repeat: -1,
+        duration: 5,
+        ease: 'sine.inOut',
+        paused: true
+    });
+
+    const glowNoise = gsap.to('.tree-layer-glow', {
+        keyframes: [
+            { opacity: 0.28, filter: 'blur(10px)', duration: 1.6 },
+            { opacity: 0.36, filter: 'blur(6px)', duration: 1.2 },
+            { opacity: 0.3, filter: 'blur(8px)', duration: 1.4 }
+        ],
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        paused: true
+    });
+
+    treeLoopTimelines = [swayLoop, glowNoise];
+
     treeTimeline = gsap.timeline({
         paused: true,
         defaults: { ease: 'power2.out' }
     });
 
     treeTimeline
-        .fromTo('.tree-layer-trunk', { opacity: 0, y: 60, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 1.1 })
-        .fromTo('.tree-layer-branches', { opacity: 0, y: 40, scale: 0.95, filter: 'blur(6px)' }, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.3 }, '-=0.5')
-        .fromTo('.tree-layer-blooms', { opacity: 0, scale: 0.8, filter: 'blur(10px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.2 }, '-=0.3')
+        .addLabel('intro')
+        .fromTo(stage, { opacity: 0, y: 18, scale: 0.94, z: -20 }, { opacity: 1, y: 0, scale: 1, z: 0, duration: 0.9, ease: 'power1.out' })
+        .fromTo('.tree-layer-trunk', { opacity: 0, y: 60, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 1.1 }, '-=0.5')
+        .addLabel('trunk')
+        .fromTo('.tree-layer-branches', { opacity: 0, y: 40, scale: 0.95, filter: 'blur(6px)' }, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.3 }, '-=0.4')
+        .addLabel('branches')
+        .fromTo('.tree-layer-blooms', { opacity: 0, scale: 0.8, filter: 'blur(10px)', z: 10 }, { opacity: 1, scale: 1, filter: 'blur(0px)', z: 0, duration: 1.2 }, '-=0.3')
+        .addLabel('blooms')
         .to('.tree-layer-glow', { opacity: 0.35, duration: 0.6 }, '-=0.6')
-        .to(petals, { opacity: 1, duration: 0.8, stagger: 0.08, ease: 'sine.out' }, '-=0.3');
+        .addLabel('glowPulse')
+        .to(petals, { opacity: 1, duration: 1, stagger: 0.08, ease: 'sine.out' }, '-=0.2')
+        .addLabel('petalWave')
+        .to('.tree-layer-blooms', { scale: 1.02, duration: 0.8, ease: 'sine.inOut' }, 'petalWave')
+        .to('.tree-layer-glow', { opacity: 0.42, duration: 0.9, ease: 'sine.inOut' }, 'petalWave+=0.1')
+        .addLabel('finale')
+        .add(() => {
+            playBloomFinale();
+        });
 
-    gsap.set(stage, { opacity: 0, y: 16 });
-    gsap.to(stage, { opacity: 1, y: 0, duration: 0.8, ease: 'power1.out' });
-
-    gsap.to('#timer-tree-stage .tree-layer', {
-        rotate: 1.4,
-        yoyo: true,
-        repeat: -1,
-        duration: 4,
-        ease: 'sine.inOut'
-    });
+    treeTimeline.eventCallback('onPlay', () => treeLoopTimelines.forEach(loop => loop.play()));
+    treeTimeline.eventCallback('onPause', () => treeLoopTimelines.forEach(loop => loop.pause()));
 }
 
 function updateTreeGrowth() {
@@ -272,7 +310,22 @@ function updateTreeGrowth() {
     const maxGrowthTime = timerState.totalSeconds;
     const growthProgress = Math.min(timerState.elapsedWithoutPause / maxGrowthTime, 1);
 
-    treeTimeline.progress(growthProgress);
+    const segments = [
+        { range: [0, 0.2], from: 'intro', to: 'trunk' },
+        { range: [0.2, 0.45], from: 'trunk', to: 'branches' },
+        { range: [0.45, 0.8], from: 'branches', to: 'glowPulse' },
+        { range: [0.8, 1], from: 'petalWave', to: 'glowPulse' }
+    ];
+
+    const segment = segments.find(seg => growthProgress >= seg.range[0] && growthProgress <= seg.range[1]) || segments[segments.length - 1];
+    const normalized = gsap.utils.normalize(segment.range[0], segment.range[1], growthProgress);
+    const totalDuration = treeTimeline.totalDuration();
+    const startTime = treeTimeline.labels[segment.from] ?? 0;
+    const endTime = treeTimeline.labels[segment.to] ?? totalDuration;
+    const targetTime = gsap.utils.interpolate(startTime, endTime, normalized);
+
+    if (treeScrubTween) treeScrubTween.kill();
+    treeScrubTween = treeTimeline.tweenTo(targetTime, { duration: 0.25, ease: 'sine.out' });
 }
 
 function updateStats() {
