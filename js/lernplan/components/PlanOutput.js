@@ -22,7 +22,10 @@ export class PlanOutput {
             <div class="plan-output">
                 <!-- Header -->
                 <div class="plan-header">
-                    <h1 class="plan-title">🎉 Dein persönlicher Lernplan</h1>
+                    <h1 class="plan-title">
+                        <span class="plan-emoji">🎉</span>
+                        <span class="plan-text">Dein persönlicher Lernplan</span>
+                    </h1>
                     <p class="plan-subtitle">Wissenschaftlich fundiert und auf dich zugeschnitten</p>
                 </div>
 
