@@ -244,6 +244,12 @@ body.sakura-theme {
     height: 44px;
 }
 
+.logo-emoji {
+    font-size: 44px;
+    line-height: 1;
+    display: inline-block;
+}
+
 .logo-text-link {
     color: var(--text-primary);
     text-decoration: none;
@@ -933,6 +939,14 @@ body.sakura-theme {
     font-size: 4rem;
     margin-bottom: var(--spacing-md);
     display: inline-block;
+}
+
+.feature-icon-img {
+    width: 4rem;
+    height: 4rem;
+    object-fit: cover;
+    border-radius: 50%;
+    vertical-align: baseline;
 }
 
 .feature-title {
