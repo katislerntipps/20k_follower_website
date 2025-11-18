@@ -924,6 +924,8 @@ body.sakura-theme {
     text-align: center;
     transition: all 0.3s ease;
     border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
 }
 
 .feature-card:hover {
@@ -969,6 +971,10 @@ body.sakura-theme {
     min-height: 3.4em;
     display: flex;
     align-items: center;
+}
+
+.feature-card .btn {
+    margin-top: auto;
 }
 
 /* ===================================
