@@ -204,6 +204,17 @@
     border-color: var(--primary);
 }
 
+[data-theme="dark"] .view-btn {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .videos-grid.list-view .video-card-item {
+    background: #231f3d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 /* ===================================
    VIDEO GRID
    =================================== */
