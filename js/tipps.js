@@ -138,9 +138,6 @@ function initializeGenerator() {
     console.log('tipDisplay:', tipDisplay);
     console.log('lerntipps length:', lerntipps.length);
 
-    // Initialize tip counter
-    let tipCounter = parseInt(localStorage.getItem('studytok_tip_counter') || '0');
-
     if (generateBtn) {
         generateBtn.addEventListener('click', function() {
             console.log('Button clicked!');
@@ -152,16 +149,21 @@ function initializeGenerator() {
                 // Display tip
                 showRandomTip(randomTip);
 
-                // Increment counter
-                tipCounter++;
-                localStorage.setItem('studytok_tip_counter', tipCounter.toString());
+                // Check cooldown for bonus points (10 minutes = 600000 milliseconds)
+                const lastBonusTime = parseInt(localStorage.getItem('studytok_tip_bonus_time') || '0');
+                const currentTime = Date.now();
+                const cooldownPeriod = 10 * 60 * 1000; // 10 minutes in milliseconds
+                const timeSinceLastBonus = currentTime - lastBonusTime;
 
-                // Add points only every 10th tip
-                if (tipCounter % 10 === 0) {
+                if (timeSinceLastBonus >= cooldownPeriod) {
+                    // Cooldown has passed, give bonus
                     addPoints(2);
-                    showNotification('💡 Neuer Lerntipp generiert! +2 Punkte (10. Tipp!)');
+                    localStorage.setItem('studytok_tip_bonus_time', currentTime.toString());
+                    showNotification('💡 Neuer Lerntipp generiert! +2 Punkte Bonus!');
                 } else {
-                    showNotification('💡 Neuer Lerntipp generiert!');
+                    // Still in cooldown
+                    const remainingMinutes = Math.ceil((cooldownPeriod - timeSinceLastBonus) / 60000);
+                    showNotification(`💡 Neuer Lerntipp generiert! (Bonus in ${remainingMinutes} Min)`);
                 }
             } catch (error) {
                 console.error('Error in tip generator:', error);
