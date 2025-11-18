@@ -10,7 +10,9 @@ let timerState = {
     mode: 'focus', // 'focus', 'short', 'long'
     interval: null,
     totalSeconds: 25 * 60,
-    elapsedWithoutPause: 0 // Track time without pausing
+    elapsedWithoutPause: 0, // Track time without pausing
+    endTime: null,
+    lastTick: null
 };
 
 // Tree State
@@ -74,6 +76,12 @@ function startTimer() {
     if (!timerState.isRunning) {
         timerState.isRunning = true;
 
+        const currentSeconds = (timerState.minutes * 60) + timerState.seconds;
+        const now = Date.now();
+
+        timerState.endTime = now + (currentSeconds * 1000);
+        timerState.lastTick = now;
+
         document.getElementById('start-btn').style.display = 'none';
         document.getElementById('pause-btn').style.display = 'block';
 
@@ -86,6 +94,10 @@ function startTimer() {
 function pauseTimer() {
     timerState.isRunning = false;
     clearInterval(timerState.interval);
+
+    updateRemainingTime();
+    timerState.endTime = null;
+    timerState.lastTick = null;
 
     document.getElementById('start-btn').style.display = 'block';
     document.getElementById('pause-btn').style.display = 'none';
@@ -117,6 +129,8 @@ function resetTimer() {
 
     timerState.seconds = 0;
     timerState.elapsedWithoutPause = 0;
+    timerState.endTime = null;
+    timerState.lastTick = null;
     updateDisplay();
     updateTreeGrowth();
     saveTimerState();
@@ -124,6 +138,8 @@ function resetTimer() {
 
 function changeMode(mode) {
     timerState.mode = mode;
+    timerState.endTime = null;
+    timerState.lastTick = null;
 
     switch(mode) {
         case 'focus':
@@ -145,24 +161,35 @@ function changeMode(mode) {
     saveTimerState();
 }
 
+function updateRemainingTime() {
+    if (timerState.endTime) {
+        const remainingSeconds = Math.max(0, Math.round((timerState.endTime - Date.now()) / 1000));
+        timerState.minutes = Math.floor(remainingSeconds / 60);
+        timerState.seconds = remainingSeconds % 60;
+    }
+}
+
 function tick() {
-    if (timerState.seconds === 0) {
-        if (timerState.minutes === 0) {
-            // Timer finished
-            timerComplete();
-            return;
-        }
-        timerState.minutes--;
-        timerState.seconds = 59;
-    } else {
-        timerState.seconds--;
+    if (!timerState.endTime) {
+        timerState.endTime = Date.now() + ((timerState.minutes * 60 + timerState.seconds) * 1000);
     }
 
-    // Increment elapsed time for tree growth
-    timerState.elapsedWithoutPause++;
+    const now = Date.now();
+    const remainingSeconds = Math.max(0, Math.round((timerState.endTime - now) / 1000));
+    const elapsedSeconds = timerState.lastTick ? Math.max(0, Math.round((now - timerState.lastTick) / 1000)) : 1;
+
+    timerState.lastTick = now;
+    timerState.elapsedWithoutPause += elapsedSeconds;
+    timerState.minutes = Math.floor(remainingSeconds / 60);
+    timerState.seconds = remainingSeconds % 60;
+
     updateDisplay();
     updateTreeGrowth();
     saveTimerState();
+
+    if (remainingSeconds <= 0) {
+        timerComplete();
+    }
 }
 
 function timerComplete() {
