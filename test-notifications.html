@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser-Benachrichtigungen Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 10px 10px 0;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button.secondary {
+            background: #2196F3;
+        }
+        button.secondary:hover {
+            background: #0b7dda;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔔 Browser-Benachrichtigungen Test</h1>
+
+        <div class="test-section">
+            <h2>1. Berechtigung prüfen</h2>
+            <p id="permission-status">Lade...</p>
+            <button onclick="checkPermission()">Status aktualisieren</button>
+            <button onclick="requestPermission()" class="secondary">Berechtigung anfordern</button>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Checkbox-Steuerung testen</h2>
+            <label>
+                <input type="checkbox" id="notifications" checked>
+                <span>Benachrichtigungen aktivieren</span>
+            </label>
+            <p>Diese Checkbox entspricht der im Pomodoro Timer.</p>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Benachrichtigungen testen</h2>
+            <button onclick="testNotification('🎉 Focus-Session abgeschlossen! +10 Punkte')">Test: Session abgeschlossen</button>
+            <button onclick="testNotification('☕ Pause beendet! Bereit für die nächste Session?')" class="secondary">Test: Pause beendet</button>
+            <button onclick="testNotification('🌸 Level 5 erreicht!')" class="secondary">Test: Level Up</button>
+            <div id="test-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. Integration mit Timer testen</h2>
+            <p>Öffne den <a href="timer.html" target="_blank">Pomodoro Timer</a> und starte eine Session.</p>
+            <p><strong>Hinweis:</strong> Für schnellere Tests kannst du in timer.js die Zeiten temporär auf 5 Sekunden reduzieren.</p>
+        </div>
+    </div>
+
+    <script>
+        // Gleiche Funktionen wie im Pomodoro Timer
+        function initializeNotifications() {
+            const notificationsCheckbox = document.getElementById('notifications');
+
+            if (notificationsCheckbox) {
+                notificationsCheckbox.addEventListener('change', function() {
+                    if (this.checked && 'Notification' in window) {
+                        if (Notification.permission === 'default') {
+                            Notification.requestPermission().then(permission => {
+                                updatePermissionStatus();
+                            });
+                        }
+                    }
+                });
+
+                if (notificationsCheckbox.checked && 'Notification' in window) {
+                    if (Notification.permission === 'default') {
+                        Notification.requestPermission().then(permission => {
+                            updatePermissionStatus();
+                        });
+                    }
+                }
+            }
+        }
+
+        function showBrowserNotification(message) {
+            const notificationsEnabled = document.getElementById('notifications')?.checked;
+
+            if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
+                const notification = new Notification('StudyTok Companion - Pomodoro Timer', {
+                    body: message,
+                    icon: 'image/logo.png',
+                    badge: 'image/logo.png',
+                    tag: 'pomodoro-timer',
+                    requireInteraction: false
+                });
+
+                setTimeout(() => notification.close(), 5000);
+
+                notification.onclick = function() {
+                    window.focus();
+                    this.close();
+                };
+
+                return true;
+            }
+            return false;
+        }
+
+        function checkPermission() {
+            updatePermissionStatus();
+        }
+
+        function updatePermissionStatus() {
+            const statusEl = document.getElementById('permission-status');
+
+            if (!('Notification' in window)) {
+                statusEl.innerHTML = '<div class="status error">❌ Dieser Browser unterstützt keine Benachrichtigungen</div>';
+                return;
+            }
+
+            const permission = Notification.permission;
+
+            if (permission === 'granted') {
+                statusEl.innerHTML = '<div class="status success">✅ Berechtigung erteilt - Benachrichtigungen werden angezeigt</div>';
+            } else if (permission === 'denied') {
+                statusEl.innerHTML = '<div class="status error">❌ Berechtigung verweigert - Bitte in den Browser-Einstellungen aktivieren</div>';
+            } else {
+                statusEl.innerHTML = '<div class="status warning">⚠️ Berechtigung noch nicht erteilt - Klicke auf "Berechtigung anfordern"</div>';
+            }
+        }
+
+        function requestPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    updatePermissionStatus();
+                    if (permission === 'granted') {
+                        testNotification('🎉 Berechtigung erteilt! Dies ist eine Test-Benachrichtigung.');
+                    }
+                });
+            }
+        }
+
+        function testNotification(message) {
+            const resultEl = document.getElementById('test-result');
+            const checkboxEnabled = document.getElementById('notifications').checked;
+
+            if (!checkboxEnabled) {
+                resultEl.innerHTML = '<div class="status warning">⚠️ Checkbox ist deaktiviert - Keine Benachrichtigung gesendet</div>';
+                return;
+            }
+
+            if (!('Notification' in window)) {
+                resultEl.innerHTML = '<div class="status error">❌ Browser unterstützt keine Benachrichtigungen</div>';
+                return;
+            }
+
+            if (Notification.permission !== 'granted') {
+                resultEl.innerHTML = '<div class="status error">❌ Berechtigung fehlt - Bitte zuerst anfordern</div>';
+                requestPermission();
+                return;
+            }
+
+            const success = showBrowserNotification(message);
+
+            if (success) {
+                resultEl.innerHTML = '<div class="status success">✅ Benachrichtigung gesendet! (Sollte jetzt erscheinen)</div>';
+            } else {
+                resultEl.innerHTML = '<div class="status error">❌ Benachrichtigung konnte nicht gesendet werden</div>';
+            }
+        }
+
+        // Initialisierung
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNotifications();
+            updatePermissionStatus();
+        });
+    </script>
+</body>
+</html>
