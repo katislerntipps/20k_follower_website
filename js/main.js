@@ -227,10 +227,19 @@ function setupHomeTreeAnimation() {
     const blooms = stage.querySelector('.tree-layer-blooms');
     const glow = stage.querySelector('.tree-layer-glow');
     const petals = stage.parentElement?.querySelectorAll('.hero-floating-petals .floating-petal');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     gsap.set(stage, { opacity: 1, y: 0, scale: 1 });
-    gsap.set([trunk, branches, blooms], { opacity: 1 });
-    gsap.set(glow, { opacity: 0.28 });
+    gsap.set([trunk, branches, blooms], { opacity: 1, yPercent: 0, rotate: 0, xPercent: 0, scale: 1 });
+    gsap.set(glow, { opacity: 0.28, yPercent: 0, scale: 1 });
+
+    if (prefersReducedMotion) {
+        gsap.set([trunk, branches, blooms, glow], { opacity: 1, rotate: 0, xPercent: 0, yPercent: 0, scale: 1 });
+        if (petals?.length) {
+            gsap.set(petals, { opacity: 0.85, y: 0, clearProps: 'animation' });
+        }
+        return;
+    }
 
     const swayTl = gsap.timeline({ repeat: -1, yoyo: true, defaults: { ease: 'sine.inOut', duration: 5 } });
     swayTl
