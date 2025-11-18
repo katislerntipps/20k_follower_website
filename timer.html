@@ -16,7 +16,7 @@
         <div class="nav-container">
             <div class="logo">
                 <a href="index.html" class="logo-home" aria-label="Zur Startseite">
-                    <img src="img/katis-logo.svg" alt="Katis Lerntipps Logo" class="logo-image">
+                    <img src="img/websitelogo.png" alt="Katis Lerntipps Logo" class="logo-image">
                 </a>
                 <a href="https://www.tiktok.com/@katislerntipps" class="logo-text-link" target="_blank" rel="noreferrer">katislerntipps</a>
             </div>
@@ -183,50 +183,10 @@
                         </div>
 
                         <div class="tree-canvas">
-                            <svg id="animated-tree" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Boden -->
-                                <ellipse cx="200" cy="480" rx="80" ry="15" fill="#8FBC8F" opacity="0.3"/>
-
-                                <!-- Baumstamm -->
-                                <g id="trunk-group">
-                                    <path d="M185 480 L185 300 Q185 280 200 270"
-                                          stroke="#8B4513" stroke-width="12" fill="none" class="trunk-main"/>
-                                    <path d="M215 480 L215 300 Q215 280 200 270"
-                                          stroke="#8B4513" stroke-width="12" fill="none" class="trunk-main"/>
-                                </g>
-
-                                <!-- Äste - Level 1 -->
-                                <g id="branches-level-1" opacity="0">
-                                    <path d="M200 350 Q160 330 130 320"
-                                          stroke="#A0522D" stroke-width="6" fill="none" class="branch"/>
-                                    <path d="M200 350 Q240 330 270 320"
-                                          stroke="#A0522D" stroke-width="6" fill="none" class="branch"/>
-                                </g>
-
-                                <!-- Äste - Level 2 -->
-                                <g id="branches-level-2" opacity="0">
-                                    <path d="M200 300 Q150 280 120 260"
-                                          stroke="#A0522D" stroke-width="5" fill="none" class="branch"/>
-                                    <path d="M200 300 Q250 280 280 260"
-                                          stroke="#A0522D" stroke-width="5" fill="none" class="branch"/>
-                                </g>
-
-                                <!-- Äste - Level 3 -->
-                                <g id="branches-level-3" opacity="0">
-                                    <path d="M200 250 Q140 220 110 190"
-                                          stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
-                                    <path d="M200 250 Q260 220 290 190"
-                                          stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
-                                    <path d="M200 250 Q200 210 200 180"
-                                          stroke="#A0522D" stroke-width="4" fill="none" class="branch"/>
-                                </g>
-
-                                <!-- Blüten Container -->
-                                <g id="blossoms-container"></g>
-
-                                <!-- Fallende Blütenblätter -->
-                                <g id="falling-petals"></g>
-                            </svg>
+                            <div class="timer-tree-wrapper">
+                                <img id="animated-tree" src="img/timer_tree.png" alt="Wachsender Baum" class="timer-tree-image">
+                                <div class="tree-growth-mask" id="tree-growth-mask"></div>
+                            </div>
                         </div>
 
                         <div class="tree-milestones">
