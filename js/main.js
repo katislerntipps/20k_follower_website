@@ -42,7 +42,8 @@ function getStats() {
         unlockedAchievements: [],
         sessionsToday: 0,
         lastSessionDate: new Date().toDateString(),
-        consecutiveSessions: 0
+        consecutiveSessions: 0,
+        dailyLoginClaimed: false
     };
 
     const stored = localStorage.getItem('studytok_stats');
@@ -54,11 +55,37 @@ function getStats() {
         if (!stats.sessionsToday) stats.sessionsToday = 0;
         if (!stats.lastSessionDate) stats.lastSessionDate = new Date().toDateString();
         if (!stats.consecutiveSessions) stats.consecutiveSessions = 0;
+        if (stats.dailyLoginClaimed === undefined) stats.dailyLoginClaimed = false;
+
+        const today = new Date().toDateString();
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toDateString();
 
         // Check if it's a new day
-        if (stats.lastActive !== new Date().toDateString()) {
-            // Could update streak logic here
-            stats.lastActive = new Date().toDateString();
+        if (stats.lastActive !== today) {
+            const lastActiveDate = new Date(stats.lastActive);
+            const todayDate = new Date(today);
+            const daysDiff = Math.floor((todayDate - lastActiveDate) / (1000 * 60 * 60 * 24));
+
+            // Update streak based on days passed
+            if (daysDiff === 1) {
+                // User was active yesterday - continue streak
+                stats.streak += 1;
+
+                // Award streak bonus points every 7 days
+                if (stats.streak % 7 === 0) {
+                    stats.points += 25;
+                    showDailyStreakNotification(stats.streak);
+                }
+            } else if (daysDiff > 1) {
+                // User missed a day - reset streak
+                stats.streak = 1;
+            }
+
+            // Reset daily counters
+            stats.sessionsToday = 0;
+            stats.dailyLoginClaimed = false;
+            stats.lastActive = today;
+
             saveStats(stats);
         }
 
@@ -509,6 +536,151 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ===================================
+// DAILY LOGIN & STREAK SYSTEM
+// ===================================
+
+function checkDailyLogin() {
+    const stats = getStats();
+
+    // Award daily login points if not yet claimed today
+    if (!stats.dailyLoginClaimed) {
+        stats.dailyLoginClaimed = true;
+        stats.points += 15;
+        saveStats(stats);
+        updatePoints();
+
+        // Show daily login notification
+        setTimeout(() => {
+            showNotification(`🎯 Täglicher Login! +15 Punkte | Streak: ${stats.streak} Tag${stats.streak > 1 ? 'e' : ''}`, 'success');
+        }, 1000);
+
+        // Check for daily login achievement (first login)
+        checkDailyLoginAchievement();
+    }
+}
+
+function showDailyStreakNotification(streak) {
+    setTimeout(() => {
+        showNotification(`🔥 ${streak} Tage Streak erreicht! +25 Punkte`, 'success');
+    }, 1500);
+}
+
+function checkDailyLoginAchievement() {
+    const stats = getStats();
+
+    // Check if "daily-login" achievement exists and is not yet unlocked
+    if (!stats.unlockedAchievements.includes('daily-login')) {
+        // Unlock the achievement
+        stats.unlockedAchievements.push('daily-login');
+        stats.achievements = stats.unlockedAchievements.length;
+        saveStats(stats);
+
+        // Show achievement notification
+        setTimeout(() => {
+            showAchievementUnlockNotification({
+                id: 'daily-login',
+                name: 'Jeden Tag ein Bisschen',
+                description: 'Erster täglicher Login',
+                emoji: '🌅'
+            });
+        }, 2000);
+    }
+}
+
+function showAchievementUnlockNotification(achievement) {
+    // Create achievement unlock popup
+    const popup = document.createElement('div');
+    popup.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.98) 0%, rgba(118, 75, 162, 0.98) 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        z-index: 10001;
+        text-align: center;
+        min-width: 300px;
+        max-width: 400px;
+        animation: achievementPopIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    `;
+
+    popup.innerHTML = `
+        <div style="font-size: 4rem; margin-bottom: 1rem; animation: achievementBounce 0.6s ease-out 0.3s;">${achievement.emoji}</div>
+        <h3 style="
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem 0;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        ">Achievement freigeschaltet!</h3>
+        <h4 style="
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+        ">${achievement.name}</h4>
+        <p style="
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            margin: 0;
+            opacity: 0.95;
+            font-weight: 500;
+        ">${achievement.description}</p>
+    `;
+
+    document.body.appendChild(popup);
+
+    // Add animations if not already present
+    if (!document.getElementById('achievement-animations')) {
+        const achievementStyle = document.createElement('style');
+        achievementStyle.id = 'achievement-animations';
+        achievementStyle.textContent = `
+            @keyframes achievementPopIn {
+                0% {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(0.5);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1);
+                }
+            }
+            @keyframes achievementBounce {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+            }
+            @keyframes achievementFadeOut {
+                from {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(0.8);
+                }
+            }
+        `;
+        document.head.appendChild(achievementStyle);
+    }
+
+    // Auto-remove after 4 seconds
+    setTimeout(() => {
+        popup.style.animation = 'achievementFadeOut 0.4s ease-out forwards';
+        setTimeout(() => popup.remove(), 400);
+    }, 4000);
+}
+
+// Call daily login check when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for other initializations
+    setTimeout(checkDailyLogin, 500);
+});
 
 // ===================================
 // DARK MODE FUNCTIONALITY

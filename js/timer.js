@@ -742,6 +742,10 @@ function loadTimerState() {
         if (saved.isRunning && saved.endTime) {
             const now = Date.now();
             const remainingSeconds = Math.max(0, Math.round((saved.endTime - now) / 1000));
+            const timeSinceEnd = saved.endTime ? now - saved.endTime : 0;
+
+            // If timer ended more than 1 hour ago, reset instead of completing
+            const ONE_HOUR_MS = 60 * 60 * 1000;
 
             if (remainingSeconds > 0) {
                 // Timer is still running, resume it
@@ -762,8 +766,27 @@ function loadTimerState() {
                         pauseBtn.style.display = 'block';
                     }
                 }, 0);
+            } else if (timeSinceEnd > ONE_HOUR_MS) {
+                // Timer ended more than 1 hour ago - reset without triggering completion
+                timerState.isRunning = false;
+                timerState.mode = 'focus';
+                timerState.minutes = 25;
+                timerState.seconds = 0;
+                timerState.totalSeconds = 25 * 60;
+                timerState.endTime = null;
+                timerState.lastTick = null;
+                timerState.elapsedWithoutPause = 0;
+
+                // Show info notification
+                setTimeout(() => {
+                    showNotification('⏰ Timer wurde nach langer Inaktivität zurückgesetzt', 'info');
+                }, 500);
+
+                updateDisplay();
+                updateModeButtons();
+                saveTimerState();
             } else {
-                // Timer has completed while user was away
+                // Timer has completed while user was away (within last hour)
                 timerState.isRunning = false;
                 timerState.minutes = 0;
                 timerState.seconds = 0;
@@ -958,31 +981,79 @@ function updateModeButtons() {
 function initializeNotifications() {
     const notificationsCheckbox = document.getElementById('notifications');
 
-    if (notificationsCheckbox) {
-        // Request permission when checkbox is clicked
-        notificationsCheckbox.addEventListener('change', function() {
-            if (this.checked && 'Notification' in window) {
-                if (Notification.permission === 'default') {
-                    // Use Promise-based API for better compatibility
-                    Notification.requestPermission().then(function(permission) {
-                        if (permission === 'granted') {
-                            console.log('Browser-Benachrichtigungen aktiviert');
-                        }
-                    });
-                }
-            }
-        });
+    if (!notificationsCheckbox) return;
 
-        // Request permission on load if checkbox is checked
-        if (notificationsCheckbox.checked && 'Notification' in window) {
-            if (Notification.permission === 'default') {
-                Notification.requestPermission().then(function(permission) {
-                    if (permission === 'granted') {
-                        console.log('Browser-Benachrichtigungen aktiviert');
-                    }
-                });
+    // Check if browser supports notifications
+    if (!('Notification' in window)) {
+        // Browser doesn't support notifications
+        notificationsCheckbox.checked = false;
+        notificationsCheckbox.disabled = true;
+        notificationsCheckbox.parentElement.title = 'Dein Browser unterstützt keine Benachrichtigungen';
+        return;
+    }
+
+    // Check initial permission state
+    updateNotificationCheckboxState();
+
+    // Request permission when checkbox is clicked
+    notificationsCheckbox.addEventListener('change', async function() {
+        if (this.checked) {
+            const permission = await requestNotificationPermission();
+            if (!permission) {
+                // Permission denied - uncheck the box
+                this.checked = false;
             }
         }
+    });
+
+    // Request permission on load if checkbox is checked
+    if (notificationsCheckbox.checked) {
+        requestNotificationPermission();
+    }
+}
+
+async function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+        return false;
+    }
+
+    try {
+        if (Notification.permission === 'default') {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                showNotification('✅ Browser-Benachrichtigungen aktiviert', 'success');
+                return true;
+            } else if (permission === 'denied') {
+                showNotification('❌ Benachrichtigungen wurden blockiert. Bitte in den Browser-Einstellungen erlauben.', 'warning');
+                return false;
+            }
+        } else if (Notification.permission === 'granted') {
+            return true;
+        } else {
+            // Permission denied
+            showNotification('❌ Benachrichtigungen sind blockiert. Bitte in den Browser-Einstellungen erlauben.', 'warning');
+            return false;
+        }
+    } catch (error) {
+        console.error('Fehler beim Anfordern der Benachrichtigungsberechtigung:', error);
+        showNotification('❌ Fehler beim Aktivieren der Benachrichtigungen', 'error');
+        return false;
+    }
+
+    return false;
+}
+
+function updateNotificationCheckboxState() {
+    const notificationsCheckbox = document.getElementById('notifications');
+    if (!notificationsCheckbox) return;
+
+    // Update checkbox based on permission state
+    if (Notification.permission === 'granted') {
+        notificationsCheckbox.checked = true;
+    } else if (Notification.permission === 'denied') {
+        notificationsCheckbox.checked = false;
+        // Add visual indicator that permission was denied
+        notificationsCheckbox.parentElement.title = 'Benachrichtigungen wurden blockiert. Klicke hier und erlaube sie in deinen Browser-Einstellungen.';
     }
 }
 
@@ -991,12 +1062,19 @@ function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.textContent = message;
+
+    // Determine background color based on type
+    let bgColor = '#4CAF50'; // success (green)
+    if (type === 'error') bgColor = '#FF5252'; // red
+    if (type === 'info') bgColor = '#2196F3'; // blue
+    if (type === 'warning') bgColor = '#FFC107'; // yellow
+
     notification.style.cssText = `
         position: fixed;
         top: 100px;
         right: 20px;
         padding: 1rem 1.5rem;
-        background: ${type === 'success' ? '#4CAF50' : '#FF5252'};
+        background: ${bgColor};
         color: white;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -1025,22 +1103,51 @@ function showBrowserNotification(message) {
     // 2. Browser supports notifications
     // 3. User has granted permission
     if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-        const notification = new Notification('StudyTok Companion - Pomodoro Timer', {
-            body: message,
-            icon: 'image/logo.png',
-            badge: 'image/logo.png',
-            tag: 'pomodoro-timer',
-            requireInteraction: false
-        });
+        try {
+            const notification = new Notification('StudyTok Companion - Pomodoro Timer', {
+                body: message,
+                icon: 'image/1.png', // Use tree icon as fallback
+                tag: 'pomodoro-timer',
+                requireInteraction: false,
+                silent: false,
+                vibrate: [200, 100, 200] // Vibration pattern for mobile devices
+            });
 
-        // Auto-close after 5 seconds
-        setTimeout(() => notification.close(), 5000);
+            // Auto-close after 8 seconds (give user time to see it)
+            setTimeout(() => {
+                try {
+                    notification.close();
+                } catch (e) {
+                    // Notification might already be closed
+                }
+            }, 8000);
 
-        // Focus window when notification is clicked
-        notification.onclick = function() {
-            window.focus();
-            this.close();
-        };
+            // Focus window when notification is clicked
+            notification.onclick = function() {
+                window.focus();
+                try {
+                    this.close();
+                } catch (e) {
+                    // Ignore if already closed
+                }
+            };
+
+            // Handle notification errors
+            notification.onerror = function(error) {
+                console.warn('Notification error:', error);
+            };
+        } catch (error) {
+            console.error('Fehler beim Anzeigen der Browser-Benachrichtigung:', error);
+            // Disable notifications checkbox if there's an error
+            const checkbox = document.getElementById('notifications');
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+        }
+    } else if (notificationsEnabled && Notification.permission !== 'granted') {
+        // User has checkbox enabled but hasn't granted permission
+        // Show in-app notification to remind them
+        console.log('Benachrichtigungen sind aktiviert, aber die Berechtigung wurde nicht erteilt');
     }
 }
 
@@ -1106,6 +1213,13 @@ function updateThemeIcon(theme) {
 
 // Achievement definitions
 const ACHIEVEMENTS = [
+    {
+        id: 'daily-login',
+        name: 'Jeden Tag ein Bisschen',
+        description: 'Erster täglicher Login',
+        emoji: '🌅',
+        check: (stats) => stats.dailyLoginClaimed === true
+    },
     {
         id: 'first-steps',
         name: 'Erste Schritte',
