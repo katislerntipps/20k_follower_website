@@ -12,7 +12,9 @@ let timerState = {
     totalSeconds: 25 * 60,
     elapsedWithoutPause: 0, // Track time without pausing
     endTime: null,
-    lastTick: null
+    lastTick: null,
+    cycleCount: 0, // Track completed focus sessions (0-3 = short break, 4 = long break)
+    isInCycle: true // Track if we're in an active Pomodoro cycle
 };
 
 // Tree State
@@ -36,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateDisplay();
     updateStats();
     updateTreeGrowth();
+    updateCycleIndicator();
     initializeDarkMode();
     initializeNotifications();
 });
@@ -59,16 +62,40 @@ function initializeTimer() {
     // Reset button
     resetBtn.addEventListener('click', resetTimer);
 
-    // Mode buttons
+    // Mode buttons are now disabled - they only show the current mode
     modeBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (!timerState.isRunning) {
-                changeMode(this.dataset.mode);
+        // Disable manual mode selection
+        btn.style.cursor = 'default';
+        btn.style.opacity = '0.8';
 
-                // Update active state
-                modeBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            }
+        // Add tooltip to explain they can't be clicked
+        btn.title = 'Der Modus wird automatisch nach der Pomodoro-Technik gewechselt';
+
+        // Prevent clicking
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Show a brief notification
+            const notification = document.createElement('div');
+            notification.textContent = 'Der Modus wird automatisch gewechselt ⏱️';
+            notification.style.cssText = `
+                position: fixed;
+                top: 120px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 0.75rem 1.5rem;
+                background: rgba(102, 126, 234, 0.95);
+                color: white;
+                border-radius: 8px;
+                font-family: 'Poppins', sans-serif;
+                font-size: 0.9rem;
+                z-index: 9999;
+                animation: fadeIn 0.3s ease-out;
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
         });
     });
 }
@@ -202,10 +229,8 @@ function timerComplete() {
         playCompletionSound();
     }
 
-    // Show notification
     if (timerState.mode === 'focus') {
-        showNotification('🎉 Focus-Session abgeschlossen! +10 Punkte');
-
+        // Focus session completed
         // Update stats
         addSession();
         addPoints(10);
@@ -216,16 +241,55 @@ function timerComplete() {
             treeTimeline.play('finale');
         }
 
-        // Auto-start break if enabled
-        const autoStartBreak = document.getElementById('auto-start-break').checked;
-        if (autoStartBreak) {
-            setTimeout(() => {
-                changeMode('short');
-                document.querySelector('[data-mode="short"]').click();
-            }, 1000);
-        }
+        // Increment cycle count
+        timerState.cycleCount++;
+        saveTimerState();
+        updateCycleIndicator();
+
+        // Show browser notification
+        showBrowserNotification('🎉 Focus-Session abgeschlossen! Zeit für eine Pause.');
+
+        // Determine which break to show
+        const isLongBreak = timerState.cycleCount >= 4;
+        const breakType = isLongBreak ? 'long' : 'short';
+        const breakDuration = isLongBreak ? 15 : 5;
+
+        // Show popup
+        showPhaseTransitionPopup(
+            '🎉 Focus-Session abgeschlossen!',
+            `Du hast 25 Minuten konzentriert gearbeitet. Zeit für eine ${isLongBreak ? 'lange' : 'kurze'} Pause von ${breakDuration} Minuten.`,
+            'Jetzt Pause starten',
+            () => {
+                // Start break
+                changeMode(breakType);
+                updateModeButtons();
+                startTimer();
+            }
+        );
+
     } else {
-        showNotification('☕ Pause beendet! Bereit für die nächste Session?');
+        // Break completed
+        showBrowserNotification('☕ Pause beendet! Bereit für die nächste Focus-Session?');
+
+        // Reset cycle count after long break
+        if (timerState.mode === 'long') {
+            timerState.cycleCount = 0;
+            saveTimerState();
+            updateCycleIndicator();
+        }
+
+        // Show popup to start next focus session
+        showPhaseTransitionPopup(
+            '☕ Pause beendet!',
+            'Bereit für die nächste Focus-Session? Starte jetzt mit 25 Minuten konzentrierter Arbeit.',
+            'Jetzt Fokus starten',
+            () => {
+                // Start next focus session
+                changeMode('focus');
+                updateModeButtons();
+                startTimer();
+            }
+        );
     }
 
     resetTimer();
@@ -256,6 +320,50 @@ function updateDisplay() {
     if (progressRing) {
         progressRing.style.strokeDashoffset = offset;
     }
+}
+
+function updateCycleIndicator() {
+    const cycleDotsContainer = document.getElementById('cycle-dots');
+    if (!cycleDotsContainer) return;
+
+    // Clear existing dots
+    cycleDotsContainer.innerHTML = '';
+
+    // Create 4 dots representing the 4 focus sessions
+    for (let i = 0; i < 4; i++) {
+        const dot = document.createElement('div');
+        const isCompleted = i < timerState.cycleCount;
+        const isCurrent = i === timerState.cycleCount && timerState.mode === 'focus';
+
+        dot.style.cssText = `
+            width: ${isCurrent ? '14px' : '10px'};
+            height: ${isCurrent ? '14px' : '10px'};
+            border-radius: 50%;
+            background: ${isCompleted ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(102, 126, 234, 0.2)'};
+            border: ${isCurrent ? '2px solid #667eea' : 'none'};
+            transition: all 0.3s ease;
+            box-shadow: ${isCompleted ? '0 2px 8px rgba(102, 126, 234, 0.4)' : 'none'};
+        `;
+
+        cycleDotsContainer.appendChild(dot);
+    }
+
+    // Add text showing current cycle
+    const cycleText = document.createElement('div');
+    cycleText.style.cssText = `
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--text-secondary, #5a6c7d);
+        font-weight: 500;
+    `;
+
+    if (timerState.cycleCount >= 4) {
+        cycleText.textContent = 'Nächste: Lange Pause';
+    } else {
+        cycleText.textContent = `Session ${timerState.cycleCount + 1} von 4`;
+    }
+
+    cycleDotsContainer.appendChild(cycleText);
 }
 
 // ===================================
@@ -590,7 +698,9 @@ function saveTimerState() {
         isRunning: timerState.isRunning,
         endTime: timerState.endTime,
         elapsedWithoutPause: timerState.elapsedWithoutPause,
-        lastTick: timerState.lastTick
+        lastTick: timerState.lastTick,
+        cycleCount: timerState.cycleCount,
+        isInCycle: timerState.isInCycle
     };
     localStorage.setItem('studytok_timer', JSON.stringify(toSave));
 }
@@ -604,6 +714,146 @@ function loadTreeState() {
 
 function saveTreeState() {
     localStorage.setItem('studytok_tree', JSON.stringify(treeState));
+}
+
+// ===================================
+// PHASE TRANSITION POPUP
+// ===================================
+
+function showPhaseTransitionPopup(title, message, buttonText, onConfirm) {
+    // Remove any existing popup
+    const existingPopup = document.getElementById('phase-transition-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    // Create popup overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'phase-transition-popup';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease-out;
+    `;
+
+    // Create popup content
+    const popup = document.createElement('div');
+    popup.style.cssText = `
+        background: var(--card-bg, white);
+        border-radius: 16px;
+        padding: 2.5rem;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        animation: slideUp 0.3s ease-out;
+    `;
+
+    popup.innerHTML = `
+        <h2 style="
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            margin: 0 0 1rem 0;
+            color: var(--text-primary, #2c3e50);
+        ">${title}</h2>
+        <p style="
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 0 0 2rem 0;
+            color: var(--text-secondary, #5a6c7d);
+        ">${message}</p>
+        <button id="phase-transition-confirm" style="
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        ">${buttonText}</button>
+    `;
+
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+
+    // Add hover effect to button
+    const confirmBtn = document.getElementById('phase-transition-confirm');
+    confirmBtn.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-2px)';
+        this.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.6)';
+    });
+    confirmBtn.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+    });
+
+    // Handle confirm button click
+    confirmBtn.addEventListener('click', () => {
+        overlay.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+            overlay.remove();
+            if (onConfirm) {
+                onConfirm();
+            }
+        }, 300);
+    });
+
+    // Add CSS animations
+    if (!document.getElementById('popup-animations')) {
+        const style = document.createElement('style');
+        style.id = 'popup-animations';
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px) scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function updateModeButtons() {
+    const focusBtn = document.querySelector('[data-mode="focus"]');
+    const shortBtn = document.querySelector('[data-mode="short"]');
+    const longBtn = document.querySelector('[data-mode="long"]');
+
+    // Remove all active classes
+    [focusBtn, shortBtn, longBtn].forEach(btn => {
+        if (btn) btn.classList.remove('active');
+    });
+
+    // Add active class to current mode
+    const currentBtn = document.querySelector(`[data-mode="${timerState.mode}"]`);
+    if (currentBtn) {
+        currentBtn.classList.add('active');
+    }
 }
 
 // ===================================
