@@ -769,14 +769,15 @@ function showPhaseTransitionPopup(title, message, buttonText, onConfirm) {
     // Create popup content
     const popup = document.createElement('div');
     popup.style.cssText = `
-        background: var(--card-bg, white);
+        background: var(--bg-card, white);
         border-radius: 16px;
         padding: 2.5rem;
         max-width: 500px;
         width: 90%;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         text-align: center;
         animation: slideUp 0.3s ease-out;
+        border: 2px solid rgba(102, 126, 234, 0.3);
     `;
 
     popup.innerHTML = `
@@ -785,6 +786,7 @@ function showPhaseTransitionPopup(title, message, buttonText, onConfirm) {
             font-size: 1.8rem;
             margin: 0 0 1rem 0;
             color: var(--text-primary, #2c3e50);
+            font-weight: 700;
         ">${title}</h2>
         <p style="
             font-family: 'Quicksand', sans-serif;
@@ -792,6 +794,7 @@ function showPhaseTransitionPopup(title, message, buttonText, onConfirm) {
             line-height: 1.6;
             margin: 0 0 2rem 0;
             color: var(--text-secondary, #5a6c7d);
+            font-weight: 500;
         ">${message}</p>
         <button id="phase-transition-confirm" style="
             font-family: 'Poppins', sans-serif;
