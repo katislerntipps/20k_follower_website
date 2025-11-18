@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
 </head>
 <body>
     <div class="blossom-background" aria-hidden="true"></div>
@@ -94,10 +96,16 @@
                         <span>💡 Tipp des Tages</span>
                     </a>
                 </div>
-            </div>
+                </div>
                 <div class="hero-visual">
                     <div class="tree-container">
-                        <img src="image/timer_tree.png" alt="Dein Lernbaum" class="home-tree-image">
+                        <div class="tree-visual-stage home-tree-stage" id="home-cherry-tree">
+                            <div class="tree-layer tree-layer-trunk"></div>
+                            <div class="tree-layer tree-layer-branches"></div>
+                            <div class="tree-layer tree-layer-blooms"></div>
+                            <div class="tree-layer tree-layer-glow"></div>
+                        </div>
+                        <div class="hero-floating-petals"></div>
                         <div class="tree-info">
                             <p class="tree-level">Level 1 🌱</p>
                             <p class="tree-progress">0 / 5 Sessions bis Level 2</p>
