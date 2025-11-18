@@ -106,6 +106,24 @@ body::before {
     pointer-events: none;
 }
 
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url('../image/background_branch.png'), url('../image/background_branch.png');
+    background-size: contain, contain;
+    background-position: left top, right bottom;
+    background-repeat: no-repeat, no-repeat;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: -2;
+}
+
+[data-theme="dark"] body::after {
+    opacity: 0.08;
+    filter: brightness(0.85);
+}
+
 body.sakura-theme {
     background: radial-gradient(circle at 20% 20%, rgba(255, 221, 235, 0.7), transparent 35%),
                 radial-gradient(circle at 80% 0%, rgba(212, 181, 241, 0.35), transparent 30%),
