@@ -138,6 +138,9 @@ function initializeGenerator() {
     console.log('tipDisplay:', tipDisplay);
     console.log('lerntipps length:', lerntipps.length);
 
+    // Initialize tip counter
+    let tipCounter = parseInt(localStorage.getItem('studytok_tip_counter') || '0');
+
     if (generateBtn) {
         generateBtn.addEventListener('click', function() {
             console.log('Button clicked!');
@@ -149,11 +152,17 @@ function initializeGenerator() {
                 // Display tip
                 showRandomTip(randomTip);
 
-                // Add points
-                addPoints(2);
+                // Increment counter
+                tipCounter++;
+                localStorage.setItem('studytok_tip_counter', tipCounter.toString());
 
-                // Show notification
-                showNotification('💡 Neuer Lerntipp generiert! +2 Punkte');
+                // Add points only every 10th tip
+                if (tipCounter % 10 === 0) {
+                    addPoints(2);
+                    showNotification('💡 Neuer Lerntipp generiert! +2 Punkte (10. Tipp!)');
+                } else {
+                    showNotification('💡 Neuer Lerntipp generiert!');
+                }
             } catch (error) {
                 console.error('Error in tip generator:', error);
                 alert('Fehler beim Generieren des Tipps: ' + error.message);

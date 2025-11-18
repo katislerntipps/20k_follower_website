@@ -386,6 +386,7 @@
     color: var(--text-secondary);
     margin-bottom: var(--spacing-sm);
     line-height: 1.6;
+    min-height: 4.8em;
 }
 
 .video-meta-large {
