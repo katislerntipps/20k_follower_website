@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupHomeTreeAnimation();
     initializeStats();
     updatePoints();
+    updateTreeDisplay();
     initializeDarkMode();
     initializePointsHistory();
 });
@@ -86,6 +87,51 @@ function updatePoints() {
     pointsElements.forEach(el => {
         el.textContent = stats.points;
     });
+}
+
+// ===================================
+// TREE STATE MANAGEMENT
+// ===================================
+
+function getTreeState() {
+    const defaultTreeState = {
+        level: 1,
+        blossoms: 0,
+        totalSessions: 0
+    };
+
+    const stored = localStorage.getItem('studytok_tree');
+    if (stored) {
+        return JSON.parse(stored);
+    }
+
+    return defaultTreeState;
+}
+
+function updateTreeDisplay() {
+    // Only update tree display on the homepage
+    if (!window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
+        return;
+    }
+
+    const treeState = getTreeState();
+
+    // Update tree level
+    const treeLevelElement = document.querySelector('.tree-level');
+    if (treeLevelElement) {
+        const levelEmoji = treeState.level === 1 ? '🌱' :
+                          treeState.level === 2 ? '🌿' :
+                          treeState.level === 3 ? '🌳' :
+                          treeState.level >= 4 ? '🌸' : '🌱';
+        treeLevelElement.textContent = `Level ${treeState.level} ${levelEmoji}`;
+    }
+
+    // Update tree progress
+    const treeProgressElement = document.querySelector('.tree-progress');
+    if (treeProgressElement) {
+        const nextLevel = treeState.level + 1;
+        treeProgressElement.textContent = `${treeState.blossoms} / 5 Sessions bis Level ${nextLevel}`;
+    }
 }
 
 function getPointsRules() {
