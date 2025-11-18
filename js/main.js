@@ -222,6 +222,12 @@ function setupHomeTreeAnimation() {
     const stage = document.getElementById('home-cherry-tree');
     if (!stage) return;
 
+    // Clean up any previous initialization to avoid duplicate ScrollTriggers
+    if (stage._homeTreeTimelineCleanup) {
+        stage._homeTreeTimelineCleanup.forEach((cleanupFn) => cleanupFn?.());
+    }
+    stage._homeTreeTimelineCleanup = [];
+
     const trunk = stage.querySelector('.tree-layer-trunk');
     const branches = stage.querySelector('.tree-layer-branches');
     const blooms = stage.querySelector('.tree-layer-blooms');
@@ -247,11 +253,15 @@ function setupHomeTreeAnimation() {
         .to(branches, { rotate: -1.4, xPercent: 0.6 }, 0)
         .to(blooms, { rotate: 1.6, xPercent: -0.8 }, 0.1);
 
-    ScrollTrigger.create({
+    const swayTrigger = ScrollTrigger.create({
         trigger: '#home-cherry-tree',
         start: 'top bottom',
         end: 'bottom top',
         onUpdate: (self) => swayTl.timeScale(0.8 + self.progress * 0.6)
+    });
+    stage._homeTreeTimelineCleanup.push(() => {
+        swayTrigger.kill();
+        swayTl.kill();
     });
 
     const parallaxTl = gsap.timeline({
@@ -268,6 +278,10 @@ function setupHomeTreeAnimation() {
         .fromTo(branches, { yPercent: -4 }, { yPercent: 12 }, 0)
         .fromTo(blooms, { yPercent: -10, scale: 1.01 }, { yPercent: 16, scale: 1.045 }, 0)
         .fromTo(glow, { yPercent: -14, scale: 1 }, { yPercent: 20, scale: 1.08 }, 0);
+    stage._homeTreeTimelineCleanup.push(() => {
+        parallaxTl.scrollTrigger?.kill();
+        parallaxTl.kill();
+    });
 
     const intro = gsap.timeline({
         scrollTrigger: {
@@ -281,9 +295,13 @@ function setupHomeTreeAnimation() {
         .to(stage, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'power1.out' })
         .to(blooms, { filter: 'blur(0px)', duration: 0.4 }, 0)
         .to(glow, { opacity: 0.32, duration: 0.5 }, 0);
+    stage._homeTreeTimelineCleanup.push(() => {
+        intro.scrollTrigger?.kill();
+        intro.kill();
+    });
 
     if (petals?.length) {
-        gsap.fromTo(petals, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'sine.out', delay: 0.4, scrollTrigger: {
+        const petalIntro = gsap.fromTo(petals, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'sine.out', delay: 0.4, scrollTrigger: {
             trigger: '#home-cherry-tree',
             start: 'top 82%'
         }});
@@ -306,13 +324,19 @@ function setupHomeTreeAnimation() {
             stagger: { each: 0.18, from: 'random' }
         });
 
-        ScrollTrigger.create({
+        const petalTrigger = ScrollTrigger.create({
             trigger: '#home-cherry-tree',
             start: 'top 82%',
             onEnter: () => petalSequence.restart(true),
             onEnterBack: () => petalSequence.restart(true),
             onLeave: () => petalSequence.pause(),
             onLeaveBack: () => petalSequence.pause()
+        });
+        stage._homeTreeTimelineCleanup.push(() => {
+            petalTrigger.kill();
+            petalSequence.kill();
+            petalIntro.scrollTrigger?.kill();
+            petalIntro.kill();
         });
     }
 }
