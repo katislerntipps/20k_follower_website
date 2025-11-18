@@ -141,6 +141,19 @@ function updateTreeDisplay() {
         const nextLevel = treeState.level + 1;
         treeProgressElement.textContent = `${treeState.blossoms} / 5 Sessions bis Level ${nextLevel}`;
     }
+
+    // Update level image
+    updateHomeLevelImage(treeState.level);
+}
+
+function updateHomeLevelImage(level) {
+    const levelImage = document.getElementById('home-level-image');
+    if (!levelImage) return;
+
+    // Level 1-6: show corresponding image, Level 6+: always show 6.png
+    const imageNumber = Math.min(level, 6);
+    levelImage.src = `image/${imageNumber}.png`;
+    levelImage.alt = `Level ${level} Bild`;
 }
 
 function getPointsRules() {
