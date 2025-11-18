@@ -333,9 +333,9 @@ function setupHomeTreeAnimation() {
 // FEATURE CARD INTERACTIONS
 // ===================================
 
-// Lerntipp Generator Button
+// Lerntipp Generator Button (nur auf Homepage)
 const generateTipBtn = document.querySelector('.feature-card:nth-child(1) .btn-outline');
-if (generateTipBtn) {
+if (generateTipBtn && (window.location.pathname.endsWith('index.html') || window.location.pathname === '/')) {
     generateTipBtn.addEventListener('click', function(e) {
         e.preventDefault();
         window.location.href = 'tipps.html';
