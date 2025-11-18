@@ -78,29 +78,41 @@ export class Step1Grundlagen {
     }
 
     attachListeners() {
-        // Lerntyp Buttons
-        const lerntypButtons = this.stepElement.querySelectorAll('.button-group:nth-child(1) .choice-button');
+        // Alle Choice Buttons
+        const allButtons = this.stepElement.querySelectorAll('.choice-button');
+
+        // Lerntyp Buttons (schüler/student)
+        const lerntypButtons = Array.from(allButtons).filter(btn =>
+            btn.dataset.value === 'schüler' || btn.dataset.value === 'student'
+        );
+
         lerntypButtons.forEach(btn => {
             btn.addEventListener('click', () => {
+                // Entferne active von allen Lerntyp-Buttons
                 lerntypButtons.forEach(b => b.classList.remove('active'));
+                // Setze active auf geklickten Button
                 btn.classList.add('active');
+                // Update hidden input
                 document.getElementById('lerntyp').value = btn.dataset.value;
                 this.clearError();
             });
         });
 
-        // Szenario Buttons
-        const szenarioButtons = this.stepElement.querySelectorAll('.button-group:nth-child(1):last-of-type .choice-button');
-        const allButtons = this.stepElement.querySelectorAll('.choice-button');
-        allButtons.forEach(btn => {
-            if (btn.dataset.value === 'prüfung' || btn.dataset.value === 'kontinuierlich') {
-                btn.addEventListener('click', () => {
-                    szenarioButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById('szenario').value = btn.dataset.value;
-                    this.clearError();
-                });
-            }
+        // Szenario Buttons (prüfung/kontinuierlich)
+        const szenarioButtons = Array.from(allButtons).filter(btn =>
+            btn.dataset.value === 'prüfung' || btn.dataset.value === 'kontinuierlich'
+        );
+
+        szenarioButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Entferne active von allen Szenario-Buttons
+                szenarioButtons.forEach(b => b.classList.remove('active'));
+                // Setze active auf geklickten Button
+                btn.classList.add('active');
+                // Update hidden input
+                document.getElementById('szenario').value = btn.dataset.value;
+                this.clearError();
+            });
         });
     }
 
