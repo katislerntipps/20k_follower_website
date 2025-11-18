@@ -119,10 +119,7 @@ function updateTreeDisplay() {
     // Update tree level
     const treeLevelElement = document.querySelector('.tree-level');
     if (treeLevelElement) {
-        const levelEmoji = treeState.level === 1 ? '🌱' :
-                          treeState.level === 2 ? '🌿' :
-                          treeState.level === 3 ? '🌳' :
-                          treeState.level >= 4 ? '🌸' : '🌱';
+        const levelEmoji = getLevelEmoji(treeState.level);
         treeLevelElement.textContent = `Level ${treeState.level} ${levelEmoji}`;
     }
 
@@ -131,6 +128,19 @@ function updateTreeDisplay() {
     if (treeProgressElement) {
         const nextLevel = treeState.level + 1;
         treeProgressElement.textContent = `${treeState.blossoms} / 5 Sessions bis Level ${nextLevel}`;
+    }
+}
+
+function getLevelEmoji(level) {
+    switch(level) {
+        case 1: return '🌱';
+        case 2: return '🌿';
+        case 3: return '🌳';
+        case 4: return '🌸';
+        case 5: return '🌸🌸';
+        case 6: return '🌸🌸🌸';
+        case 7: return '✨🌸🌸✨';
+        default: return level > 7 ? '✨🌸🌸✨' : '🌱';
     }
 }
 

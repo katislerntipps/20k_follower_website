@@ -516,8 +516,22 @@ function renderTree() {
     renderTimerCherryTree();
 
     // Update tree info
-    document.getElementById('tree-level').textContent = treeState.level;
+    const levelEmoji = getLevelEmoji(treeState.level);
+    document.getElementById('tree-level').textContent = `${treeState.level} ${levelEmoji}`;
     document.getElementById('blossoms-count').textContent = treeState.blossoms;
+}
+
+function getLevelEmoji(level) {
+    switch(level) {
+        case 1: return '🌱';
+        case 2: return '🌿';
+        case 3: return '🌳';
+        case 4: return '🌸';
+        case 5: return '🌸🌸';
+        case 6: return '🌸🌸🌸';
+        case 7: return '✨🌸🌸✨';
+        default: return level > 7 ? '✨🌸🌸✨' : '🌱';
+    }
 }
 
 function addFallingPetals() {
