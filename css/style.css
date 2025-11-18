@@ -883,6 +883,10 @@ body.sakura-theme {
 .stat-label {
     color: var(--text-secondary);
     font-size: 0.9rem;
+    min-height: 2.8em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* ===================================
@@ -942,6 +946,9 @@ body.sakura-theme {
     color: var(--text-secondary);
     margin-bottom: var(--spacing-md);
     line-height: 1.7;
+    min-height: 3.4em;
+    display: flex;
+    align-items: center;
 }
 
 /* ===================================
