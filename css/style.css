@@ -223,6 +223,7 @@ body.sakura-theme {
     padding: 0.25rem;
     border-radius: var(--radius-md);
     transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    text-decoration: none;
 }
 
 .logo-home:hover,
