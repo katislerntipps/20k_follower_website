@@ -252,12 +252,15 @@ body.sakura-theme {
 }
 
 .logo-text-link {
-    color: var(--text-primary);
+    color: var(--text-secondary);
     text-decoration: none;
     position: relative;
     padding: 0.2rem 0.4rem;
     border-radius: var(--radius-md);
     transition: color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    font-size: 1.1rem;
+    font-weight: 500;
+    opacity: 0.85;
 }
 
 .logo-text-link::after {
@@ -279,6 +282,7 @@ body.sakura-theme {
     transform: translateY(-1px);
     background: rgba(255, 255, 255, 0.35);
     outline: none;
+    opacity: 1;
 }
 
 .logo-text-link:hover::after,
@@ -291,6 +295,7 @@ body.sakura-theme {
 [data-theme="dark"] .logo-text-link:focus-visible {
     background: rgba(255, 255, 255, 0.08);
     color: #b2c4ff;
+    opacity: 1;
 }
 
 .nav-menu {
