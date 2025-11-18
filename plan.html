@@ -302,6 +302,98 @@
 
     <script src="js/main.js"></script>
     <script>
+        // Check if cooldown period has passed (20 minutes)
+        function canAwardPlanPoints() {
+            const lastPlanTimestamp = localStorage.getItem('studytok_last_plan_points');
+            if (!lastPlanTimestamp) {
+                return true;
+            }
+
+            const now = Date.now();
+            const twentyMinutesInMs = 20 * 60 * 1000; // 20 minutes in milliseconds
+            const timeSinceLastPlan = now - parseInt(lastPlanTimestamp);
+
+            return timeSinceLastPlan >= twentyMinutesInMs;
+        }
+
+        // Award points if cooldown has passed
+        function awardPlanPoints() {
+            if (canAwardPlanPoints()) {
+                // Add 30 points
+                addPoints(30);
+                // Save timestamp
+                localStorage.setItem('studytok_last_plan_points', Date.now().toString());
+                // Show notification with points
+                showNotification('🎯 Lernplan erstellt! +30 Punkte');
+            } else {
+                // Show notification without points
+                showNotification('🎯 Lernplan erstellt!');
+            }
+        }
+
+        // Get stats from localStorage
+        function getStats() {
+            const defaultStats = {
+                sessions: 0,
+                focusTime: 0,
+                streak: 1,
+                achievements: 0,
+                points: 0,
+                lastActive: new Date().toDateString()
+            };
+
+            const stored = localStorage.getItem('studytok_stats');
+            return stored ? JSON.parse(stored) : defaultStats;
+        }
+
+        // Save stats to localStorage
+        function saveStats(stats) {
+            localStorage.setItem('studytok_stats', JSON.stringify(stats));
+        }
+
+        // Add points to user's total
+        function addPoints(points) {
+            const stats = getStats();
+            stats.points += points;
+            saveStats(stats);
+            updatePoints();
+        }
+
+        // Update points display
+        function updatePoints() {
+            const stats = getStats();
+            const pointsElements = document.querySelectorAll('.points-value');
+            pointsElements.forEach(el => {
+                el.textContent = stats.points;
+            });
+        }
+
+        // Show notification (same as main.js)
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                background: ${type === 'success' ? '#4CAF50' : '#FF5252'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                animation: slideIn 0.3s ease-out;
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
         // Placeholder script for form handling
         document.getElementById('lernplan-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -311,6 +403,9 @@
 
             // Scroll to plan
             document.getElementById('generated-plan').scrollIntoView({ behavior: 'smooth' });
+
+            // Award points with cooldown check
+            awardPlanPoints();
 
             // Update plan content (placeholder)
             document.getElementById('plan-content').innerHTML = `
