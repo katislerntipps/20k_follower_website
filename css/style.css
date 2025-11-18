@@ -1468,7 +1468,7 @@ body.sakura-theme {
 
 .shop-trigger-btn {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border: none;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: var(--radius-full);
     width: 48px;
     height: 48px;
@@ -1479,11 +1479,19 @@ body.sakura-theme {
     transition: all 0.3s ease;
     box-shadow: var(--shadow-sm);
     margin-left: 12px;
+    position: relative;
+}
+
+.shop-trigger-btn::before {
+    content: "🛒";
+    font-size: 1.4rem;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .shop-trigger-btn:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+    border-color: rgba(255, 255, 255, 0.5);
 }
 
 .shop-trigger-btn:active {
@@ -1491,16 +1499,17 @@ body.sakura-theme {
 }
 
 .shop-icon {
-    font-size: 1.5rem;
+    display: none;
 }
 
 .shop-modal {
-    max-width: 800px;
+    max-width: 1100px;
+    width: 95vw;
 }
 
 .shop-items {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
 }
 
@@ -1710,6 +1719,16 @@ body.sakura-theme {
     font-weight: 700;
     color: var(--text-primary);
     margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .shop-items {
+        grid-template-columns: 1fr;
+    }
+
+    .shop-modal {
+        max-width: 95vw;
+    }
 }
 
 @media (max-width: 480px) {
