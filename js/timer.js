@@ -535,7 +535,48 @@ function loadTimerState() {
     const stored = localStorage.getItem('studytok_timer');
     if (stored) {
         const saved = JSON.parse(stored);
-        timerState = { ...timerState, ...saved, isRunning: false, interval: null };
+        timerState = { ...timerState, ...saved, interval: null };
+
+        // Resume timer if it was running and hasn't completed yet
+        if (saved.isRunning && saved.endTime) {
+            const now = Date.now();
+            const remainingSeconds = Math.max(0, Math.round((saved.endTime - now) / 1000));
+
+            if (remainingSeconds > 0) {
+                // Timer is still running, resume it
+                timerState.isRunning = true;
+                timerState.minutes = Math.floor(remainingSeconds / 60);
+                timerState.seconds = remainingSeconds % 60;
+                timerState.lastTick = now;
+
+                // Restart the interval
+                timerState.interval = setInterval(tick, 1000);
+
+                // Update UI to show pause button
+                setTimeout(() => {
+                    const startBtn = document.getElementById('start-btn');
+                    const pauseBtn = document.getElementById('pause-btn');
+                    if (startBtn && pauseBtn) {
+                        startBtn.style.display = 'none';
+                        pauseBtn.style.display = 'block';
+                    }
+                }, 0);
+            } else {
+                // Timer has completed while user was away
+                timerState.isRunning = false;
+                timerState.minutes = 0;
+                timerState.seconds = 0;
+                timerState.endTime = null;
+                timerState.lastTick = null;
+
+                // Trigger completion
+                setTimeout(() => {
+                    timerComplete();
+                }, 100);
+            }
+        } else {
+            timerState.isRunning = false;
+        }
     }
 }
 
@@ -544,7 +585,11 @@ function saveTimerState() {
         minutes: timerState.minutes,
         seconds: timerState.seconds,
         mode: timerState.mode,
-        totalSeconds: timerState.totalSeconds
+        totalSeconds: timerState.totalSeconds,
+        isRunning: timerState.isRunning,
+        endTime: timerState.endTime,
+        elapsedWithoutPause: timerState.elapsedWithoutPause,
+        lastTick: timerState.lastTick
     };
     localStorage.setItem('studytok_timer', JSON.stringify(toSave));
 }
