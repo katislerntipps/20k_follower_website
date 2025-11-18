@@ -307,6 +307,23 @@ function generateBlossomPetals() {
     const container = document.querySelector('.blossom-background');
     if (!container) return;
 
+    // Check if blossom rain is purchased
+    const shopState = localStorage.getItem('studytok_shop');
+    if (shopState) {
+        const shop = JSON.parse(shopState);
+        if (!shop.purchases.blossoms) {
+            container.style.display = 'none';
+            return;
+        }
+    } else {
+        // Not purchased yet, hide it
+        container.style.display = 'none';
+        return;
+    }
+
+    // Show container if purchased
+    container.style.display = 'block';
+
     const petalCount = 24;
     const randomBetween = (min, max) => Math.random() * (max - min) + min;
 

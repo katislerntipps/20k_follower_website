@@ -1253,6 +1253,14 @@ const ACHIEVEMENTS = [
         description: '500 Punkte gesammelt',
         emoji: '💰',
         check: (stats) => stats.points >= 500
+    },
+    {
+        id: 'filthy-rich',
+        name: 'Filthy Rich',
+        description: 'Geheimes Achievement freigeschaltet',
+        emoji: '💎',
+        check: (stats) => stats.unlockedAchievements.includes('filthy-rich'),
+        hidden: true // Only show when unlocked
     }
 ];
 
@@ -1299,12 +1307,23 @@ function updateAchievementUI() {
             const achievement = ACHIEVEMENTS[index];
             const isUnlocked = stats.unlockedAchievements.includes(achievement.id);
 
-            if (isUnlocked) {
-                card.classList.remove('locked');
-                card.classList.add('unlocked');
+            // Handle hidden achievements (only show when unlocked)
+            if (achievement.hidden) {
+                if (isUnlocked) {
+                    card.style.display = 'block';
+                    card.classList.remove('locked');
+                    card.classList.add('unlocked');
+                } else {
+                    card.style.display = 'none';
+                }
             } else {
-                card.classList.remove('unlocked');
-                card.classList.add('locked');
+                if (isUnlocked) {
+                    card.classList.remove('locked');
+                    card.classList.add('unlocked');
+                } else {
+                    card.classList.remove('unlocked');
+                    card.classList.add('locked');
+                }
             }
         }
     });
