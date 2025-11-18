@@ -482,6 +482,19 @@ function updateStats() {
 // TREE FUNCTIONALITY
 // ===================================
 
+function getLevelEmoji(level) {
+    switch(level) {
+        case 1: return '🌱';
+        case 2: return '🌿';
+        case 3: return '🌳';
+        case 4: return '🌸';
+        case 5: return '🌸🌸';
+        case 6: return '🌸🌸🌸';
+        case 7: return '✨🌸🌸✨';
+        default: return level > 7 ? '✨🌸🌸✨' : '🌱';
+    }
+}
+
 function initializeTree() {
     renderTree();
 }
@@ -503,7 +516,8 @@ function levelUp() {
     treeState.level++;
     treeState.blossoms = 0;
 
-    showNotification(`🌸 Level ${treeState.level} erreicht!`, 'success');
+    const levelEmoji = getLevelEmoji(treeState.level);
+    showNotification(`${levelEmoji} Level ${treeState.level} erreicht!`, 'success');
 
     // Show branches based on level
     const branchGroup = document.getElementById(`branches-level-${treeState.level}`);
@@ -516,8 +530,16 @@ function renderTree() {
     renderTimerCherryTree();
 
     // Update tree info
-    document.getElementById('tree-level').textContent = treeState.level;
-    document.getElementById('blossoms-count').textContent = treeState.blossoms;
+    const treeLevelElement = document.getElementById('tree-level');
+    if (treeLevelElement) {
+        const levelEmoji = getLevelEmoji(treeState.level);
+        treeLevelElement.textContent = `Level ${treeState.level} ${levelEmoji}`;
+    }
+
+    const blossomsCountElement = document.getElementById('blossoms-count');
+    if (blossomsCountElement) {
+        blossomsCountElement.textContent = treeState.blossoms;
+    }
 }
 
 function addFallingPetals() {
