@@ -390,17 +390,35 @@
     padding: 0.6rem 1rem;
     border: 2px solid var(--primary);
     background: var(--bg-card);
+    color: var(--text-primary);
     border-radius: var(--radius-md);
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: var(--font-primary);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 
 .action-btn:hover {
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: white;
+    border-color: transparent;
+}
+
+/* Dark Mode Styles for Action Buttons */
+[data-theme="dark"] .action-btn {
+    background: rgba(255, 183, 197, 0.15);
+    border-color: var(--primary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .action-btn:hover {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: #1a1a2e;
+    border-color: transparent;
 }
 
 .action-btn.favorite {
