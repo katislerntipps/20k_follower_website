@@ -72,6 +72,9 @@
                 </span>
                 <span class="points-value">0</span>
             </div>
+            <button class="shop-trigger-btn" id="shop-trigger" aria-label="Shop öffnen">
+                <span class="shop-icon">🛍️</span>
+            </button>
         </div>
     </nav>
 
@@ -293,7 +296,87 @@
         </div>
     </div>
 
+    <!-- Shop Modal -->
+    <div class="modal-overlay" id="shop-modal" aria-hidden="true" role="dialog" aria-label="Shop">
+        <div class="modal shop-modal" role="document">
+            <div class="modal-header">
+                <div>
+                    <p class="modal-kicker">Punkte einlösen</p>
+                    <h3>🛍️ Shop</h3>
+                </div>
+                <button class="modal-close" aria-label="Schließen">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="shop-items">
+                    <div class="shop-item" data-item="rabattcode">
+                        <div class="shop-item-header">
+                            <h4>🎁 Astra AI Rabattcode</h4>
+                            <span class="shop-item-price">650 Punkte</span>
+                        </div>
+                        <p class="shop-item-description">Erhalte einen exklusiven Rabattcode für Astra AI per E-Mail!</p>
+                        <button class="btn btn-primary shop-buy-btn" data-price="650" data-item="rabattcode">
+                            Kaufen
+                        </button>
+                        <span class="shop-item-purchased" style="display: none;">✅ Gekauft</span>
+                    </div>
+                    <div class="shop-item" data-item="achievement">
+                        <div class="shop-item-header">
+                            <h4>💎 Geheimes Achievement</h4>
+                            <span class="shop-item-price">1.000 Punkte</span>
+                        </div>
+                        <p class="shop-item-description">Schalte das geheime "Filthy Rich" Achievement frei!</p>
+                        <button class="btn btn-primary shop-buy-btn" data-price="1000" data-item="achievement">
+                            Kaufen
+                        </button>
+                        <span class="shop-item-purchased" style="display: none;">✅ Gekauft</span>
+                    </div>
+                    <div class="shop-item" data-item="music">
+                        <div class="shop-item-header">
+                            <h4>🎵 Hintergrundmusik</h4>
+                            <span class="shop-item-price">250 Punkte</span>
+                        </div>
+                        <p class="shop-item-description">Schalte beruhigende Hintergrundmusik für deine Lernsessions frei!</p>
+                        <button class="btn btn-primary shop-buy-btn" data-price="250" data-item="music">
+                            Kaufen
+                        </button>
+                        <span class="shop-item-purchased" style="display: none;">✅ Gekauft</span>
+                    </div>
+                    <div class="shop-item" data-item="blossoms">
+                        <div class="shop-item-header">
+                            <h4>🌸 Kirschblütenregen</h4>
+                            <span class="shop-item-price">150 Punkte</span>
+                        </div>
+                        <p class="shop-item-description">Erlebe den wunderschönen animierten Kirschblütenregen auf der gesamten Website!</p>
+                        <button class="btn btn-primary shop-buy-btn" data-price="150" data-item="blossoms">
+                            Kaufen
+                        </button>
+                        <span class="shop-item-purchased" style="display: none;">✅ Gekauft</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Input Modal for Rabattcode -->
+    <div class="modal-overlay" id="email-modal" aria-hidden="true" role="dialog" aria-label="E-Mail eingeben">
+        <div class="modal" role="document">
+            <div class="modal-header">
+                <div>
+                    <p class="modal-kicker">Rabattcode erhalten</p>
+                    <h3>📧 E-Mail Adresse</h3>
+                </div>
+                <button class="modal-close" aria-label="Schließen">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Gib deine E-Mail Adresse ein, um den Astra AI Rabattcode zu erhalten:</p>
+                <input type="email" id="email-input" class="email-input" placeholder="deine@email.de" required>
+                <button class="btn btn-primary" id="email-submit">Absenden</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
+    <script src="js/shop.js"></script>
     <script>
         // Check if cooldown period has passed (20 minutes)
         function canAwardPlanPoints() {
