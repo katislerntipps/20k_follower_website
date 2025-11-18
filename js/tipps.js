@@ -2,88 +2,113 @@
 // TIPPS.JS - Lerntipps Page Functionality
 // ===================================
 
-// Lerntipps Data
+// Lerntipps Data - 100 verschiedene Tipps von konventionell bis unkonventionell
 const lerntipps = [
-    {
-        title: 'Die Feynman-Methode',
-        description: 'Erkläre das Thema so, als würdest du es einem 5-Jährigen beibringen. Wenn du stecken bleibst, hast du eine Wissenslücke gefunden!',
-        category: 'methode',
-        subject: 'allgemein',
-        difficulty: 'anfaenger',
-        icon: '🧠'
-    },
-    {
-        title: 'Spaced Repetition',
-        description: 'Wiederhole Inhalte in immer größeren Abständen: Tag 1, 3, 7, 14, 30. So bleibt alles im Langzeitgedächtnis!',
-        category: 'gedaechtnis',
-        subject: 'allgemein',
-        difficulty: 'anfaenger',
-        icon: '🔁'
-    },
-    {
-        title: 'Active Recall',
-        description: 'Teste dich selbst BEVOR du lernst. Dein Gehirn merkt sich besser, was es aktiv abrufen musste!',
-        category: 'methode',
-        subject: 'allgemein',
-        difficulty: 'fortgeschritten',
-        icon: '⚡'
-    },
-    {
-        title: 'Pomodoro-Technik',
-        description: '25 Minuten fokussiert lernen, 5 Minuten Pause. Nach 4 Sessions eine längere Pause von 15-30 Minuten.',
-        category: 'organisation',
-        subject: 'allgemein',
-        difficulty: 'anfaenger',
-        icon: '🍅'
-    },
-    {
-        title: 'Memory Palace',
-        description: 'Verknüpfe Informationen mit einem bekannten Ort (z.B. dein Zuhause). Spaziere gedanklich durch und sammel Wissen!',
-        category: 'gedaechtnis',
-        subject: 'allgemein',
-        difficulty: 'profi',
-        icon: '🏛️'
-    },
-    {
-        title: 'Lernmusik 40 Hz',
-        description: 'Binaurale Beats mit 40 Hz fördern Konzentration und Fokus. Perfekt für intensive Lernsessions!',
-        category: 'verruckt',
-        subject: 'allgemein',
-        difficulty: 'anfaenger',
-        icon: '🎵'
-    },
-    {
-        title: 'Kaugummi-Trick',
-        description: 'Kaue beim Lernen eine bestimmte Sorte, in der Prüfung die gleiche. Dein Gehirn erinnert sich über den Geschmack!',
-        category: 'verruckt',
-        subject: 'allgemein',
-        difficulty: 'anfaenger',
-        icon: '🍬'
-    },
-    {
-        title: 'Teaching Method',
-        description: 'Erkläre das Gelernte jemand anderem oder deinem Teddy. Wenn du es lehren kannst, hast du es verstanden!',
-        category: 'methode',
-        subject: 'allgemein',
-        difficulty: 'anfaenger',
-        icon: '👥'
-    },
-    {
-        title: '2-Minuten-Regel',
-        description: 'Wenn eine Aufgabe unter 2 Minuten dauert, mach sie SOFORT. Überwinde Prokrastination in Sekunden!',
-        category: 'motivation',
-        subject: 'allgemein',
-        difficulty: 'anfaenger',
-        icon: '💪'
-    },
-    {
-        title: 'Cornell Notes',
-        description: 'Teile Seite in 3 Bereiche: Notizen, Schlüsselwörter, Zusammenfassung. Perfekt für strukturiertes Lernen!',
-        category: 'organisation',
-        subject: 'allgemein',
-        difficulty: 'anfaenger',
-        icon: '📝'
-    }
+    // Konventionelle Lernmethoden (1-30)
+    { title: 'Die Feynman-Methode', description: 'Erkläre das Thema so, als würdest du es einem 5-Jährigen beibringen. Wenn du stecken bleibst, hast du eine Wissenslücke gefunden!', category: 'methode', subject: 'allgemein', difficulty: 'anfaenger', icon: '🧠' },
+    { title: 'Spaced Repetition', description: 'Wiederhole Inhalte in immer größeren Abständen: Tag 1, 3, 7, 14, 30. So bleibt alles im Langzeitgedächtnis!', category: 'gedaechtnis', subject: 'allgemein', difficulty: 'anfaenger', icon: '🔁' },
+    { title: 'Active Recall', description: 'Teste dich selbst BEVOR du lernst. Dein Gehirn merkt sich besser, was es aktiv abrufen musste!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '⚡' },
+    { title: 'Pomodoro-Technik', description: '25 Minuten fokussiert lernen, 5 Minuten Pause. Nach 4 Sessions eine längere Pause von 15-30 Minuten.', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '🍅' },
+    { title: 'Memory Palace', description: 'Verknüpfe Informationen mit einem bekannten Ort (z.B. dein Zuhause). Spaziere gedanklich durch und sammel Wissen!', category: 'gedaechtnis', subject: 'allgemein', difficulty: 'profi', icon: '🏛️' },
+    { title: 'Cornell Notes', description: 'Teile Seite in 3 Bereiche: Notizen, Schlüsselwörter, Zusammenfassung. Perfekt für strukturiertes Lernen!', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '📝' },
+    { title: 'SQ3R-Methode', description: 'Survey, Question, Read, Recite, Review - eine bewährte Lesestrategie für Lehrbücher und Texte.', category: 'methode', subject: 'allgemein', difficulty: 'anfaenger', icon: '📖' },
+    { title: 'Mind Mapping', description: 'Erstelle visuelle Diagramme mit Hauptthema in der Mitte und verzweigten Unterthemen. Ideal für komplexe Themen!', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '🗺️' },
+    { title: 'Lernkarten', description: 'Erstelle Karteikarten mit Frage auf einer Seite und Antwort auf der anderen. Wiederhole regelmäßig!', category: 'gedaechtnis', subject: 'allgemein', difficulty: 'anfaenger', icon: '🃏' },
+    { title: 'Zusammenfassungen schreiben', description: 'Fasse jeden Abschnitt in eigenen Worten zusammen. Das zwingt dich zum aktiven Denken!', category: 'methode', subject: 'allgemein', difficulty: 'anfaenger', icon: '✍️' },
+    { title: 'Lerngruppen', description: 'Lerne mit anderen zusammen, erklärt euch gegenseitig die Themen und profitiert voneinander!', category: 'methode', subject: 'allgemein', difficulty: 'anfaenger', icon: '👥' },
+    { title: 'Lernplan erstellen', description: 'Plane deine Lernzeiten im Voraus und halte dich daran. Struktur ist der Schlüssel zum Erfolg!', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '📅' },
+    { title: 'Farb-Kodierung', description: 'Nutze verschiedene Farben für verschiedene Themen oder Wichtigkeitsgrade. Visuelle Unterscheidung hilft!', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '🎨' },
+    { title: 'Laut vorlesen', description: 'Lies den Stoff laut vor. Durch Hören und Sprechen aktivierst du mehrere Sinne gleichzeitig!', category: 'methode', subject: 'allgemein', difficulty: 'anfaenger', icon: '📢' },
+    { title: 'Pausen machen', description: 'Nach 45-60 Minuten Lernen brauchst du eine Pause. Dein Gehirn braucht Zeit zum Verarbeiten!', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '☕' },
+    { title: 'Morgenstunden nutzen', description: 'Lerne wichtige Dinge morgens, wenn dein Gehirn noch frisch ist. Der frühe Vogel fängt den Wurm!', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '🌅' },
+    { title: 'Wiederholungen planen', description: 'Wiederhole neues Wissen nach 1 Tag, 1 Woche, 1 Monat. So wandert es ins Langzeitgedächtnis!', category: 'gedaechtnis', subject: 'allgemein', difficulty: 'anfaenger', icon: '🔄' },
+    { title: 'Lernumgebung optimieren', description: 'Schaffe einen ruhigen, aufgeräumten Lernplatz mit gutem Licht. Die Umgebung beeinflusst deine Leistung!', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '🪑' },
+    { title: 'Ziele setzen', description: 'Setze dir klare, erreichbare Lernziele für jede Session. Was willst du heute schaffen?', category: 'motivation', subject: 'allgemein', difficulty: 'anfaenger', icon: '🎯' },
+    { title: 'Belohnungen einbauen', description: 'Belohne dich nach erfolgreichen Lernsessions. Positive Verstärkung motiviert!', category: 'motivation', subject: 'allgemein', difficulty: 'anfaenger', icon: '🎁' },
+    { title: 'Ablenkungen eliminieren', description: 'Handy weg, Social Media aus. Fokus ist alles beim Lernen!', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '📵' },
+    { title: 'Teaching Method', description: 'Erkläre das Gelernte jemand anderem oder deinem Teddy. Wenn du es lehren kannst, hast du es verstanden!', category: 'methode', subject: 'allgemein', difficulty: 'anfaenger', icon: '🧸' },
+    { title: 'Prüfungssimulation', description: 'Übe unter Prüfungsbedingungen: Zeitlimit, keine Hilfsmittel. So gewöhnst du dich an den Stress!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '⏱️' },
+    { title: 'Schreibschrift nutzen', description: 'Handschriftliche Notizen fördern das Gedächtnis besser als Tippen. Die motorische Aktivität hilft!', category: 'methode', subject: 'allgemein', difficulty: 'anfaenger', icon: '✒️' },
+    { title: 'Fragen stellen', description: 'Stelle dir selbst Fragen zum Thema und beantworte sie. Aktives Denken statt passives Lesen!', category: 'methode', subject: 'allgemein', difficulty: 'anfaenger', icon: '❓' },
+    { title: 'Eselsbrücken bauen', description: 'Erstelle merkwürdige, lustige Eselsbrücken für schwierige Inhalte. Je absurder, desto besser!', category: 'gedaechtnis', subject: 'allgemein', difficulty: 'anfaenger', icon: '🫏' },
+    { title: 'Schlaf ist wichtig', description: 'Mindestens 7-8 Stunden Schlaf! Im Schlaf verarbeitet dein Gehirn das Gelernte.', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '😴' },
+    { title: 'Wasser trinken', description: 'Bleib hydratisiert! Dein Gehirn braucht Wasser für optimale Leistung.', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '💧' },
+    { title: 'Bewegung einbauen', description: 'Kurze Bewegungspausen fördern die Durchblutung und Konzentration. Steh auf, streck dich!', category: 'organisation', subject: 'allgemein', difficulty: 'anfaenger', icon: '🤸' },
+    { title: '2-Minuten-Regel', description: 'Wenn eine Aufgabe unter 2 Minuten dauert, mach sie SOFORT. Überwinde Prokrastination in Sekunden!', category: 'motivation', subject: 'allgemein', difficulty: 'anfaenger', icon: '💪' },
+
+    // Fortgeschrittene Methoden (31-60)
+    { title: 'Interleaving', description: 'Wechsle zwischen verschiedenen Themen statt eines zu perfektionieren. Dein Gehirn lernt besser durch Kontraste!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🔀' },
+    { title: 'Elaborative Interrogation', description: 'Frage dich bei jedem Fakt: "Warum ist das so?" Die Erklärung hilft beim Merken!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🤔' },
+    { title: 'Self-Explanation', description: 'Erkläre dir selbst jeden Schritt beim Problemlösen. Verbalisiere deinen Denkprozess!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '💭' },
+    { title: 'Dual Coding', description: 'Kombiniere Worte mit Bildern. Visuelle und verbale Information gleichzeitig speichern!', category: 'gedaechtnis', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🖼️' },
+    { title: 'Chunking', description: 'Teile große Informationsmengen in kleine "Chunks". Wie Telefonnummern: 0123-456-789 statt 0123456789!', category: 'gedaechtnis', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🧩' },
+    { title: 'Metaphern nutzen', description: 'Vergleiche neue Konzepte mit bekannten Dingen. "Das Atom ist wie ein Sonnensystem..."', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🌟' },
+    { title: 'Lerntagebuch führen', description: 'Schreibe täglich auf, was du gelernt hast und was noch unklar ist. Reflektiere deinen Fortschritt!', category: 'organisation', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '📓' },
+    { title: 'Wissenslücken identifizieren', description: 'Teste dich selbst und markiere, was du NICHT weißt. Konzentriere dich auf die Lücken!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🕳️' },
+    { title: 'Rückwärts lernen', description: 'Beginne mit der Lösung und arbeite dich rückwärts zum Problem. Besonders gut für Mathe!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '⏪' },
+    { title: 'Kontextwechsel', description: 'Lerne das gleiche Thema an verschiedenen Orten. So wird das Wissen kontextunabhängiger!', category: 'gedaechtnis', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🌍' },
+    { title: 'Analogien bilden', description: 'Finde Parallelen zu anderen Fächern oder Lebensbereichen. "Chemische Reaktionen sind wie Kochen..."', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🔗' },
+    { title: 'Pre-Testing', description: 'Teste dich BEVOR du lernst, auch wenn du nichts weißt. Es aktiviert dein Gehirn für das Thema!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '📋' },
+    { title: 'Distributed Practice', description: 'Verteile das Lernen über Wochen statt alles in 2 Tagen. Langfristig effektiver!', category: 'organisation', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '📆' },
+    { title: 'Retrieval Practice', description: 'Übe das Abrufen von Informationen aus dem Gedächtnis. Das Abrufen selbst ist Lernen!', category: 'gedaechtnis', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🎣' },
+    { title: 'Elaboration', description: 'Verbinde neues Wissen mit Vorwissen. "Das erinnert mich an..." Baue ein Wissensnetz!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🕸️' },
+    { title: 'Generation Effect', description: 'Generiere selbst Beispiele statt sie nur zu lesen. Selbst gemachte Beispiele bleiben besser hängen!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '⚡' },
+    { title: 'Testing Effect', description: 'Tests sind nicht nur zum Bewerten da - sie sind eine der besten Lernmethoden!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '📝' },
+    { title: 'Desirable Difficulties', description: 'Mach es dir schwerer! Kleine Hindernisse beim Lernen führen zu besserem Langzeiterfolg.', category: 'methode', subject: 'allgemein', difficulty: 'profi', icon: '🏋️' },
+    { title: 'Metacognition', description: 'Denke über dein Denken nach. "Wie lerne ich am besten? Was funktioniert bei mir?"', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🧠' },
+    { title: 'Konzeptmaps', description: 'Erstelle Karten mit Konzepten und ihren Beziehungen. Zeigt dir das große Ganze!', category: 'organisation', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🗺️' },
+    { title: 'Pareto-Prinzip', description: '80% der Ergebnisse kommen von 20% des Aufwands. Identifiziere die wichtigsten 20%!', category: 'organisation', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '📊' },
+    { title: 'Deep Work', description: 'Schaffe 2-4 Stunden intensive, ununterbrochene Fokuszeit. Qualität über Quantität!', category: 'organisation', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🎯' },
+    { title: 'Timeboxing', description: 'Weise jeder Aufgabe eine feste Zeitspanne zu. Verhindert endloses Prokrastinieren!', category: 'organisation', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '⏰' },
+    { title: 'Batch Processing', description: 'Gruppiere ähnliche Aufgaben zusammen. Bearbeite alle Mathe-Aufgaben am Stück!', category: 'organisation', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '📦' },
+    { title: 'Energy Management', description: 'Lerne, wenn deine Energie hoch ist. Nicht jeder ist ein Morgenmensch!', category: 'organisation', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '⚡' },
+    { title: 'Progressive Summarization', description: 'Erstelle mehrere Zusammenfassungs-Ebenen: Grob → Detail → Kern. Schichten von Verständnis!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '📑' },
+    { title: 'Zettelkasten-Methode', description: 'Erstelle vernetzte Notizen wie Luhmann. Jede Notiz ist ein Gedanke, verlinkt mit anderen!', category: 'organisation', subject: 'allgemein', difficulty: 'profi', icon: '🗃️' },
+    { title: 'Sokratische Methode', description: 'Stelle dir selbst kritische Fragen. "Was wäre, wenn...? Warum nicht...?"', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '💬' },
+    { title: 'First Principles Thinking', description: 'Breche Probleme auf fundamentale Wahrheiten herunter. Lerne von Grund auf!', category: 'methode', subject: 'allgemein', difficulty: 'profi', icon: '🔬' },
+    { title: 'Deliberate Practice', description: 'Übe gezielt deine Schwächen, nicht was du schon kannst. Raus aus der Komfortzone!', category: 'methode', subject: 'allgemein', difficulty: 'fortgeschritten', icon: '🎯' },
+
+    // Unkonventionelle & Verrückte Methoden (61-100)
+    { title: 'Lernmusik 40 Hz', description: 'Binaurale Beats mit 40 Hz fördern Konzentration und Fokus. Perfekt für intensive Lernsessions!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🎵' },
+    { title: 'Kaugummi-Trick', description: 'Kaue beim Lernen eine bestimmte Sorte, in der Prüfung die gleiche. Dein Gehirn erinnert sich über den Geschmack!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🍬' },
+    { title: 'Rückwärts gehen', description: 'Gehe beim Wiederholen rückwärts. Die ungewöhnliche Bewegung aktiviert dein Gehirn!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🚶' },
+    { title: 'Duft-Anker', description: 'Nutze beim Lernen ein bestimmtes Parfüm/ätherisches Öl und in der Prüfung das gleiche!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '👃' },
+    { title: 'Lern-Gesang', description: 'Singe den Lernstoff zu deiner Lieblingsmelodie. Absurd, aber effektiv!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🎤' },
+    { title: 'Lern-Rap', description: 'Erstelle einen Rap mit dem Lernstoff. Rhythmus + Reim = Gedächtnis-Booster!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🎤' },
+    { title: 'Andere Hand nutzen', description: 'Schreibe mit deiner nicht-dominanten Hand. Aktiviert neue Gehirnbereiche!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '✍️' },
+    { title: 'Power Poses', description: 'Nimm vor dem Lernen 2 Minuten eine Power Pose ein. Steigert Testosteron und Selbstvertrauen!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🦸' },
+    { title: 'Kaltes Wasser', description: 'Wasche dein Gesicht mit kaltem Wasser. Aktiviert den Mammalian Dive Reflex und weckt dich auf!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '❄️' },
+    { title: 'Upside Down Lesen', description: 'Lies Texte auf dem Kopf. Zwingt dein Gehirn zu aktivem Denken!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🙃' },
+    { title: 'Jonglieren', description: 'Jongliere in Lernpausen. Steigert neuronale Verbindungen!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🤹' },
+    { title: 'Lernen im Stehen', description: 'Lerne im Stehen oder auf einem Balanceboard. Bewegung aktiviert das Gehirn!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🧍' },
+    { title: 'Farbige Brillen', description: 'Nutze farbige Brillen/Filter für verschiedene Themen. Blau für Mathe, Rot für Geschichte...', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '👓' },
+    { title: 'Spiegelschrift', description: 'Schreibe wichtige Konzepte in Spiegelschrift. Dein Gehirn muss sich mehr anstrengen!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🪞' },
+    { title: 'Lern-TikToks', description: 'Erstelle TikToks über den Lernstoff. Kreativität + Lehren = Doppelt lernen!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '📱' },
+    { title: 'Emotionale Verankerung', description: 'Verbinde Fakten mit starken Emotionen. Je intensiver das Gefühl, desto besser das Erinnern!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '❤️' },
+    { title: 'Absurde Geschichten', description: 'Erstelle absurde, übertriebene Geschichten mit dem Lernstoff. Je verrückter, desto einprägsamer!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '📚' },
+    { title: 'Akkordeon-Methode', description: 'Erstelle einen Spickzettel, den du immer kleiner machst. Am Ende brauchst du ihn nicht mehr!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '📄' },
+    { title: 'Charaktere erschaffen', description: 'Gib Konzepten Persönlichkeiten. "Mitochondrien ist der energische Typ, der allen Energie gibt!"', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🎭' },
+    { title: 'Lern-Parkour', description: 'Platziere Lernkarten im Raum und erstelle einen Parkour. Bewegung + Lernen!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🏃' },
+    { title: 'KI als Lernpartner', description: 'Lass dir von ChatGPT den Stoff erklären, wie einem 5-Jährigen. Diskutiere mit der KI!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🤖' },
+    { title: 'Memes erstellen', description: 'Erstelle Memes über den Lernstoff. Humor hilft beim Erinnern!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '😂' },
+    { title: 'Fingerübungen', description: 'Mache spezielle Fingerübungen beim Lernen. Aktiviert motorische Areale!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🖐️' },
+    { title: 'Farben essen', description: 'Iss Lebensmittel in verschiedenen Farben für verschiedene Themen. Sinnesverknüpfung!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🍎' },
+    { title: 'Reim-Technik', description: 'Erstelle Reime für alles. "Mitochondrien ist die Powerstation, gibt uns Energie - was für eine Sensation!"', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🎵' },
+    { title: 'Lern-Kostüm', description: 'Trage ein spezielles Outfit nur zum Lernen. Dein Gehirn schaltet in "Lern-Modus"!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '👔' },
+    { title: 'Grimassen schneiden', description: 'Schneide Grimassen beim Lernen schwieriger Konzepte. Emotionale Verbindung!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '😝' },
+    { title: 'Lern-Ritual', description: 'Erstelle ein absurdes Ritual vor jeder Lernsession. Mentale Vorbereitung!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🕯️' },
+    { title: 'Visualisierungs-Theater', description: 'Stelle dir vor, du bist IN dem Konzept. "Ich bin ein Elektron und reise durch den Stromkreis..."', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🎬' },
+    { title: 'Schreib-Marathon', description: 'Schreibe den Stoff 10x hintereinander auf. Monoton, aber effektiv für motorisches Gedächtnis!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '✍️' },
+    { title: 'Luftschrift', description: 'Schreibe Formeln in die Luft mit großen Bewegungen. Kinästhetisches Lernen!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '✋' },
+    { title: 'Lern-Mantra', description: 'Wiederhole wichtige Fakten wie ein Mantra. Meditation meets Lernen!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🧘' },
+    { title: 'Gewichte am Stift', description: 'Befestige kleine Gewichte am Stift. Die Anstrengung verstärkt das Gedächtnis!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🖊️' },
+    { title: 'Esspapier-Vokabeln', description: 'Schreibe Vokabeln auf Esspapier und iss sie. Buchstäblich "Wissen aufnehmen"!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '📄' },
+    { title: 'Stimmen imitieren', description: 'Lerne den Stoff mit verschiedenen Stimmen/Akzenten. Aktiviert verschiedene Gehirnareale!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🗣️' },
+    { title: 'Blind lernen', description: 'Schließe die Augen und lerne nur durch Hören/Tasten. Schärft andere Sinne!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🙈' },
+    { title: 'Neon-Notizen', description: 'Nutze nur Neon-Farben für Notizen. Visueller Schock = besser Erinnerung!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🌈' },
+    { title: 'Lern-Challenges', description: 'Erstelle TikTok-Challenges für Lernthemen. Gamification!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🏆' },
+    { title: 'Akrostichon', description: 'Erstelle Sätze aus Anfangsbuchstaben. "Mein Vater Erklärt Mir Jeden Sonntag Unsere Neun Planeten"', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🔤' },
+    { title: 'Zahlen-Formen', description: 'Verbinde Zahlen mit Formen. 0=Ei, 1=Kerze, 2=Schwan... Erstelle visuelle Geschichten!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🔢' }
 ];
 
 // Initialize
@@ -136,7 +161,6 @@ function showRandomTip(tip) {
                 ${tip.description}
             </div>
         </div>
-        <a href="#" class="btn btn-secondary">Video ansehen 📱</a>
     `;
 
     // Scroll to tip

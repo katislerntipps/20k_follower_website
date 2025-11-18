@@ -210,9 +210,40 @@
     border-color: rgba(255, 255, 255, 0.15);
 }
 
+[data-theme="dark"] .view-btn:hover:not(.active) {
+    border-color: var(--primary);
+    background: rgba(255, 183, 197, 0.1);
+}
+
 [data-theme="dark"] .videos-grid.list-view .video-card-item {
     background: #231f3d;
     border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .videos-grid.list-view .video-card-item:hover {
+    border-color: rgba(255, 183, 197, 0.3);
+    box-shadow: 0 4px 20px rgba(255, 183, 197, 0.15);
+}
+
+[data-theme="dark"] .video-card-item {
+    background: #231f3d;
+}
+
+[data-theme="dark"] .video-card-item:hover {
+    box-shadow: 0 8px 30px rgba(255, 183, 197, 0.2);
+}
+
+[data-theme="dark"] .tip-display {
+    background: #1a1a2e;
+}
+
+[data-theme="dark"] .tip-card-flip {
+    background: #231f3d;
+}
+
+[data-theme="dark"] .tip-description {
+    background: rgba(255, 183, 197, 0.15);
+    border-left-color: var(--primary);
 }
 
 /* ===================================
@@ -231,6 +262,9 @@
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
+}
+
+.video-card-item[onclick] {
     cursor: pointer;
 }
 
@@ -446,23 +480,47 @@
 
 .videos-grid.list-view {
     grid-template-columns: 1fr;
+    gap: var(--spacing-md);
 }
 
 .videos-grid.list-view .video-card-item {
     display: flex;
     flex-direction: row;
+    min-height: 180px;
+}
+
+.videos-grid.list-view .video-card-item:hover {
+    transform: translateY(0) translateX(4px);
 }
 
 .videos-grid.list-view .video-thumbnail-large {
-    width: 300px;
+    width: 280px;
+    min-width: 280px;
     flex-shrink: 0;
+    aspect-ratio: 16/9;
 }
 
 .videos-grid.list-view .video-info {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.videos-grid.list-view .video-title-large {
+    font-size: 1.3rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.videos-grid.list-view .video-description {
+    flex: 1;
+    margin-bottom: var(--spacing-md);
+}
+
+.videos-grid.list-view .video-actions {
+    margin-top: auto;
+    max-width: 200px;
 }
 
 /* ===================================
