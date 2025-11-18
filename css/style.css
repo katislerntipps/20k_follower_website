@@ -942,6 +942,7 @@ body.sakura-theme {
     color: var(--text-secondary);
     margin-bottom: var(--spacing-md);
     line-height: 1.7;
+    text-align: center;
 }
 
 /* ===================================
