@@ -83,11 +83,6 @@ html {
 body {
     font-family: var(--font-primary);
     background: var(--bg-gradient);
-    background-image: url('../img/background_tree.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
     color: var(--text-primary);
     line-height: 1.6;
     overflow-x: hidden;
@@ -102,28 +97,25 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--bg-gradient);
-    opacity: 0.85;
+    background-image: url('../img/background_tree.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.15;
     z-index: -1;
     pointer-events: none;
 }
 
 body.sakura-theme {
-    background-image: url('../img/background_tree.png');
-}
-
-body.sakura-theme::before {
     background: radial-gradient(circle at 20% 20%, rgba(255, 221, 235, 0.7), transparent 35%),
                 radial-gradient(circle at 80% 0%, rgba(212, 181, 241, 0.35), transparent 30%),
                 linear-gradient(135deg, #fff4f8 0%, #f9fbff 35%, #ffe9f2 100%);
-    opacity: 0.9;
 }
 
-[data-theme="dark"] body.sakura-theme::before {
+[data-theme="dark"] body.sakura-theme {
     background: radial-gradient(circle at 20% 20%, rgba(255, 155, 173, 0.35), transparent 32%),
                 radial-gradient(circle at 80% 0%, rgba(192, 159, 232, 0.25), transparent 28%),
                 linear-gradient(135deg, #0f1424 0%, #171c2f 40%, #24162a 100%);
-    opacity: 0.85;
 }
 
 .blossom-background {
