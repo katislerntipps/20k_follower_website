@@ -9,7 +9,8 @@ let timerState = {
     isRunning: false,
     mode: 'focus', // 'focus', 'short', 'long'
     interval: null,
-    totalSeconds: 25 * 60
+    totalSeconds: 25 * 60,
+    elapsedWithoutPause: 0 // Track time without pausing
 };
 
 // Tree State
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTree();
     updateDisplay();
     updateStats();
+    updateTreeGrowth();
     initializeDarkMode();
 });
 
@@ -83,6 +85,10 @@ function pauseTimer() {
     document.getElementById('start-btn').style.display = 'block';
     document.getElementById('pause-btn').style.display = 'none';
 
+    // Reset tree growth on pause
+    timerState.elapsedWithoutPause = 0;
+    updateTreeGrowth();
+
     saveTimerState();
 }
 
@@ -105,7 +111,9 @@ function resetTimer() {
     }
 
     timerState.seconds = 0;
+    timerState.elapsedWithoutPause = 0;
     updateDisplay();
+    updateTreeGrowth();
     saveTimerState();
 }
 
@@ -145,7 +153,10 @@ function tick() {
         timerState.seconds--;
     }
 
+    // Increment elapsed time for tree growth
+    timerState.elapsedWithoutPause++;
     updateDisplay();
+    updateTreeGrowth();
     saveTimerState();
 }
 
@@ -209,6 +220,24 @@ function updateDisplay() {
     if (progressRing) {
         progressRing.style.strokeDashoffset = offset;
     }
+}
+
+// ===================================
+// TREE GROWTH ANIMATION
+// ===================================
+
+function updateTreeGrowth() {
+    const mask = document.getElementById('tree-growth-mask');
+    if (!mask) return;
+
+    // Calculate growth based on elapsed time
+    // The tree grows as time passes without pausing
+    const maxGrowthTime = timerState.totalSeconds; // Max growth at full session
+    const growthProgress = Math.min(timerState.elapsedWithoutPause / maxGrowthTime, 1);
+
+    // Mask height decreases as tree grows (revealing tree from bottom)
+    const maskHeight = 100 - (growthProgress * 100);
+    mask.style.height = `${maskHeight}%`;
 }
 
 function updateStats() {

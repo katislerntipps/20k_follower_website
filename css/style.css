@@ -661,12 +661,21 @@ body.sakura-theme {
     text-align: center;
 }
 
-.cherry-tree {
+.cherry-tree,
+.home-tree-image {
     width: 100%;
     max-width: 300px;
     height: auto;
-    image-rendering: pixelated;
     filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.home-tree-image {
+    animation: float 3s ease-in-out infinite;
+}
+
+[data-theme="dark"] .home-tree-image {
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3)) brightness(0.9) contrast(1.1);
 }
 
 .cherry-tree .foliage rect,
