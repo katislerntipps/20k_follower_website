@@ -1246,6 +1246,13 @@ const ACHIEVEMENTS = [
         description: '7 Tage Streak',
         emoji: '👑',
         check: (stats) => stats.streak >= 7
+    },
+    {
+        id: 'point-collector',
+        name: 'Punkte-Sammler',
+        description: '500 Punkte gesammelt',
+        emoji: '💰',
+        check: (stats) => stats.points >= 500
     }
 ];
 
