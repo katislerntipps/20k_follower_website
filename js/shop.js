@@ -96,11 +96,15 @@ function initShop() {
 }
 
 function setupModalClose(modal) {
+    if (!modal) return;
+
     const closeBtn = modal.querySelector('.modal-close');
 
-    closeBtn.addEventListener('click', () => {
-        closeModal(modal);
-    });
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            closeModal(modal);
+        });
+    }
 
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
@@ -110,14 +114,16 @@ function setupModalClose(modal) {
 }
 
 function openModal(modal) {
+    if (!modal) return;
     modal.setAttribute('aria-hidden', 'false');
-    modal.classList.add('active');
+    modal.classList.add('open');
     document.body.style.overflow = 'hidden';
 }
 
 function closeModal(modal) {
+    if (!modal) return;
     modal.setAttribute('aria-hidden', 'true');
-    modal.classList.remove('active');
+    modal.classList.remove('open');
     document.body.style.overflow = '';
 }
 
