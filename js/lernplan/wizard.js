@@ -307,76 +307,75 @@ export class LernplanWizard {
     }
 
     addPointsToUser(points) {
-        // Integration mit bestehendem Points-System
-        if (typeof addPoints === 'function') {
-            addPoints(points);
-        }
+        // Direkte Integration mit Points-System (unabhängig von globalen Funktionen)
 
+        // 1. Hole Stats aus localStorage
+        const stats = this.getStats();
+
+        // 2. Füge Punkte hinzu
+        stats.points += points;
+
+        // 3. Speichere Stats
+        this.saveStats(stats);
+
+        // 4. Update Points Display
+        this.updatePointsDisplay();
+
+        // 5. Speichere Timestamp
         localStorage.setItem('studytok_last_plan_points', Date.now().toString());
 
-        if (typeof showNotification === 'function') {
-            showNotification(`🎯 Lernplan erstellt! +${points} Punkte`);
-        }
+        // 6. Zeige Notification
+        this.showNotification(`🎯 Lernplan erstellt! +${points} Punkte`, 'success');
     }
 
-    onRestart() {
-        // Restart wizard
-        this.formData = {
-            lerntyp: null,
-            szenario: null,
-            startdatum: null,
-            prüfungsdatum: null,
-            dauer: null,
-            custom_wochen: null,
-            fach: '',
-            fachkategorie: null,
-            themen: [],
-            aktuelles_verständnis: 5,
-            wochentage_verfügbarkeit: {},
-            bevorzugte_sessionlänge: '50',
-            max_sessions_pro_tag: 2,
-            chronotyp: 'neutral',
-            bevorzugte_zeiten: [],
-            lernstil: 'balanced',
-            methoden_präferenz: {
-                spaced_repetition: true,
-                active_recall: true,
-                interleaving: true,
-                pomodoro: true
-            },
-            motivationstyp: 'gemischt',
-            andere_verpflichtungen: [],
-            puffer_gewünscht: true,
-            reminder_gewünscht: false,
-            reminder_typ: 'email'
+    // Stats Management Hilfsfunktionen
+    getStats() {
+        const defaultStats = {
+            sessions: 0,
+            focusTime: 0,
+            streak: 1,
+            achievements: 0,
+            points: 0,
+            lastActive: new Date().toDateString()
         };
 
-        this.generatedPlan = null;
-        this.clearFormData();
-
-        // Reset UI
-        this.container.querySelector('#plan-output').style.display = 'none';
-        this.container.querySelector('.wizard-progress').style.display = 'block';
-        this.container.querySelector('.wizard-content').style.display = 'block';
-
-        // Reinitialize steps
-        this.initializeSteps();
-        this.showStep(1);
-
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const stored = localStorage.getItem('studytok_stats');
+        return stored ? JSON.parse(stored) : defaultStats;
     }
 
-    // Local Storage Management
-    saveFormData() {
-        localStorage.setItem('lernplan_wizard_data', JSON.stringify(this.formData));
+    saveStats(stats) {
+        localStorage.setItem('studytok_stats', JSON.stringify(stats));
     }
 
-    loadFormData() {
-        const stored = localStorage.getItem('lernplan_wizard_data');
-        return stored ? JSON.parse(stored) : null;
+    updatePointsDisplay() {
+        const stats = this.getStats();
+        const pointsElements = document.querySelectorAll('.points-value');
+        pointsElements.forEach(el => {
+            el.textContent = stats.points;
+        });
     }
 
-    clearFormData() {
-        localStorage.removeItem('lernplan_wizard_data');
+    showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background: ${type === 'success' ? '#4CAF50' : '#FF5252'};
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+        `;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
     }
-}
