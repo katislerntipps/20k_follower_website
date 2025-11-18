@@ -178,12 +178,17 @@ export class Step3Themen {
     addThema() {
         if (this.formData.themen.length >= 10) return;
 
+        // Speichere aktuelle Formulardaten VOR dem Neu-Rendern
+        this.updateFormData();
+
+        // Füge neues Thema hinzu
         this.formData.themen.push({
             name: '',
             komplexität: 'mittel',
             priorität: 'mittel'
         });
 
+        // Neu rendern
         this.render();
         this.attachListeners();
     }
@@ -191,7 +196,13 @@ export class Step3Themen {
     removeThema(index) {
         if (this.formData.themen.length <= 1) return;
 
+        // Speichere aktuelle Formulardaten VOR dem Neu-Rendern
+        this.updateFormData();
+
+        // Entferne Thema
         this.formData.themen.splice(index, 1);
+
+        // Neu rendern
         this.render();
         this.attachListeners();
     }
