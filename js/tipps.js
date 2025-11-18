@@ -386,11 +386,23 @@ function getStats() {
         streak: 1,
         achievements: 0,
         points: 0,
-        lastActive: new Date().toDateString()
+        lastActive: new Date().toDateString(),
+        unlockedAchievements: [],
+        sessionsToday: 0,
+        lastSessionDate: new Date().toDateString(),
+        consecutiveSessions: 0
     };
 
     const stored = localStorage.getItem('studytok_stats');
-    return stored ? JSON.parse(stored) : defaultStats;
+    const stats = stored ? JSON.parse(stored) : defaultStats;
+
+    // Ensure new properties exist
+    if (!stats.unlockedAchievements) stats.unlockedAchievements = [];
+    if (!stats.sessionsToday) stats.sessionsToday = 0;
+    if (!stats.lastSessionDate) stats.lastSessionDate = new Date().toDateString();
+    if (!stats.consecutiveSessions) stats.consecutiveSessions = 0;
+
+    return stats;
 }
 
 function saveStats(stats) {
