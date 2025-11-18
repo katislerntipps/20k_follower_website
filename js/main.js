@@ -155,7 +155,7 @@ function getPointsRules() {
         {
             icon: '💡',
             title: 'Lerntipp generieren',
-            description: 'Lass dir einen neuen Lerntipp anzeigen (jeder 10.)',
+            description: 'Lass dir einen neuen Lerntipp anzeigen',
             points: 2
         },
         {
