@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateStats();
     updateTreeGrowth();
     initializeDarkMode();
+    initializeNotifications();
 });
 
 // ===================================
@@ -609,7 +610,39 @@ function saveTreeState() {
 // NOTIFICATIONS & SOUNDS
 // ===================================
 
+function initializeNotifications() {
+    const notificationsCheckbox = document.getElementById('notifications');
+
+    if (notificationsCheckbox) {
+        // Request permission when checkbox is clicked
+        notificationsCheckbox.addEventListener('change', function() {
+            if (this.checked && 'Notification' in window) {
+                if (Notification.permission === 'default') {
+                    // Use Promise-based API for better compatibility
+                    Notification.requestPermission().then(function(permission) {
+                        if (permission === 'granted') {
+                            console.log('Browser-Benachrichtigungen aktiviert');
+                        }
+                    });
+                }
+            }
+        });
+
+        // Request permission on load if checkbox is checked
+        if (notificationsCheckbox.checked && 'Notification' in window) {
+            if (Notification.permission === 'default') {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        console.log('Browser-Benachrichtigungen aktiviert');
+                    }
+                });
+            }
+        }
+    }
+}
+
 function showNotification(message, type = 'success') {
+    // Always show in-app notification
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.textContent = message;
@@ -634,6 +667,36 @@ function showNotification(message, type = 'success') {
         notification.style.animation = 'slideOut 0.3s ease-out';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
+
+    // Show browser notification if enabled and supported
+    showBrowserNotification(message);
+}
+
+function showBrowserNotification(message) {
+    const notificationsEnabled = document.getElementById('notifications')?.checked;
+
+    // Only send browser notification if:
+    // 1. Checkbox is enabled
+    // 2. Browser supports notifications
+    // 3. User has granted permission
+    if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
+        const notification = new Notification('StudyTok Companion - Pomodoro Timer', {
+            body: message,
+            icon: 'image/logo.png',
+            badge: 'image/logo.png',
+            tag: 'pomodoro-timer',
+            requireInteraction: false
+        });
+
+        // Auto-close after 5 seconds
+        setTimeout(() => notification.close(), 5000);
+
+        // Focus window when notification is clicked
+        notification.onclick = function() {
+            window.focus();
+            this.close();
+        };
+    }
 }
 
 function playCompletionSound() {
