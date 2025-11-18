@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
-    <script async src="https://www.tiktok.com/embed.js"></script>
+    <!-- TikTok embed script will be loaded on demand when user clicks a video -->
 </head>
 <body>
     <div class="blossom-background" aria-hidden="true"></div>
@@ -183,48 +183,64 @@
             <h2 class="section-title">Die Neusten TikTok-Videos</h2>
             <div class="video-grid">
                 <div class="video-card">
-                    <a href="https://www.tiktok.com/@katislerntipps/video/7573783708772207894" target="_blank" rel="noopener noreferrer" class="video-link">
-                        <div class="video-thumbnail">
-                            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@katislerntipps/video/7573783708772207894" data-video-id="7573783708772207894" style="max-width: 605px;min-width: 325px;">
-                                <section></section>
-                            </blockquote>
+                    <div class="video-thumbnail tiktok-video-placeholder" data-video-id="7573783708772207894" data-video-url="https://www.tiktok.com/@katislerntipps/video/7573783708772207894">
+                        <div class="video-play-overlay">
+                            <div class="video-play-button">
+                                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="40" cy="40" r="40" fill="rgba(0, 0, 0, 0.7)"/>
+                                    <path d="M32 24L56 40L32 56V24Z" fill="white"/>
+                                </svg>
+                            </div>
+                            <p class="video-play-text">Klicken zum Abspielen</p>
                         </div>
-                        <h4 class="video-title">Die Feynman-Methode → Markier jemanden der paar Ideen braucht 👀</h4>
-                        <p class="video-meta">126.7K views</p>
-                    </a>
+                    </div>
+                    <h4 class="video-title">Die Feynman-Methode → Markier jemanden der paar Ideen braucht 👀</h4>
+                    <p class="video-meta">126.7K views</p>
                 </div>
                 <div class="video-card">
-                    <a href="https://www.tiktok.com/@katislerntipps/video/7573028369600679190" target="_blank" rel="noopener noreferrer" class="video-link">
-                        <div class="video-thumbnail">
-                            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@katislerntipps/video/7573028369600679190" data-video-id="7573028369600679190" style="max-width: 605px;min-width: 325px;">
-                                <section></section>
-                            </blockquote>
+                    <div class="video-thumbnail tiktok-video-placeholder" data-video-id="7573028369600679190" data-video-url="https://www.tiktok.com/@katislerntipps/video/7573028369600679190">
+                        <div class="video-play-overlay">
+                            <div class="video-play-button">
+                                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="40" cy="40" r="40" fill="rgba(0, 0, 0, 0.7)"/>
+                                    <path d="M32 24L56 40L32 56V24Z" fill="white"/>
+                                </svg>
+                            </div>
+                            <p class="video-play-text">Klicken zum Abspielen</p>
                         </div>
-                        <h4 class="video-title">Spaced Repetition Hack → Markier jemanden der diese Hacks braucht 🤝</h4>
-                        <p class="video-meta">47.8K views</p>
-                    </a>
+                    </div>
+                    <h4 class="video-title">Spaced Repetition Hack → Markier jemanden der diese Hacks braucht 🤝</h4>
+                    <p class="video-meta">47.8K views</p>
                 </div>
                 <div class="video-card">
-                    <a href="https://www.tiktok.com/@katislerntipps/video/7572200114773658902" target="_blank" rel="noopener noreferrer" class="video-link">
-                        <div class="video-thumbnail">
-                            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@katislerntipps/video/7572200114773658902" data-video-id="7572200114773658902" style="max-width: 605px;min-width: 325px;">
-                                <section></section>
-                            </blockquote>
+                    <div class="video-thumbnail tiktok-video-placeholder" data-video-id="7572200114773658902" data-video-url="https://www.tiktok.com/@katislerntipps/video/7572200114773658902">
+                        <div class="video-play-overlay">
+                            <div class="video-play-button">
+                                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="40" cy="40" r="40" fill="rgba(0, 0, 0, 0.7)"/>
+                                    <path d="M32 24L56 40L32 56V24Z" fill="white"/>
+                                </svg>
+                            </div>
+                            <p class="video-play-text">Klicken zum Abspielen</p>
                         </div>
-                        <h4 class="video-title">Active Recall in 5 Min → Vertraut mir, diese Methode ist anders krass 🧠🤝</h4>
-                        <p class="video-meta">112.7K views</p>
-                    </a>
+                    </div>
+                    <h4 class="video-title">Active Recall in 5 Min → Vertraut mir, diese Methode ist anders krass 🧠🤝</h4>
+                    <p class="video-meta">112.7K views</p>
                 </div>
                 <div class="video-card">
-                    <a href="https://www.tiktok.com/@katislerntipps/video/7571567256912661762" target="_blank" rel="noopener noreferrer" class="video-link">
-                        <div class="video-thumbnail">
-                            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@katislerntipps/video/7571567256912661762" data-video-id="7571567256912661762" style="max-width: 605px;min-width: 325px;">
-                                <section></section>
-                            </blockquote>
+                    <div class="video-thumbnail tiktok-video-placeholder" data-video-id="7571567256912661762" data-video-url="https://www.tiktok.com/@katislerntipps/video/7571567256912661762">
+                        <div class="video-play-overlay">
+                            <div class="video-play-button">
+                                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="40" cy="40" r="40" fill="rgba(0, 0, 0, 0.7)"/>
+                                    <path d="M32 24L56 40L32 56V24Z" fill="white"/>
+                                </svg>
+                            </div>
+                            <p class="video-play-text">Klicken zum Abspielen</p>
                         </div>
-                        <h4 class="video-title">Verrückte Gedächtnistricks → Wer sollte dafür zahlen? Zuschauerin wollte eure Meinung</h4>
-                        <p class="video-meta">115.6K views</p>
-                    </a>
+                    </div>
+                    <h4 class="video-title">Verrückte Gedächtnistricks → Wer sollte dafür zahlen? Zuschauerin wollte eure Meinung</h4>
+                    <p class="video-meta">115.6K views</p>
                 </div>
             </div>
             <div class="section-footer">
