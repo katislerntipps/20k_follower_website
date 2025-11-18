@@ -229,7 +229,34 @@ function setupHomeTreeAnimation() {
     const petals = stage.parentElement?.querySelectorAll('.hero-floating-petals .floating-petal');
 
     gsap.set(stage, { opacity: 0, y: 18, scale: 0.96 });
-    gsap.to([trunk, branches, blooms], { rotate: 1.2, yoyo: true, repeat: -1, duration: 5, ease: 'sine.inOut' });
+
+    const swayTl = gsap.timeline({ repeat: -1, yoyo: true, defaults: { ease: 'sine.inOut', duration: 5 } });
+    swayTl
+        .to(trunk, { rotate: 1.2, xPercent: -0.2 }, 0)
+        .to(branches, { rotate: -1.4, xPercent: 0.6 }, 0)
+        .to(blooms, { rotate: 1.6, xPercent: -0.8 }, 0.1);
+
+    ScrollTrigger.create({
+        trigger: '#home-cherry-tree',
+        start: 'top bottom',
+        end: 'bottom top',
+        onUpdate: (self) => swayTl.timeScale(0.8 + self.progress * 0.6)
+    });
+
+    const parallaxTl = gsap.timeline({
+        scrollTrigger: {
+            trigger: '#home-cherry-tree',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true
+        }
+    });
+
+    parallaxTl
+        .fromTo(trunk, { yPercent: 0 }, { yPercent: 8 }, 0)
+        .fromTo(branches, { yPercent: -4 }, { yPercent: 12 }, 0)
+        .fromTo(blooms, { yPercent: -10, scale: 1.01 }, { yPercent: 16, scale: 1.045 }, 0)
+        .fromTo(glow, { yPercent: -14, scale: 1 }, { yPercent: 20, scale: 1.08 }, 0);
 
     const intro = gsap.timeline({
         scrollTrigger: {
@@ -251,6 +278,33 @@ function setupHomeTreeAnimation() {
             trigger: '#home-cherry-tree',
             start: 'top 82%'
         }});
+
+        const petalSequence = gsap.timeline({
+            repeat: -1,
+            repeatDelay: gsap.utils.random(6, 8)
+        }).fromTo(petals, {
+            opacity: 0.9,
+            y: -8,
+            rotate: () => gsap.utils.random(-14, 14),
+            skewX: () => gsap.utils.random(-8, 8)
+        }, {
+            opacity: 1,
+            y: 8,
+            rotate: () => gsap.utils.random(12, 26),
+            skewX: () => gsap.utils.random(-12, 12),
+            duration: 2.4,
+            ease: 'sine.inOut',
+            stagger: { each: 0.18, from: 'random' }
+        });
+
+        ScrollTrigger.create({
+            trigger: '#home-cherry-tree',
+            start: 'top 82%',
+            onEnter: () => petalSequence.restart(true),
+            onEnterBack: () => petalSequence.restart(true),
+            onLeave: () => petalSequence.pause(),
+            onLeaveBack: () => petalSequence.pause()
+        });
     }
 }
 

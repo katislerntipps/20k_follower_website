@@ -709,25 +709,34 @@ body.sakura-theme {
     opacity: 0;
     transform-origin: 50% 90%;
     filter: drop-shadow(0 12px 28px rgba(197, 121, 152, 0.25));
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
 }
 
 .tree-layer-trunk {
     clip-path: polygon(44% 100%, 56% 100%, 56% 68%, 46% 60%, 42% 40%, 44% 24%, 48% 12%, 52% 0%, 44% 0%, 35% 0%, 30% 14%, 34% 36%, 38% 48%, 42% 68%);
+    transform: translateZ(2px) scale(1.01);
+    filter: drop-shadow(0 10px 18px rgba(110, 68, 86, 0.35)) saturate(1.02);
 }
 
 .tree-layer-branches {
     clip-path: polygon(0% 38%, 40% 34%, 60% 32%, 82% 36%, 100% 44%, 100% 82%, 0% 82%);
+    transform: translateZ(4px) scale(1.015);
+    filter: drop-shadow(0 12px 22px rgba(163, 112, 138, 0.3)) saturate(1.04);
 }
 
 .tree-layer-blooms {
     clip-path: polygon(6% 0%, 94% 0%, 100% 30%, 90% 50%, 70% 60%, 52% 72%, 42% 70%, 20% 62%, 6% 40%);
     opacity: 0;
+    transform: translateZ(6px) scale(1.02);
+    filter: drop-shadow(0 16px 28px rgba(228, 158, 184, 0.35)) contrast(1.03);
 }
 
 .tree-layer-glow {
     background: radial-gradient(circle at 50% 45%, rgba(255, 183, 197, 0.55) 0%, rgba(255, 183, 197, 0) 40%);
     opacity: 0;
-    filter: blur(14px);
+    filter: blur(14px) drop-shadow(0 18px 36px rgba(255, 183, 197, 0.4));
+    transform: translateZ(1px) scale(1.02);
 }
 
 .floating-petal,
@@ -758,6 +767,27 @@ body.sakura-theme {
 
 .cherry-tree .falling-petals .petal-fall-2 {
     animation-delay: 0.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        scroll-behavior: auto;
+    }
+
+    #home-cherry-tree,
+    .tree-layer,
+    .floating-petal,
+    .hero-floating-petals .floating-petal,
+    .blossom-background .petal {
+        animation: none !important;
+        transform: none !important;
+        transition: opacity 0.6s ease;
+    }
+
+    .tree-layer,
+    #home-cherry-tree {
+        opacity: 1 !important;
+    }
 }
 
 .cherry-tree .falling-petals .petal-fall-3 {
