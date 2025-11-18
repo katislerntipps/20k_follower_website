@@ -289,50 +289,11 @@ function levelUp() {
 }
 
 function renderTree() {
-    const blossomsContainer = document.getElementById('blossoms-container');
-    if (!blossomsContainer) return;
-
-    // Clear existing blossoms
-    blossomsContainer.innerHTML = '';
-
-    // Blossom positions for different levels
-    const positions = [
-        { cx: 130, cy: 320 },
-        { cx: 270, cy: 320 },
-        { cx: 120, cy: 260 },
-        { cx: 280, cy: 260 },
-        { cx: 200, cy: 240 }
-    ];
-
-    // Render blossoms
-    for (let i = 0; i < Math.min(treeState.blossoms, 5); i++) {
-        const pos = positions[i];
-        const blossom = createBlossomElement(pos.cx, pos.cy, i);
-        blossomsContainer.innerHTML += blossom;
-    }
+    renderTimerCherryTree();
 
     // Update tree info
     document.getElementById('tree-level').textContent = treeState.level;
     document.getElementById('blossoms-count').textContent = treeState.blossoms;
-
-    // Add falling petals
-    addFallingPetals();
-}
-
-function createBlossomElement(cx, cy, index) {
-    const colors = ['#FFB7C5', '#FFC8D3', '#FFD4E0', '#FF69B4', '#FF1493'];
-    const color = colors[index % colors.length];
-
-    return `
-        <g class="blossom-group" style="animation: blossom-appear 0.6s ease-out ${index * 0.2}s both">
-            <circle cx="${cx}" cy="${cy}" r="25" fill="${color}" opacity="0.8"/>
-            <circle cx="${cx - 8}" cy="${cy - 8}" r="8" fill="${color}" opacity="0.9"/>
-            <circle cx="${cx + 8}" cy="${cy - 8}" r="8" fill="${color}" opacity="0.9"/>
-            <circle cx="${cx - 8}" cy="${cy + 8}" r="8" fill="${color}" opacity="0.9"/>
-            <circle cx="${cx + 8}" cy="${cy + 8}" r="8" fill="${color}" opacity="0.9"/>
-            <circle cx="${cx}" cy="${cy}" r="6" fill="#FFE5EC"/>
-        </g>
-    `;
 }
 
 function addFallingPetals() {
@@ -340,19 +301,45 @@ function addFallingPetals() {
     if (!fallingPetalsContainer) return;
 
     // Add random falling petals
-    const petalCount = Math.min(treeState.totalSessions, 10);
+    const petalCount = Math.min(treeState.totalSessions + 4, 10);
     fallingPetalsContainer.innerHTML = '';
 
     for (let i = 0; i < petalCount; i++) {
-        const x = 100 + Math.random() * 200;
-        const y = 200 + Math.random() * 100;
-        const delay = Math.random() * 5;
-
-        fallingPetalsContainer.innerHTML += `
-            <circle cx="${x}" cy="${y}" r="4" fill="#FFB7C5"
-                    style="animation: petal-fall 6s ease-in-out infinite ${delay}s"/>
-        `;
+        const petal = document.createElement('img');
+        petal.src = 'image/cherry_petal.svg';
+        petal.alt = 'Falling cherry petal';
+        petal.className = 'timer-floating-petal';
+        petal.style.setProperty('--x', `${20 + Math.random() * 60}%`);
+        petal.style.setProperty('--delay', `${Math.random() * 6}s`);
+        petal.style.setProperty('--duration', `${10 + Math.random() * 6}s`);
+        petal.style.setProperty('--scale', `${0.5 + Math.random() * 0.6}`);
+        fallingPetalsContainer.appendChild(petal);
     }
+}
+
+function renderTimerCherryTree() {
+    const wrapper = document.querySelector('.timer-tree-wrapper');
+    if (!wrapper) return;
+
+    let treeImage = wrapper.querySelector('.timer-tree-image');
+    if (!treeImage) {
+        treeImage = document.createElement('img');
+        treeImage.className = 'timer-tree-image';
+        wrapper.appendChild(treeImage);
+    }
+
+    treeImage.src = 'image/cherry_blossom_tree.svg';
+    treeImage.alt = 'Wachsender Kirschblütenbaum';
+
+    let fallingLayer = wrapper.querySelector('#falling-petals');
+    if (!fallingLayer) {
+        fallingLayer = document.createElement('div');
+        fallingLayer.id = 'falling-petals';
+        fallingLayer.className = 'timer-petal-layer';
+        wrapper.appendChild(fallingLayer);
+    }
+
+    addFallingPetals();
 }
 
 // ===================================
