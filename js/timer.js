@@ -379,8 +379,17 @@ function updateTimerTreeImage() {
 
     // Only update if in focus mode (not during breaks)
     if (timerState.mode === 'focus') {
-        // Check session count first (higher priority)
-        if (timerState.cycleCount === 1) {
+        // Check session count (cycleCount represents completed sessions)
+        if (timerState.cycleCount === 0) {
+            // Session 0 (not started) or Session 1 (first session running)
+            if (timerState.isRunning) {
+                // Session 1: First session is running
+                imageNumber = 2;
+            } else {
+                // Session 0: Before first session starts
+                imageNumber = 1;
+            }
+        } else if (timerState.cycleCount === 1) {
             // Session 2 of 4
             imageNumber = 3;
         } else if (timerState.cycleCount === 2) {
@@ -389,16 +398,6 @@ function updateTimerTreeImage() {
         } else if (timerState.cycleCount >= 3) {
             // Session 4 of 4
             imageNumber = 6;
-        } else if (timerState.cycleCount === 0) {
-            // Session 1 of 4
-            // Check elapsed time (13 minutes = 780 seconds)
-            if (timerState.elapsedWithoutPause >= 780) {
-                // After 13 minutes have passed in first session
-                imageNumber = 2;
-            } else {
-                // Before start or less than 13 minutes
-                imageNumber = 1;
-            }
         }
     }
 
