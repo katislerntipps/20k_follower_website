@@ -520,10 +520,90 @@
 
     .timer-controls {
         flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .control-btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
     }
 
     .timer-stats {
         flex-direction: column;
         gap: var(--spacing-sm);
+    }
+
+    .tree-canvas {
+        min-height: 250px;
+    }
+
+    .timer-tree-wrapper {
+        max-width: 100%;
+    }
+
+    .mode-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .pomodoro-cycle-indicator {
+        padding: 0.5rem !important;
+        margin-top: 0.75rem !important;
+    }
+
+    #cycle-dots {
+        gap: 0.35rem !important;
+    }
+
+    .achievements-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .achievement-card {
+        padding: 1.25rem;
+    }
+
+    /* Better spacing for mobile */
+    .timer-card {
+        padding: 1.5rem;
+    }
+
+    .settings-card {
+        padding: 1.5rem;
+    }
+
+    .tree-card {
+        padding: 1.5rem;
+    }
+}
+
+/* Extra small screens (iPhone SE, etc.) */
+@media (max-width: 375px) {
+    .timer-display {
+        width: 180px;
+        height: 180px;
+    }
+
+    .timer-time {
+        font-size: 2rem;
+    }
+
+    .timer-ring {
+        width: 180px;
+        height: 180px;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .timer-hero {
+        padding: 2rem 0;
     }
 }
