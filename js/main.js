@@ -83,50 +83,66 @@ function updatePoints() {
     });
 }
 
-function getPointsHistory() {
-    const defaultHistory = [
-        { title: 'Pomodoro abgeschlossen', detail: '25 Minuten Fokus', points: 50, timestamp: new Date().toISOString() },
-        { title: 'Täglicher Login', detail: 'Motivation gecheckt', points: 15, timestamp: new Date(Date.now() - 86400000).toISOString() },
-        { title: 'Lernplan erstellt', detail: 'Ziele für die Woche gesetzt', points: 30, timestamp: new Date(Date.now() - 2 * 86400000).toISOString() }
+function getPointsRules() {
+    return [
+        {
+            icon: '🍅',
+            title: 'Focus-Session abschließen',
+            description: 'Beende eine 25-minütige Pomodoro-Session',
+            points: 10
+        },
+        {
+            icon: '💡',
+            title: 'Lerntipp generieren',
+            description: 'Lass dir einen neuen Lerntipp anzeigen',
+            points: 2
+        },
+        {
+            icon: '🎯',
+            title: 'Täglicher Login',
+            description: 'Melde dich jeden Tag an',
+            points: 15
+        },
+        {
+            icon: '📝',
+            title: 'Lernplan erstellen',
+            description: 'Plane deine Lernziele für die Woche',
+            points: 30
+        },
+        {
+            icon: '🔥',
+            title: 'Streak aufbauen',
+            description: 'Lerne mehrere Tage hintereinander',
+            points: 25
+        },
+        {
+            icon: '🎵',
+            title: 'Fokusmusik nutzen',
+            description: 'Starte eine Session mit Fokusmusik',
+            points: 5
+        }
     ];
-
-    const stored = localStorage.getItem('studytok_points_history');
-    if (stored) return JSON.parse(stored);
-
-    localStorage.setItem('studytok_points_history', JSON.stringify(defaultHistory));
-    return defaultHistory;
 }
 
-function formatHistoryDate(isoString) {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-}
-
-function renderPointsHistory(history) {
+function renderPointsRules() {
     const list = document.querySelector('#points-history-modal .history-list');
-    const emptyState = document.querySelector('#points-history-modal .history-empty');
-    if (!list || !emptyState) return;
+    if (!list) return;
 
     list.innerHTML = '';
+    const rules = getPointsRules();
 
-    if (!history.length) {
-        emptyState.hidden = false;
-        return;
-    }
-
-    emptyState.hidden = true;
-
-    history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-    history.forEach(item => {
+    rules.forEach(rule => {
         const li = document.createElement('li');
         li.className = 'history-item';
         li.innerHTML = `
-            <div>
-                <p class="history-title">${item.title}</p>
-                <p class="history-meta">${item.detail || ''} • ${formatHistoryDate(item.timestamp)}</p>
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <span style="font-size: 24px; line-height: 1;">${rule.icon}</span>
+                <div>
+                    <p class="history-title">${rule.title}</p>
+                    <p class="history-meta">${rule.description}</p>
+                </div>
             </div>
-            <span class="history-points">+${item.points}</span>
+            <span class="history-points">+${rule.points}</span>
         `;
         list.appendChild(li);
     });
@@ -139,7 +155,7 @@ function initializePointsHistory() {
 
     const closeBtn = modal.querySelector('.modal-close');
     const openModal = () => {
-        renderPointsHistory(getPointsHistory());
+        renderPointsRules();
         modal.classList.add('open');
         modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
