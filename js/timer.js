@@ -490,8 +490,7 @@ function getLevelEmoji(level) {
         case 4: return '🌸';
         case 5: return '🌸🌸';
         case 6: return '🌸🌸🌸';
-        case 7: return '✨🌸🌸✨';
-        default: return level > 7 ? '✨🌸🌸✨' : '🌱';
+        default: return level > 6 ? '🌸🌸🌸' : '🌱';
     }
 }
 
