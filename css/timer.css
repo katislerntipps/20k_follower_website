@@ -322,26 +322,6 @@
     justify-content: center;
 }
 
-.timer-tree-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: bottom;
-    filter: drop-shadow(0 22px 40px rgba(200, 130, 160, 0.35)) drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
-    transition: filter 0.3s ease;
-}
-
-.tree-growth-mask {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, #E3F2FD 0%, #F5F5F5 100%);
-    transition: height 0.5s ease-out;
-    pointer-events: none;
-}
-
 .timer-petal-layer {
     inset: 0;
 }
@@ -351,19 +331,21 @@
     height: 28px;
 }
 
-#animated-tree {
-    width: 100%;
-    height: auto;
+.tree-finale-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
 }
 
-.trunk-main {
-    animation: grow-up 1.5s ease-out;
-}
-
-.branch {
-    stroke-dasharray: 200;
-    stroke-dashoffset: 200;
-    animation: draw-branch 2s ease-out forwards;
+.finale-petal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 12px;
+    background: radial-gradient(circle at 40% 40%, #fff, hsl(var(--hue), 76%, 74%));
+    border-radius: 60% 40% 60% 40%;
+    filter: drop-shadow(0 6px 10px rgba(255, 183, 197, 0.4));
 }
 
 /* ===================================
@@ -479,14 +461,6 @@
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-[data-theme="dark"] .tree-growth-mask {
-    background: linear-gradient(180deg, rgba(199, 169, 255, 0.12) 0%, rgba(17, 16, 45, 0.92) 100%);
-}
-
-[data-theme="dark"] .timer-tree-image {
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3)) brightness(0.9) contrast(1.1);
-}
-
 [data-theme="dark"] .achievements-section {
     background: var(--bg-card);
 }
@@ -495,48 +469,6 @@
     background: linear-gradient(135deg, rgba(255, 46, 230, 0.12) 0%, rgba(104, 210, 187, 0.12) 100%);
     border-color: rgba(255, 46, 230, 0.35);
     box-shadow: var(--shadow-lg);
-}
-
-/* ===================================
-   ANIMATIONS
-   =================================== */
-
-@keyframes grow-up {
-    from {
-        stroke-dasharray: 500;
-        stroke-dashoffset: 500;
-    }
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
-@keyframes draw-branch {
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
-@keyframes blossom-appear {
-    from {
-        opacity: 0;
-        transform: scale(0);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes petal-fall {
-    0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(150px) rotate(360deg);
-        opacity: 0;
-    }
 }
 
 /* ===================================

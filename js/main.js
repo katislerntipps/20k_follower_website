@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     applySakuraTheme();
     renderCherryTree();
     generateBlossomPetals();
+    setupHomeTreeAnimation();
     initializeStats();
     updatePoints();
     initializeDarkMode();
@@ -196,31 +197,61 @@ function generateBlossomPetals() {
 }
 
 function renderCherryTree() {
-    const heroTree = document.querySelector('.home-tree-image');
-    if (!heroTree) return;
+    const treeStage = document.getElementById('home-cherry-tree');
+    if (!treeStage) return;
 
-    heroTree.src = 'image/cherry_blossom_tree.svg';
-    heroTree.alt = 'Kirschblütenbaum Illustration';
-    heroTree.classList.add('cherry-tree-asset');
-
-    const wrapper = heroTree.closest('.tree-container');
-    if (!wrapper || wrapper.querySelector('.hero-floating-petals')) return;
-
-    const petalLayer = document.createElement('div');
-    petalLayer.className = 'hero-floating-petals';
-
-    const petalTotal = 8;
-    for (let i = 0; i < petalTotal; i++) {
-        const petal = document.createElement('span');
-        petal.className = 'floating-petal';
-        petal.style.setProperty('--x', `${Math.random() * 90}%`);
-        petal.style.setProperty('--duration', `${12 + Math.random() * 6}s`);
-        petal.style.setProperty('--delay', `${Math.random() * 6}s`);
-        petalLayer.appendChild(petal);
+    const petalLayer = treeStage.parentElement?.querySelector('.hero-floating-petals');
+    if (petalLayer && !petalLayer.children.length) {
+        const petalTotal = 10;
+        for (let i = 0; i < petalTotal; i++) {
+            const petal = document.createElement('span');
+            petal.className = 'floating-petal';
+            petal.style.setProperty('--x', `${Math.random() * 90}%`);
+            petal.style.setProperty('--duration', `${12 + Math.random() * 6}s`);
+            petal.style.setProperty('--delay', `${Math.random() * 6}s`);
+            petalLayer.appendChild(petal);
+        }
     }
+}
 
-    wrapper.style.position = 'relative';
-    wrapper.appendChild(petalLayer);
+function setupHomeTreeAnimation() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const stage = document.getElementById('home-cherry-tree');
+    if (!stage) return;
+
+    const trunk = stage.querySelector('.tree-layer-trunk');
+    const branches = stage.querySelector('.tree-layer-branches');
+    const blooms = stage.querySelector('.tree-layer-blooms');
+    const glow = stage.querySelector('.tree-layer-glow');
+    const petals = stage.parentElement?.querySelectorAll('.hero-floating-petals .floating-petal');
+
+    gsap.set(stage, { opacity: 0, y: 18, scale: 0.96 });
+    gsap.to([trunk, branches, blooms], { rotate: 1.2, yoyo: true, repeat: -1, duration: 5, ease: 'sine.inOut' });
+
+    const intro = gsap.timeline({
+        scrollTrigger: {
+            trigger: '#home-cherry-tree',
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+        }
+    });
+
+    intro
+        .to(stage, { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power2.out' })
+        .from(trunk, { opacity: 0, y: 40, duration: 0.8, ease: 'power1.out' }, '-=0.7')
+        .from(branches, { opacity: 0, y: 24, duration: 0.9, ease: 'power1.out' }, '-=0.4')
+        .from(blooms, { opacity: 0, scale: 0.85, filter: 'blur(8px)', duration: 0.9, ease: 'back.out(1.4)' }, '-=0.3')
+        .to(glow, { opacity: 0.28, duration: 0.6 }, '-=0.5');
+
+    if (petals?.length) {
+        gsap.fromTo(petals, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'sine.out', delay: 0.4, scrollTrigger: {
+            trigger: '#home-cherry-tree',
+            start: 'top 82%'
+        }});
+    }
 }
 
 // ===================================

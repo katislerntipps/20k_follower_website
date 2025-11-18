@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -184,8 +186,13 @@
 
                         <div class="tree-canvas">
                             <div class="timer-tree-wrapper">
-                                <img id="animated-tree" src="image/timer_tree.png" alt="Wachsender Baum" class="timer-tree-image">
-                                <div class="tree-growth-mask" id="tree-growth-mask"></div>
+                                <div class="tree-visual-stage" id="timer-tree-stage">
+                                    <div class="tree-layer tree-layer-trunk"></div>
+                                    <div class="tree-layer tree-layer-branches"></div>
+                                    <div class="tree-layer tree-layer-blooms"></div>
+                                    <div class="tree-layer tree-layer-glow"></div>
+                                </div>
+                                <div class="timer-petal-layer" id="timer-petal-layer"></div>
                             </div>
                         </div>
 

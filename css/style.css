@@ -662,20 +662,16 @@ body.sakura-theme {
 }
 
 .cherry-tree,
-.home-tree-image {
+.home-tree-image,
+.tree-visual-stage {
     width: 100%;
     max-width: 320px;
-    height: auto;
     filter: drop-shadow(0 20px 40px rgba(197, 121, 152, 0.35)) drop-shadow(0 10px 22px rgba(0,0,0,0.16));
     transition: transform 0.3s ease, filter 0.3s ease;
 }
 
-.home-tree-image {
-    animation: float 3s ease-in-out infinite;
-}
-
-[data-theme="dark"] .home-tree-image {
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3)) brightness(0.9) contrast(1.1);
+[data-theme="dark"] .tree-visual-stage {
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3)) brightness(0.92) contrast(1.05);
 }
 
 .cherry-tree .foliage rect,
@@ -691,6 +687,47 @@ body.sakura-theme {
     inset: 0;
     pointer-events: none;
     overflow: hidden;
+}
+
+.tree-visual-stage {
+    position: relative;
+    height: 380px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: visible;
+}
+
+.home-tree-stage {
+    height: 400px;
+}
+
+.tree-layer {
+    position: absolute;
+    inset: 0;
+    background: url('../image/cherry_blossom_tree.svg') center bottom/contain no-repeat;
+    opacity: 0;
+    transform-origin: 50% 90%;
+    filter: drop-shadow(0 12px 28px rgba(197, 121, 152, 0.25));
+}
+
+.tree-layer-trunk {
+    clip-path: polygon(44% 100%, 56% 100%, 56% 68%, 46% 60%, 42% 40%, 44% 24%, 48% 12%, 52% 0%, 44% 0%, 35% 0%, 30% 14%, 34% 36%, 38% 48%, 42% 68%);
+}
+
+.tree-layer-branches {
+    clip-path: polygon(0% 38%, 40% 34%, 60% 32%, 82% 36%, 100% 44%, 100% 82%, 0% 82%);
+}
+
+.tree-layer-blooms {
+    clip-path: polygon(6% 0%, 94% 0%, 100% 30%, 90% 50%, 70% 60%, 52% 72%, 42% 70%, 20% 62%, 6% 40%);
+    opacity: 0;
+}
+
+.tree-layer-glow {
+    background: radial-gradient(circle at 50% 45%, rgba(255, 183, 197, 0.55) 0%, rgba(255, 183, 197, 0) 40%);
+    opacity: 0;
+    filter: blur(14px);
 }
 
 .floating-petal,
@@ -844,7 +881,6 @@ body.sakura-theme {
     font-size: 4rem;
     margin-bottom: var(--spacing-md);
     display: inline-block;
-    animation: float 3s ease-in-out infinite;
 }
 
 .feature-title {
@@ -1191,24 +1227,6 @@ body.sakura-theme {
 /* ===================================
    ANIMATIONS
    =================================== */
-
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-}
 
 @keyframes coinFloat {
     0%, 100% {

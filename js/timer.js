@@ -20,12 +20,15 @@ let treeState = {
     totalSessions: 0
 };
 
+let treeTimeline;
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     loadTimerState();
     loadTreeState();
     initializeTimer();
     initializeTree();
+    setupTreeTimeline();
     updateDisplay();
     updateStats();
     updateTreeGrowth();
@@ -179,6 +182,7 @@ function timerComplete() {
 
         // Grow tree
         addBlossom();
+        playBloomFinale();
 
         // Auto-start break if enabled
         const autoStartBreak = document.getElementById('auto-start-break').checked;
@@ -226,18 +230,49 @@ function updateDisplay() {
 // TREE GROWTH ANIMATION
 // ===================================
 
-function updateTreeGrowth() {
-    const mask = document.getElementById('tree-growth-mask');
-    if (!mask) return;
+function setupTreeTimeline() {
+    if (typeof gsap === 'undefined') return;
 
-    // Calculate growth based on elapsed time
-    // The tree grows as time passes without pausing
-    const maxGrowthTime = timerState.totalSeconds; // Max growth at full session
+    const stage = document.getElementById('timer-tree-stage');
+    if (!stage) return;
+
+    if (treeTimeline) {
+        treeTimeline.kill();
+    }
+
+    const petals = stage.parentElement?.querySelectorAll('#timer-petal-layer .timer-floating-petal');
+
+    treeTimeline = gsap.timeline({
+        paused: true,
+        defaults: { ease: 'power2.out' }
+    });
+
+    treeTimeline
+        .fromTo('.tree-layer-trunk', { opacity: 0, y: 60, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 1.1 })
+        .fromTo('.tree-layer-branches', { opacity: 0, y: 40, scale: 0.95, filter: 'blur(6px)' }, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.3 }, '-=0.5')
+        .fromTo('.tree-layer-blooms', { opacity: 0, scale: 0.8, filter: 'blur(10px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.2 }, '-=0.3')
+        .to('.tree-layer-glow', { opacity: 0.35, duration: 0.6 }, '-=0.6')
+        .to(petals, { opacity: 1, duration: 0.8, stagger: 0.08, ease: 'sine.out' }, '-=0.3');
+
+    gsap.set(stage, { opacity: 0, y: 16 });
+    gsap.to(stage, { opacity: 1, y: 0, duration: 0.8, ease: 'power1.out' });
+
+    gsap.to('#timer-tree-stage .tree-layer', {
+        rotate: 1.4,
+        yoyo: true,
+        repeat: -1,
+        duration: 4,
+        ease: 'sine.inOut'
+    });
+}
+
+function updateTreeGrowth() {
+    if (!treeTimeline) return;
+
+    const maxGrowthTime = timerState.totalSeconds;
     const growthProgress = Math.min(timerState.elapsedWithoutPause / maxGrowthTime, 1);
 
-    // Mask height decreases as tree grows (revealing tree from bottom)
-    const maskHeight = 100 - (growthProgress * 100);
-    mask.style.height = `${maskHeight}%`;
+    treeTimeline.progress(growthProgress);
 }
 
 function updateStats() {
@@ -297,21 +332,18 @@ function renderTree() {
 }
 
 function addFallingPetals() {
-    const fallingPetalsContainer = document.getElementById('falling-petals');
+    const fallingPetalsContainer = document.getElementById('timer-petal-layer');
     if (!fallingPetalsContainer) return;
 
-    // Add random falling petals
-    const petalCount = Math.min(treeState.totalSessions + 4, 10);
+    const petalCount = Math.min(treeState.totalSessions + 6, 12);
     fallingPetalsContainer.innerHTML = '';
 
     for (let i = 0; i < petalCount; i++) {
-        const petal = document.createElement('img');
-        petal.src = 'image/cherry_petal.svg';
-        petal.alt = 'Falling cherry petal';
+        const petal = document.createElement('span');
         petal.className = 'timer-floating-petal';
         petal.style.setProperty('--x', `${20 + Math.random() * 60}%`);
-        petal.style.setProperty('--delay', `${Math.random() * 6}s`);
-        petal.style.setProperty('--duration', `${10 + Math.random() * 6}s`);
+        petal.style.setProperty('--delay', `${Math.random() * 4}s`);
+        petal.style.setProperty('--duration', `${12 + Math.random() * 6}s`);
         petal.style.setProperty('--scale', `${0.5 + Math.random() * 0.6}`);
         fallingPetalsContainer.appendChild(petal);
     }
@@ -321,25 +353,65 @@ function renderTimerCherryTree() {
     const wrapper = document.querySelector('.timer-tree-wrapper');
     if (!wrapper) return;
 
-    let treeImage = wrapper.querySelector('.timer-tree-image');
-    if (!treeImage) {
-        treeImage = document.createElement('img');
-        treeImage.className = 'timer-tree-image';
-        wrapper.appendChild(treeImage);
+    let stage = wrapper.querySelector('#timer-tree-stage');
+    if (!stage) {
+        stage = document.createElement('div');
+        stage.id = 'timer-tree-stage';
+        stage.className = 'tree-visual-stage';
+        stage.innerHTML = `
+            <div class="tree-layer tree-layer-trunk"></div>
+            <div class="tree-layer tree-layer-branches"></div>
+            <div class="tree-layer tree-layer-blooms"></div>
+            <div class="tree-layer tree-layer-glow"></div>
+        `;
+        wrapper.appendChild(stage);
     }
 
-    treeImage.src = 'image/cherry_blossom_tree.svg';
-    treeImage.alt = 'Wachsender Kirschblütenbaum';
-
-    let fallingLayer = wrapper.querySelector('#falling-petals');
+    let fallingLayer = wrapper.querySelector('#timer-petal-layer');
     if (!fallingLayer) {
         fallingLayer = document.createElement('div');
-        fallingLayer.id = 'falling-petals';
+        fallingLayer.id = 'timer-petal-layer';
         fallingLayer.className = 'timer-petal-layer';
         wrapper.appendChild(fallingLayer);
     }
 
     addFallingPetals();
+    setupTreeTimeline();
+    updateTreeGrowth();
+}
+
+function playBloomFinale() {
+    const wrapper = document.querySelector('.timer-tree-wrapper');
+    if (!wrapper || typeof gsap === 'undefined') return;
+
+    const finaleLayer = document.createElement('div');
+    finaleLayer.className = 'tree-finale-layer';
+    wrapper.appendChild(finaleLayer);
+
+    const burstCount = 16;
+    for (let i = 0; i < burstCount; i++) {
+        const petal = document.createElement('span');
+        petal.className = 'finale-petal';
+        petal.style.setProperty('--hue', `${320 + Math.random() * 40}`);
+        finaleLayer.appendChild(petal);
+
+        const angle = (i / burstCount) * Math.PI * 2;
+        const distance = 140 + Math.random() * 40;
+
+        gsap.fromTo(petal,
+            { x: 0, y: 0, scale: 0.4, opacity: 1, rotate: 0 },
+            {
+                x: Math.cos(angle) * distance,
+                y: Math.sin(angle) * distance,
+                scale: 1.2,
+                rotate: Math.random() * 220,
+                duration: 1.4,
+                ease: 'power2.out'
+            }
+        );
+    }
+
+    gsap.to(finaleLayer, { opacity: 0, duration: 1.2, delay: 1, onComplete: () => finaleLayer.remove() });
 }
 
 // ===================================
