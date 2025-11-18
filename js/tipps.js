@@ -431,8 +431,8 @@ function showNotification(message, type = 'success') {
 }
 
 // Add CSS animations
-const style = document.createElement('style');
-style.textContent = `
+const tippsAnimationStyle = document.createElement('style');
+tippsAnimationStyle.textContent = `
     @keyframes slideIn {
         from {
             transform: translateX(400px);
@@ -466,7 +466,7 @@ style.textContent = `
         }
     }
 `;
-document.head.appendChild(style);
+document.head.appendChild(tippsAnimationStyle);
 
 // ===================================
 // DARK MODE FUNCTIONALITY
