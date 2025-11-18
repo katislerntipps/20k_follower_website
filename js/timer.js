@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateStats();
     updateTreeGrowth();
     updateCycleIndicator();
+    updateTimerTreeImage();
     initializeDarkMode();
     initializeNotifications();
 });
@@ -154,6 +155,7 @@ function resetTimer() {
     updateTreeGrowth();
     updateModeButtons();
     updateCycleIndicator();
+    updateTimerTreeImage();
     saveTimerState();
 }
 
@@ -179,6 +181,7 @@ function changeMode(mode) {
 
     timerState.seconds = 0;
     updateDisplay();
+    updateTimerTreeImage();
     saveTimerState();
 }
 
@@ -206,6 +209,7 @@ function tick() {
 
     updateDisplay();
     updateTreeGrowth();
+    updateTimerTreeImage();
     saveTimerState();
 
     if (remainingSeconds <= 0) {
@@ -238,6 +242,7 @@ function timerComplete() {
         timerState.cycleCount++;
         saveTimerState();
         updateCycleIndicator();
+        updateTimerTreeImage();
 
         // Show browser notification
         showBrowserNotification('🎉 Focus-Session abgeschlossen! Zeit für eine Pause.');
@@ -357,6 +362,42 @@ function updateCycleIndicator() {
     }
 
     cycleDotsContainer.appendChild(cycleText);
+}
+
+function updateTimerTreeImage() {
+    const timerImage = document.getElementById('timer-tree-image');
+    if (!timerImage) return;
+
+    // Determine which image to show based on timer state
+    let imageNumber = 1;
+
+    // Only update if in focus mode (not during breaks)
+    if (timerState.mode === 'focus') {
+        // Check session count first (higher priority)
+        if (timerState.cycleCount === 1) {
+            // Session 2 of 4
+            imageNumber = 3;
+        } else if (timerState.cycleCount === 2) {
+            // Session 3 of 4
+            imageNumber = 5;
+        } else if (timerState.cycleCount >= 3) {
+            // Session 4 of 4
+            imageNumber = 6;
+        } else if (timerState.cycleCount === 0) {
+            // Session 1 of 4
+            // Check elapsed time (13 minutes = 780 seconds)
+            if (timerState.elapsedWithoutPause >= 780) {
+                // After 13 minutes have passed in first session
+                imageNumber = 2;
+            } else {
+                // Before start or less than 13 minutes
+                imageNumber = 1;
+            }
+        }
+    }
+
+    timerImage.src = `image/${imageNumber}.png`;
+    timerImage.alt = `Konzentrations-Status ${imageNumber}`;
 }
 
 // ===================================
