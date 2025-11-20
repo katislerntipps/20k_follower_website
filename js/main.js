@@ -126,6 +126,15 @@ function updatePoints() {
     });
 }
 
+// Global helper zum Hinzufügen von Punkten (für alle Seiten)
+function addPoints(points) {
+    const stats = getStats();
+    stats.points += points;
+    saveStats(stats);
+    updatePoints();
+    return stats.points;
+}
+
 // ===================================
 // TREE STATE MANAGEMENT
 // ===================================

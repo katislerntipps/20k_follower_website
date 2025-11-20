@@ -81,7 +81,10 @@ export function generateLernplan(eingaben) {
             hauptfach: eingaben.fach,
             zeitraum: `${zeitrahmen.tage} Tage`,
             chronotyp: eingaben.chronotyp,
-            methoden: Object.keys(eingaben.methoden_präferenz || {}).filter(k => eingaben.methoden_präferenz[k])
+            methoden: Object.keys(eingaben.methoden_präferenz || {}).filter(k => eingaben.methoden_präferenz[k]),
+            reminder_gewünscht: eingaben.reminder_gewünscht,
+            reminder_typ: eingaben.reminder_typ,
+            reminder_email: eingaben.reminder_email
         },
         zeitrahmen,
         spacingInfo

@@ -765,6 +765,43 @@
     margin-bottom: 2rem;
 }
 
+.reminder-banner {
+    margin-top: -0.75rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px dashed var(--primary);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    align-items: center;
+}
+
+.reminder-icon {
+    font-size: 1.5rem;
+}
+
+.reminder-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.reminder-title {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.reminder-text {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.reminder-extra {
+    font-size: 0.9rem;
+    color: var(--primary);
+}
+
 .toolbar-left, .toolbar-right {
     display: flex;
     gap: 0.75rem;

@@ -18,7 +18,7 @@ export class LernplanWizard {
         this.totalSteps = 6;
 
         // Form data storage
-        this.formData = this.loadFormData() || {
+        const defaultFormData = {
             // Step 1
             lerntyp: null,
             szenario: null,
@@ -56,8 +56,11 @@ export class LernplanWizard {
             andere_verpflichtungen: [],
             puffer_gewünscht: true,
             reminder_gewünscht: false,
-            reminder_typ: 'email'
+            reminder_typ: 'email',
+            reminder_email: ''
         };
+
+        this.formData = { ...defaultFormData, ...(this.loadFormData() || {}) };
 
         this.steps = [];
         this.planOutput = null;
@@ -348,7 +351,8 @@ export class LernplanWizard {
             andere_verpflichtungen: [],
             puffer_gewünscht: true,
             reminder_gewünscht: false,
-            reminder_typ: 'email'
+            reminder_typ: 'email',
+            reminder_email: ''
         };
 
         this.generatedPlan = null;

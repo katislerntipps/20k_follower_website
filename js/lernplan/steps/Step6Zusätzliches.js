@@ -63,6 +63,17 @@ export class Step6Zusätzliches {
                             <span>Keine (nur im Kalender)</span>
                         </label>
                     </div>
+                    <div class="form-group" id="reminder-email-group" style="margin-top: 0.75rem; display: ${(this.formData.reminder_gewünscht && this.formData.reminder_typ === 'email') ? 'block' : 'none'};">
+                        <label for="reminder-email" class="form-label">E-Mail für Erinnerungen</label>
+                        <input
+                            type="email"
+                            id="reminder-email"
+                            class="input"
+                            placeholder="deine@email.de"
+                            value="${this.formData.reminder_email || ''}"
+                        >
+                        <small class="input-hint">Wir speichern die Adresse nur lokal, um deine Kalender-Exports mit E-Mail-Alerts zu versehen.</small>
+                    </div>
                 </div>
 
                 <div class="info-box">
@@ -88,14 +99,34 @@ export class Step6Zusätzliches {
     attachListeners() {
         const reminderCheckbox = document.getElementById('reminder');
         const reminderTypeGroup = document.getElementById('reminder-type-group');
+        const reminderEmailGroup = document.getElementById('reminder-email-group');
+
+        const emailRadio = document.querySelector('input[name="reminder-typ"][value="email"]');
+        const reminderTypeRadios = document.querySelectorAll('input[name="reminder-typ"]');
 
         reminderCheckbox?.addEventListener('change', (e) => {
             reminderTypeGroup.style.display = e.target.checked ? 'block' : 'none';
+            reminderEmailGroup.style.display = (e.target.checked && emailRadio?.checked) ? 'block' : 'none';
+        });
+
+        reminderTypeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                reminderEmailGroup.style.display = (e.target.value === 'email' && reminderCheckbox?.checked) ? 'block' : 'none';
+            });
         });
     }
 
     validate() {
-        // Keine Validierung nötig, alles optional
+        const reminderChecked = document.getElementById('reminder')?.checked;
+        const reminderType = document.querySelector('input[name="reminder-typ"]:checked')?.value;
+        const reminderEmail = document.getElementById('reminder-email')?.value.trim();
+
+        if (reminderChecked && reminderType === 'email' && !reminderEmail) {
+            this.showError('Bitte gib eine E-Mail-Adresse für deine Erinnerungen ein.');
+            return false;
+        }
+
+        this.clearError();
         return true;
     }
 
@@ -103,6 +134,7 @@ export class Step6Zusätzliches {
         this.formData.puffer_gewünscht = document.getElementById('puffer')?.checked !== false;
         this.formData.reminder_gewünscht = document.getElementById('reminder')?.checked || false;
         this.formData.reminder_typ = document.querySelector('input[name="reminder-typ"]:checked')?.value || 'email';
+        this.formData.reminder_email = document.getElementById('reminder-email')?.value.trim() || '';
     }
 
     showError(message) {
