@@ -72,13 +72,24 @@ function generateICSEvent(session, planInfo) {
 
     // Alarm 15 Minuten vorher (optional)
     if (planInfo?.reminder_gewünscht) {
-        event.push(
-            'BEGIN:VALARM',
-            'TRIGGER:-PT15M',
-            'ACTION:DISPLAY',
-            `DESCRIPTION:Reminder: ${summary}`,
-            'END:VALARM'
-        );
+        const reminderLines = ['BEGIN:VALARM', 'TRIGGER:-PT15M'];
+
+        if (planInfo.reminder_typ === 'email' && planInfo.reminder_email) {
+            reminderLines.push(
+                'ACTION:EMAIL',
+                `SUMMARY:Lernsession: ${summary}`,
+                `DESCRIPTION:Reminder: ${summary}`,
+                `ATTENDEE:mailto:${planInfo.reminder_email}`
+            );
+        } else {
+            reminderLines.push(
+                'ACTION:DISPLAY',
+                `DESCRIPTION:Reminder: ${summary}`
+            );
+        }
+
+        reminderLines.push('END:VALARM');
+        event.push(...reminderLines);
     }
 
     event.push('END:VEVENT');

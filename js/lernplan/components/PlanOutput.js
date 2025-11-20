@@ -91,6 +91,8 @@ export class PlanOutput {
                     </div>
                 </div>
 
+                ${this.renderReminderStatus()}
+
                 <!-- Sessions Container -->
                 <div class="sessions-container">
                     <div id="liste-view" class="liste-view">
@@ -115,6 +117,29 @@ export class PlanOutput {
         `;
 
         this.container.innerHTML = html;
+    }
+
+    renderReminderStatus() {
+        const einstellungen = this.plan?.eingaben_zusammenfassung;
+
+        if (!einstellungen?.reminder_gewünscht) return '';
+
+        const isEmail = einstellungen.reminder_typ === 'email';
+        const typLabel = isEmail ? 'E-Mail' : (einstellungen.reminder_typ === 'push' ? 'Push' : 'Kalenderhinweis');
+        const emailInfo = isEmail && einstellungen.reminder_email
+            ? `<div class="reminder-extra">📧 Erinnerungen gehen an <strong>${einstellungen.reminder_email}</strong>. Du kannst die Adresse im letzten Schritt anpassen.</div>`
+            : '';
+
+        return `
+            <div class="reminder-banner">
+                <div class="reminder-icon">🔔</div>
+                <div class="reminder-content">
+                    <div class="reminder-title">Erinnerungen aktiv</div>
+                    <div class="reminder-text">Wir planen eine ${typLabel}-Erinnerung 15 Minuten vor jeder Session ein.</div>
+                    ${emailInfo}
+                </div>
+            </div>
+        `;
     }
 
     renderEmpfehlungen() {
@@ -265,14 +290,7 @@ export class PlanOutput {
                 // Check if it was the action button (don't trigger card click)
                 const isActionButton = e.target.closest('.session-actions button');
                 if (!isActionButton) {
-                    const sessionId = sessionCard.getAttribute('data-session-id');
-                    if (sessionId) {
-                        const session = this.plan.sessions.find(s => s.id === sessionId);
-                        if (session) {
-                            console.log('Opening session details:', session);
-                            this.showSessionDetails(session);
-                        }
-                    }
+                    this.openSession(sessionCard.getAttribute('data-session-id'));
                 }
             }
 
@@ -280,16 +298,12 @@ export class PlanOutput {
             const actionButton = e.target.closest('.session-actions button');
             if (actionButton) {
                 e.stopPropagation();
-                const sessionId = actionButton.getAttribute('data-session-id');
-                if (sessionId) {
-                    const session = this.plan.sessions.find(s => s.id === sessionId);
-                    if (session) {
-                        console.log('Opening session details from button:', session);
-                        this.showSessionDetails(session);
-                    }
-                }
+                this.openSession(actionButton.getAttribute('data-session-id'));
             }
         });
+
+        // Direkt auf Karten/Button klicken (Fallback, falls Event Delegation blockiert wird)
+        this.bindSessionClicks();
 
         // Export Buttons
         document.getElementById('export-pdf')?.addEventListener('click', () => this.exportPDF());
@@ -310,6 +324,29 @@ export class PlanOutput {
         modal?.addEventListener('click', (e) => {
             if (e.target === modal) this.closeModal();
         });
+    }
+
+    bindSessionClicks() {
+        const sessionElements = this.container.querySelectorAll('.session-card, .calendar-session, .session-actions button');
+
+        sessionElements.forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const sessionId = e.currentTarget.getAttribute('data-session-id');
+                if (sessionId) {
+                    this.openSession(sessionId);
+                }
+            });
+        });
+    }
+
+    openSession(sessionId) {
+        if (!sessionId) return;
+
+        const session = this.plan.sessions.find(s => String(s.id) === String(sessionId));
+        if (session) {
+            this.showSessionDetails(session);
+        }
     }
 
     switchView(view) {
