@@ -87,7 +87,7 @@ export class Step5Präferenzen {
                                    ${this.formData.methoden_präferenz.spaced_repetition !== false ? 'checked' : ''}>
                             <span>
                                 <strong>Spaced Repetition ⭐</strong><br>
-                                <small>Verteiltes Üben mit optimalen Abständen (Effektstärke d=0.75)</small>
+                                <small>Verteiltes Üben mit optimalen Abständen</small>
                             </span>
                         </label>
                         <label class="checkbox-label">
@@ -95,7 +95,7 @@ export class Step5Präferenzen {
                                    ${this.formData.methoden_präferenz.active_recall !== false ? 'checked' : ''}>
                             <span>
                                 <strong>Active Recall ⭐</strong><br>
-                                <small>Selbsttests ohne Spickzettel (Effektstärke d=0.74)</small>
+                                <small>Selbsttests ohne Spickzettel</small>
                             </span>
                         </label>
                         <label class="checkbox-label ${this.formData.themen?.length <= 1 ? 'disabled' : ''}">
