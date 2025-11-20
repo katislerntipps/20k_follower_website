@@ -2,6 +2,32 @@
    LERNPLAN GENERATOR STYLES
    =================================== */
 
+:root {
+    --empfehlung-warn-bg: #fff3e0;
+    --empfehlung-warn-border: #ff9800;
+    --empfehlung-erfolg-bg: #e8f5e9;
+    --empfehlung-erfolg-border: #4caf50;
+    --empfehlung-tipp-bg: #e3f2fd;
+    --empfehlung-tipp-border: #2196f3;
+    --empfehlung-info-bg: #f3e5f5;
+    --empfehlung-info-border: #9c27b0;
+    --empfehlung-subtitle-bg: linear-gradient(135deg, rgba(255, 183, 197, 0.24), rgba(212, 181, 241, 0.2));
+    --empfehlung-subtitle-text: var(--primary-dark);
+}
+
+[data-theme="dark"] {
+    --empfehlung-warn-bg: rgba(255, 152, 0, 0.12);
+    --empfehlung-warn-border: #ffb74d;
+    --empfehlung-erfolg-bg: rgba(104, 210, 187, 0.14);
+    --empfehlung-erfolg-border: #68d2bb;
+    --empfehlung-tipp-bg: rgba(199, 169, 255, 0.14);
+    --empfehlung-tipp-border: #c7a9ff;
+    --empfehlung-info-bg: rgba(255, 46, 230, 0.12);
+    --empfehlung-info-border: #ff9bf2;
+    --empfehlung-subtitle-bg: linear-gradient(135deg, rgba(255, 46, 230, 0.18), rgba(104, 210, 187, 0.14));
+    --empfehlung-subtitle-text: #ffe6f4;
+}
+
 /* ===================================
    WIZARD CONTAINER
    =================================== */
@@ -691,7 +717,13 @@
 .section-subtitle {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: var(--text-primary);
+    color: var(--empfehlung-subtitle-text);
+    background: var(--empfehlung-subtitle-bg);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
 }
 
 .empfehlungen-grid {
@@ -709,23 +741,23 @@
 }
 
 .empfehlung-warnung {
-    background: #fff3e0;
-    border-color: #ff9800;
+    background: var(--empfehlung-warn-bg);
+    border-color: var(--empfehlung-warn-border);
 }
 
 .empfehlung-erfolg {
-    background: #e8f5e9;
-    border-color: #4caf50;
+    background: var(--empfehlung-erfolg-bg);
+    border-color: var(--empfehlung-erfolg-border);
 }
 
 .empfehlung-tipp {
-    background: #e3f2fd;
-    border-color: #2196f3;
+    background: var(--empfehlung-tipp-bg);
+    border-color: var(--empfehlung-tipp-border);
 }
 
 .empfehlung-info {
-    background: #f3e5f5;
-    border-color: #9c27b0;
+    background: var(--empfehlung-info-bg);
+    border-color: var(--empfehlung-info-border);
 }
 
 .empfehlung-icon {
