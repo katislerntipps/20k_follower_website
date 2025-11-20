@@ -445,14 +445,12 @@ export function generatePDFHTML(plan) {
     <p>
         Basierend auf der Ebbinghaus'schen Vergessenskurve. Durch optimale Wiederholungsabstände
         (Tag 1, 3, 7, 14, 21, 28) wird das Gelernte im Langzeitgedächtnis verankert.
-        <strong>Effektstärke: d=0.75</strong>
     </p>
 
     <h3>🧠 Active Recall (Aktives Abrufen)</h3>
     <p>
         Statt passivem Wiederlesen: Aktives Abrufen des Gelernten ohne Hilfsmittel.
         Diese Methode hat die höchste wissenschaftliche Evidenz für Lernerfolg.
-        <strong>Effektstärke: d=0.74</strong>
     </p>
 
     <h3>🔀 Interleaving (Themenmischung)</h3>
