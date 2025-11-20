@@ -454,12 +454,19 @@ export class PlanOutput {
             </div>
         `;
 
-        modal.style.display = 'flex';
+        // Modal sichtbar machen und Interaktion zulassen
+        modal.style.display = 'grid';
+        modal.classList.add('open');
     }
 
     closeModal() {
         const modal = this.container.querySelector('#session-modal');
-        modal.style.display = 'none';
+        modal.classList.remove('open');
+
+        // Nach der Transition wieder komplett aus dem Layout nehmen
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
     }
 
     exportPDF() {
