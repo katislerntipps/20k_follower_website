@@ -319,8 +319,10 @@ function generateBlossomPetals() {
     // Check if blossom rain is purchased
     const shopState = localStorage.getItem('studytok_shop');
     if (shopState) {
-        const shop = JSON.parse(shopState);
-        if (!shop.purchases.blossoms) {
+        const shop = JSON.parse(shopState) || {};
+        const purchases = shop.purchases || {};
+
+        if (!purchases.blossoms) {
             container.style.display = 'none';
             return;
         }
