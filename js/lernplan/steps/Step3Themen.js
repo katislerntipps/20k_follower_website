@@ -2,6 +2,8 @@
 // STEP 3: THEMEN & FÄCHER
 // ===================================
 
+import { escapeHTML } from '../utils/sanitize.js';
+
 export class Step3Themen {
     constructor(container, formData, onComplete) {
         this.container = container;
@@ -40,7 +42,7 @@ export class Step3Themen {
                     <label class="form-label" for="fach">📖 Fach oder Hauptthema</label>
                     <input type="text" id="fach" class="form-input"
                            placeholder="z.B. Mathematik, Biologie, Geschichte..."
-                           value="${this.formData.fach || ''}">
+                           value="${escapeHTML(this.formData.fach || '')}">
                 </div>
 
                 <div class="form-group">
@@ -76,7 +78,7 @@ export class Step3Themen {
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="verständnis">💡 Dein aktuelles Verständnis: <span id="verständnis-value">${this.formData.aktuelles_verständnis}</span>/10</label>
+                    <label class="form-label" for="verständnis">💡 Dein aktuelles Verständnis: <span id="verständnis-value">${escapeHTML(this.formData.aktuelles_verständnis ?? 5)}</span>/10</label>
                     <input type="range" id="verständnis" class="form-range"
                            min="1" max="10" value="${this.formData.aktuelles_verständnis || 5}">
                     <div class="range-labels">
@@ -100,7 +102,7 @@ export class Step3Themen {
                 <div class="thema-header">
                     <input type="text" class="form-input thema-name"
                            placeholder="z.B. Integralrechnung"
-                           value="${thema.name || ''}"
+                           value="${escapeHTML(thema.name || '')}"
                            data-index="${index}">
                     ${this.formData.themen.length > 1 ? `
                         <button type="button" class="btn-icon btn-remove" data-index="${index}" title="Entfernen">
