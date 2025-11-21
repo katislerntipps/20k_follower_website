@@ -14,7 +14,9 @@ let timerState = {
     endTime: null,
     lastTick: null,
     cycleCount: 0, // Track completed focus sessions (0-3 = short break, 4 = long break)
-    isInCycle: true // Track if we're in an active Pomodoro cycle
+    isInCycle: true, // Track if we're in an active Pomodoro cycle
+    totalCycleSessions: 0, // Track all focus sessions for the day regardless of long breaks
+    cycleDay: new Date().toDateString() // Track which day the totalCycleSessions counter belongs to
 };
 
 // Tree State
@@ -45,11 +47,11 @@ const treeImageSources = {
 
 const treeImageMapping = {
     focus: [
-        { key: 'focus-idle', matches: state => state.cycleCount === 0 && !state.isRunning },
-        { key: 'focus-warming', matches: state => state.cycleCount === 0 && state.isRunning },
-        { key: 'focus-mid', matches: state => state.cycleCount === 1 },
-        { key: 'focus-late', matches: state => state.cycleCount === 2 },
-        { key: 'focus-finale', matches: state => state.cycleCount >= 3 }
+        { key: 'focus-idle', matches: state => (state.visualCycleIndex ?? state.cycleCount) === 0 && !state.isRunning },
+        { key: 'focus-warming', matches: state => (state.visualCycleIndex ?? state.cycleCount) === 0 && state.isRunning },
+        { key: 'focus-mid', matches: state => (state.visualCycleIndex ?? state.cycleCount) === 1 },
+        { key: 'focus-late', matches: state => (state.visualCycleIndex ?? state.cycleCount) === 2 },
+        { key: 'focus-finale', matches: state => (state.visualCycleIndex ?? state.cycleCount) >= 3 }
     ],
     short: [
         { key: 'break-short-active', matches: state => state.isRunning },
@@ -288,6 +290,12 @@ function timerComplete() {
         addSession();
         addPoints(10);
 
+        // Track daily total focus sessions beyond the current Pomodoro cycle
+        const today = new Date().toDateString();
+        const baseSessions = timerState.cycleDay === today ? timerState.totalCycleSessions : 0;
+        timerState.totalCycleSessions = baseSessions + 1;
+        timerState.cycleDay = today;
+
         // Grow tree
         addBlossom();
         if (treeTimeline) {
@@ -424,6 +432,21 @@ function updateTimerTreeImage() {
     const timerImage = document.getElementById('timer-tree-image');
     if (!timerImage) return;
 
+    const today = new Date().toDateString();
+    const stats = getStats();
+    const sessionsToday = stats.lastSessionDate === today ? stats.sessionsToday : 0;
+    const totalSessionsForDay = (timerState.cycleDay === today && typeof timerState.totalCycleSessions === 'number')
+        ? timerState.totalCycleSessions
+        : sessionsToday;
+
+    // Smooth visuals so "late" sessions keep their motif even after long breaks
+    const visualCycleIndex = Math.max(
+        timerState.cycleCount,
+        Math.min(3, Math.max(0, totalSessionsForDay - 1))
+    );
+
+    const stateForMapping = { ...timerState, visualCycleIndex };
+
     const resolveKey = (state) => {
         const modeMappings = treeImageMapping[state.mode] || [];
         const match = modeMappings.find(entry => entry.matches(state));
@@ -434,7 +457,7 @@ function updateTimerTreeImage() {
         return fallback.key || 'default';
     };
 
-    const imageKey = resolveKey(timerState);
+    const imageKey = resolveKey(stateForMapping);
     const imageSrc = treeImageSources[imageKey] || treeImageSources.default;
 
     if (timerImage.dataset.currentKey === imageKey && timerImage.src.endsWith(imageSrc)) return;
@@ -818,6 +841,19 @@ function loadTimerState() {
         const saved = JSON.parse(stored);
         timerState = { ...timerState, ...saved, interval: null };
 
+        // Normalize long-running counters per day
+        const today = new Date().toDateString();
+        const stats = getStats();
+        const sessionsToday = stats.lastSessionDate === today ? stats.sessionsToday : 0;
+
+        if (timerState.cycleDay !== today) {
+            timerState.totalCycleSessions = sessionsToday;
+            timerState.cycleDay = today;
+        }
+        if (typeof timerState.totalCycleSessions !== 'number') {
+            timerState.totalCycleSessions = sessionsToday;
+        }
+
         // Resume timer if it was running and hasn't completed yet
         if (saved.isRunning && saved.endTime) {
             const now = Date.now();
@@ -895,7 +931,9 @@ function saveTimerState() {
         elapsedWithoutPause: timerState.elapsedWithoutPause,
         lastTick: timerState.lastTick,
         cycleCount: timerState.cycleCount,
-        isInCycle: timerState.isInCycle
+        isInCycle: timerState.isInCycle,
+        totalCycleSessions: timerState.totalCycleSessions,
+        cycleDay: timerState.cycleDay
     };
     localStorage.setItem('studytok_timer', JSON.stringify(toSave));
 }
