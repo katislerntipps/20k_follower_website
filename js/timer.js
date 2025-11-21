@@ -24,12 +24,50 @@ let treeState = {
     totalSessions: 0
 };
 
+const treeImages = {
+    focus: ['image/1.png', 'image/2.png', 'image/3.png', 'image/5.png', 'image/6.png'],
+    short: ['image/3.png', 'image/4.png'],
+    long: ['image/5.png', 'image/6.png']
+};
+
+const treeImageSources = {
+    'focus-idle': 'image/1.png',
+    'focus-warming': 'image/2.png',
+    'focus-mid': 'image/3.png',
+    'focus-late': 'image/5.png',
+    'focus-finale': 'image/6.png',
+    'break-short': 'image/3.png',
+    'break-short-active': 'image/4.png',
+    'break-long': 'image/5.png',
+    'break-long-active': 'image/6.png',
+    default: 'image/1.png'
+};
+
+const treeImageMapping = {
+    focus: [
+        { key: 'focus-idle', matches: state => state.cycleCount === 0 && !state.isRunning },
+        { key: 'focus-warming', matches: state => state.cycleCount === 0 && state.isRunning },
+        { key: 'focus-mid', matches: state => state.cycleCount === 1 },
+        { key: 'focus-late', matches: state => state.cycleCount === 2 },
+        { key: 'focus-finale', matches: state => state.cycleCount >= 3 }
+    ],
+    short: [
+        { key: 'break-short-active', matches: state => state.isRunning },
+        { key: 'break-short', matches: () => true }
+    ],
+    long: [
+        { key: 'break-long-active', matches: state => state.isRunning },
+        { key: 'break-long', matches: () => true }
+    ]
+};
+
 let treeTimeline;
 let treeScrubTween;
 let treeLoopTimelines = [];
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
+    preloadTreeImages();
     loadTimerState();
     loadTreeState();
     initializeTimer();
@@ -44,6 +82,18 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeNotifications();
     initializeAchievements();
 });
+
+function preloadTreeImages() {
+    const loaded = new Set();
+
+    Object.values(treeImages).flat().forEach(src => {
+        if (loaded.has(src)) return;
+
+        const img = new Image();
+        img.src = src;
+        loaded.add(src);
+    });
+}
 
 // ===================================
 // TIMER FUNCTIONALITY
@@ -374,35 +424,36 @@ function updateTimerTreeImage() {
     const timerImage = document.getElementById('timer-tree-image');
     if (!timerImage) return;
 
-    // Determine which image to show based on timer state
-    let imageNumber = 1;
+    const resolveKey = (state) => {
+        const modeMappings = treeImageMapping[state.mode] || [];
+        const match = modeMappings.find(entry => entry.matches(state));
 
-    // Only update if in focus mode (not during breaks)
-    if (timerState.mode === 'focus') {
-        // Check session count (cycleCount represents completed sessions)
-        if (timerState.cycleCount === 0) {
-            // Session 0 (not started) or Session 1 (first session running)
-            if (timerState.isRunning) {
-                // Session 1: First session is running
-                imageNumber = 2;
-            } else {
-                // Session 0: Before first session starts
-                imageNumber = 1;
-            }
-        } else if (timerState.cycleCount === 1) {
-            // Session 2 of 4
-            imageNumber = 3;
-        } else if (timerState.cycleCount === 2) {
-            // Session 3 of 4
-            imageNumber = 5;
-        } else if (timerState.cycleCount >= 3) {
-            // Session 4 of 4
-            imageNumber = 6;
-        }
+        if (match) return match.key;
+
+        const fallback = treeImageMapping.focus?.find(entry => entry.key) || {};
+        return fallback.key || 'default';
+    };
+
+    const imageKey = resolveKey(timerState);
+    const imageSrc = treeImageSources[imageKey] || treeImageSources.default;
+
+    if (timerImage.dataset.currentKey === imageKey && timerImage.src.endsWith(imageSrc)) return;
+
+    timerImage.dataset.currentKey = imageKey;
+    timerImage.style.opacity = '0';
+
+    const handleLoad = () => {
+        timerImage.style.opacity = '1';
+        timerImage.removeEventListener('load', handleLoad);
+    };
+
+    timerImage.addEventListener('load', handleLoad);
+    timerImage.src = imageSrc;
+    timerImage.alt = `Timer-Baum Motiv: ${imageKey}`;
+
+    if (timerImage.complete && timerImage.naturalWidth !== 0) {
+        handleLoad();
     }
-
-    timerImage.src = `image/${imageNumber}.png`;
-    timerImage.alt = `Konzentrations-Status ${imageNumber}`;
 }
 
 // ===================================
