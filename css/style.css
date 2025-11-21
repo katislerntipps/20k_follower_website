@@ -1590,6 +1590,64 @@ body.sakura-theme {
     display: block;
 }
 
+.shop-admin {
+    margin-top: 2rem;
+    padding: 1.25rem;
+    border: 2px dashed rgba(255, 183, 197, 0.4);
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(255, 183, 197, 0.08), rgba(255, 107, 142, 0.05));
+}
+
+.shop-admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.shop-admin-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: white;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.8rem;
+}
+
+.shop-admin-description,
+.shop-admin-hint {
+    color: var(--text-secondary);
+    margin: 0 0 0.75rem;
+}
+
+.shop-admin-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.shop-admin-form input {
+    padding: 0.75rem 1rem;
+    border: 2px solid rgba(255, 183, 197, 0.3);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.shop-admin-form input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
 .email-input {
     width: 100%;
     padding: 0.75rem 1rem;
