@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTreeDisplay();
     initializeDarkMode();
     initializePointsHistory();
+    initializeStickyTimer();
 });
 
 function applySakuraTheme() {
@@ -709,6 +710,274 @@ document.addEventListener('DOMContentLoaded', function() {
     // Wait a bit for other initializations
     setTimeout(checkDailyLogin, 500);
 });
+
+// ===================================
+// STICKY TIMER MINI-PLAYER
+// ===================================
+
+function initializeStickyTimer() {
+    if (document.querySelector('.sticky-timer')) return;
+
+    const sticky = document.createElement('div');
+    sticky.className = 'sticky-timer sticky-timer--hidden';
+    sticky.setAttribute('role', 'status');
+    sticky.setAttribute('aria-live', 'polite');
+    sticky.innerHTML = `
+        <div class="sticky-timer__progress" data-sticky-progress>
+            <span data-sticky-progress-text>--</span>
+        </div>
+        <div class="sticky-timer__body">
+            <div class="sticky-timer__title">⏱️ Mini-Timer</div>
+            <div class="sticky-timer__mode" data-sticky-mode>Bereit</div>
+            <div class="sticky-timer__time" data-sticky-time>25:00</div>
+        </div>
+        <div class="sticky-timer__actions">
+            <button class="sticky-timer__button" type="button" data-sticky-action>
+                <span data-sticky-action-icon>▶</span>
+                <span data-sticky-action-text>Start</span>
+            </button>
+            <a class="sticky-timer__link" href="timer.html">
+                <span>🌸</span>
+                <span>Voller Timer</span>
+            </a>
+        </div>
+    `;
+
+    document.body.appendChild(sticky);
+
+    const progressRing = sticky.querySelector('[data-sticky-progress]');
+    const progressText = sticky.querySelector('[data-sticky-progress-text]');
+    const timeEl = sticky.querySelector('[data-sticky-time]');
+    const modeEl = sticky.querySelector('[data-sticky-mode]');
+    const actionBtn = sticky.querySelector('[data-sticky-action]');
+    const actionIcon = sticky.querySelector('[data-sticky-action-icon]');
+    const actionText = sticky.querySelector('[data-sticky-action-text]');
+
+    const timerCard = document.querySelector('.timer-card');
+    let timerCardVisible = true;
+
+    if (timerCard) {
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0]) {
+                timerCardVisible = entries[0].isIntersecting;
+                updateStickyVisibility();
+            }
+        }, { threshold: 0.2 });
+        observer.observe(timerCard);
+    } else {
+        timerCardVisible = false;
+    }
+
+    function getStoredTimerState() {
+        const stored = localStorage.getItem('studytok_timer');
+        const defaults = {
+            minutes: 25,
+            seconds: 0,
+            mode: 'focus',
+            totalSeconds: 25 * 60,
+            isRunning: false,
+            endTime: null,
+            elapsedWithoutPause: 0,
+            lastTick: null,
+            cycleCount: 0,
+            isInCycle: true,
+            totalCycleSessions: 0,
+            lastCycleSessionDate: new Date().toDateString()
+        };
+
+        if (!stored) return defaults;
+
+        try {
+            return { ...defaults, ...JSON.parse(stored) };
+        } catch (error) {
+            return defaults;
+        }
+    }
+
+    function saveStoredTimerState(state) {
+        const toSave = {
+            minutes: state.minutes,
+            seconds: state.seconds,
+            mode: state.mode,
+            totalSeconds: state.totalSeconds,
+            isRunning: state.isRunning,
+            endTime: state.endTime,
+            elapsedWithoutPause: state.elapsedWithoutPause,
+            lastTick: state.lastTick,
+            cycleCount: state.cycleCount,
+            isInCycle: state.isInCycle,
+            totalCycleSessions: state.totalCycleSessions,
+            lastCycleSessionDate: state.lastCycleSessionDate
+        };
+
+        localStorage.setItem('studytok_timer', JSON.stringify(toSave));
+    }
+
+    function getDefaultDuration(mode) {
+        switch (mode) {
+            case 'short':
+                return 5 * 60;
+            case 'long':
+                return 15 * 60;
+            default:
+                return 25 * 60;
+        }
+    }
+
+    function getRemainingInfo(state) {
+        const totalSeconds = state.totalSeconds || getDefaultDuration(state.mode);
+        const remainingSeconds = state.isRunning && state.endTime
+            ? Math.max(0, Math.round((state.endTime - Date.now()) / 1000))
+            : Math.max(0, Math.round((state.minutes * 60) + state.seconds));
+
+        const progress = totalSeconds > 0
+            ? Math.min(1, Math.max(0, 1 - (remainingSeconds / totalSeconds)))
+            : 0;
+
+        return { totalSeconds, remainingSeconds, progress };
+    }
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const secs = Math.max(0, seconds % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
+    }
+
+    function pauseFromMini(state) {
+        if (typeof pauseTimer === 'function') {
+            pauseTimer();
+            return;
+        }
+
+        const { remainingSeconds } = getRemainingInfo(state);
+        const pausedState = {
+            ...state,
+            isRunning: false,
+            endTime: null,
+            lastTick: null,
+            minutes: Math.floor(remainingSeconds / 60),
+            seconds: remainingSeconds % 60,
+            elapsedWithoutPause: 0
+        };
+
+        saveStoredTimerState(pausedState);
+    }
+
+    function resumeFromMini(state) {
+        const { remainingSeconds, totalSeconds } = getRemainingInfo(state);
+        const now = Date.now();
+
+        if (typeof startTimer === 'function') {
+            const minutesEl = document.getElementById('timer-minutes');
+            const secondsEl = document.getElementById('timer-seconds');
+            if (minutesEl && secondsEl) {
+                minutesEl.textContent = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
+                secondsEl.textContent = (remainingSeconds % 60).toString().padStart(2, '0');
+            }
+            timerState.minutes = Math.floor(remainingSeconds / 60);
+            timerState.seconds = remainingSeconds % 60;
+            timerState.totalSeconds = totalSeconds;
+            timerState.mode = state.mode;
+            startTimer();
+            return;
+        }
+
+        const resumedState = {
+            ...state,
+            isRunning: true,
+            totalSeconds: totalSeconds,
+            endTime: now + (remainingSeconds * 1000),
+            lastTick: now,
+            minutes: Math.floor(remainingSeconds / 60),
+            seconds: remainingSeconds % 60
+        };
+
+        saveStoredTimerState(resumedState);
+    }
+
+    function setModeLabel(mode) {
+        const icons = {
+            focus: '🎯 Fokus',
+            short: '☕ Kurze Pause',
+            long: '🌙 Lange Pause'
+        };
+        return icons[mode] || '⏱️ Timer';
+    }
+
+    function finalizeIfFinished(state, remainingSeconds) {
+        if (!state.isRunning || remainingSeconds > 0) return state;
+
+        const cleanedState = {
+            ...state,
+            isRunning: false,
+            endTime: null,
+            lastTick: null,
+            minutes: 0,
+            seconds: 0,
+            elapsedWithoutPause: 0
+        };
+
+        saveStoredTimerState(cleanedState);
+        return cleanedState;
+    }
+
+    function updateStickyVisibility() {
+        const state = getStoredTimerState();
+        const { remainingSeconds } = getRemainingInfo(state);
+        const isActive = (state.isRunning && remainingSeconds > 0) || (!timerCard && remainingSeconds > 0);
+        const shouldShow = !timerCardVisible && isActive;
+
+        sticky.classList.toggle('sticky-timer--hidden', !shouldShow);
+    }
+
+    function updateStickyTimer() {
+        let state = getStoredTimerState();
+        const { remainingSeconds, totalSeconds, progress } = getRemainingInfo(state);
+
+        state = finalizeIfFinished(state, remainingSeconds);
+
+        const safeSeconds = state.isRunning && state.endTime ? Math.max(0, Math.round((state.endTime - Date.now()) / 1000)) : remainingSeconds;
+
+        progressRing.style.setProperty('--progress', (progress * 100).toFixed(2));
+        progressText.textContent = state.mode === 'focus' ? '🍅' : '🌸';
+        timeEl.textContent = formatTime(safeSeconds);
+        modeEl.textContent = setModeLabel(state.mode);
+
+        const running = state.isRunning && safeSeconds > 0;
+        actionIcon.textContent = running ? '⏸' : '▶';
+        actionText.textContent = running ? 'Pause' : 'Start';
+        actionBtn.setAttribute('aria-pressed', running ? 'true' : 'false');
+
+        const hasTimeLeft = safeSeconds > 0 && totalSeconds > 0;
+        sticky.setAttribute('aria-label', running ? `Timer läuft: ${timeEl.textContent}` : `Timer bereit: ${timeEl.textContent}`);
+
+        sticky.classList.toggle('sticky-timer--hidden', !(hasTimeLeft || running) && !state.isRunning);
+        updateStickyVisibility();
+    }
+
+    actionBtn.addEventListener('click', () => {
+        const state = getStoredTimerState();
+        const { remainingSeconds } = getRemainingInfo(state);
+        const running = state.isRunning && remainingSeconds > 0;
+
+        if (running) {
+            pauseFromMini(state);
+        } else {
+            resumeFromMini(state);
+        }
+
+        updateStickyTimer();
+    });
+
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'studytok_timer') {
+            updateStickyTimer();
+        }
+    });
+
+    updateStickyTimer();
+    setInterval(updateStickyTimer, 1000);
+}
 
 // ===================================
 // DARK MODE FUNCTIONALITY
