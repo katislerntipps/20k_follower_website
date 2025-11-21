@@ -9,7 +9,9 @@
         return [];
     }
 
-    function applyStyles(elements, props) {
+    function applyStyles(targets, props) {
+        const elements = selectTargets(targets);
+
         elements.forEach((el) => {
             Object.entries(props || {}).forEach(([key, value]) => {
                 if (key === 'duration' || key === 'delay' || key === 'ease' || key === 'stagger' || key === 'scrollTrigger') return;
