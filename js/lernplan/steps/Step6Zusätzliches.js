@@ -2,6 +2,8 @@
 // STEP 6: ZUSÄTZLICHES
 // ===================================
 
+import { escapeHTML, sanitizeEmail } from '../utils/sanitize.js';
+
 export class Step6Zusätzliches {
     constructor(container, formData, onComplete) {
         this.container = container;
@@ -69,8 +71,9 @@ export class Step6Zusätzliches {
                             type="email"
                             id="reminder-email"
                             class="input"
+                            pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
                             placeholder="deine@email.de"
-                            value="${this.formData.reminder_email || ''}"
+                            value="${escapeHTML(this.formData.reminder_email || '')}"
                         >
                         <small class="input-hint">Wir speichern die Adresse nur lokal, um deine Kalender-Exports mit E-Mail-Alerts zu versehen.</small>
                     </div>
@@ -126,6 +129,14 @@ export class Step6Zusätzliches {
             return false;
         }
 
+        if (reminderChecked && reminderType === 'email') {
+            const sanitized = sanitizeEmail(reminderEmail);
+            if (!sanitized) {
+                this.showError('Bitte gib eine gültige E-Mail-Adresse ein (z.B. name@domain.de).');
+                return false;
+            }
+        }
+
         this.clearError();
         return true;
     }
@@ -134,7 +145,7 @@ export class Step6Zusätzliches {
         this.formData.puffer_gewünscht = document.getElementById('puffer')?.checked !== false;
         this.formData.reminder_gewünscht = document.getElementById('reminder')?.checked || false;
         this.formData.reminder_typ = document.querySelector('input[name="reminder-typ"]:checked')?.value || 'email';
-        this.formData.reminder_email = document.getElementById('reminder-email')?.value.trim() || '';
+        this.formData.reminder_email = sanitizeEmail(document.getElementById('reminder-email')?.value);
     }
 
     showError(message) {

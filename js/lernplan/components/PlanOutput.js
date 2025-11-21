@@ -4,6 +4,7 @@
 
 import { exportAsPDF, exportAsICS } from '../utils/exportHelpers.js';
 import { formatDuration } from '../utils/dateHelpers.js';
+import { escapeHTML, sanitizeChoice } from '../utils/sanitize.js';
 
 export class PlanOutput {
     constructor(container, plan, onRestart) {
@@ -35,28 +36,28 @@ export class PlanOutput {
                         <div class="metadata-card erfolgschance">
                             <div class="metadata-icon">🎯</div>
                             <div class="metadata-content">
-                                <div class="metadata-value">${this.plan.metadata.erfolgschance_prozent}%</div>
+                                <div class="metadata-value">${escapeHTML(this.plan.metadata.erfolgschance_prozent)}%</div>
                                 <div class="metadata-label">Erfolgschance</div>
                             </div>
                         </div>
                         <div class="metadata-card">
                             <div class="metadata-icon">📝</div>
                             <div class="metadata-content">
-                                <div class="metadata-value">${this.plan.metadata.gesamt_sessions}</div>
+                                <div class="metadata-value">${escapeHTML(this.plan.metadata.gesamt_sessions)}</div>
                                 <div class="metadata-label">Sessions gesamt</div>
                             </div>
                         </div>
                         <div class="metadata-card">
                             <div class="metadata-icon">⏱️</div>
                             <div class="metadata-content">
-                                <div class="metadata-value">${this.plan.metadata.gesamt_lernzeit_stunden} Std</div>
+                                <div class="metadata-value">${escapeHTML(this.plan.metadata.gesamt_lernzeit_stunden)} Std</div>
                                 <div class="metadata-label">Lernzeit gesamt</div>
                             </div>
                         </div>
                         <div class="metadata-card">
                             <div class="metadata-icon">🔄</div>
                             <div class="metadata-content">
-                                <div class="metadata-value">${this.plan.metadata.spacing_zyklen_pro_thema}x</div>
+                                <div class="metadata-value">${escapeHTML(this.plan.metadata.spacing_zyklen_pro_thema)}x</div>
                                 <div class="metadata-label">Wiederholungen</div>
                             </div>
                         </div>
@@ -124,10 +125,11 @@ export class PlanOutput {
 
         if (!einstellungen?.reminder_gewünscht) return '';
 
-        const isEmail = einstellungen.reminder_typ === 'email';
-        const typLabel = isEmail ? 'E-Mail' : (einstellungen.reminder_typ === 'push' ? 'Push' : 'Kalenderhinweis');
+        const reminderTyp = sanitizeChoice(einstellungen.reminder_typ, ['email', 'push', 'kalender', 'keine'], 'email');
+        const isEmail = reminderTyp === 'email';
+        const typLabel = isEmail ? 'E-Mail' : (reminderTyp === 'push' ? 'Push' : 'Kalenderhinweis');
         const emailInfo = isEmail && einstellungen.reminder_email
-            ? `<div class="reminder-extra">📧 Erinnerungen gehen an <strong>${einstellungen.reminder_email}</strong>. Du kannst die Adresse im letzten Schritt anpassen.</div>`
+            ? `<div class="reminder-extra">📧 Erinnerungen gehen an <strong>${escapeHTML(einstellungen.reminder_email)}</strong>. Du kannst die Adresse im letzten Schritt anpassen.</div>`
             : '';
 
         return `
@@ -135,7 +137,7 @@ export class PlanOutput {
                 <div class="reminder-icon">🔔</div>
                 <div class="reminder-content">
                     <div class="reminder-title">Erinnerungen aktiv</div>
-                    <div class="reminder-text">Wir planen eine ${typLabel}-Erinnerung 15 Minuten vor jeder Session ein.</div>
+                    <div class="reminder-text">Wir planen eine ${escapeHTML(typLabel)}-Erinnerung 15 Minuten vor jeder Session ein.</div>
                     ${emailInfo}
                 </div>
             </div>
@@ -156,12 +158,12 @@ export class PlanOutput {
                 <h3 class="section-subtitle">💡 Wichtige Hinweise</h3>
                 <div class="empfehlungen-grid">
                     ${wichtigeEmpfehlungen.map(emp => `
-                        <div class="empfehlung-card empfehlung-${emp.typ}">
-                            <div class="empfehlung-icon">${emp.icon || '💡'}</div>
+                        <div class="empfehlung-card empfehlung-${sanitizeChoice(emp.typ, ['fokus', 'zeit', 'effizienz', 'balance', 'motivation'], 'fokus')}">
+                            <div class="empfehlung-icon">${escapeHTML(emp.icon || '💡')}</div>
                             <div class="empfehlung-content">
-                                <div class="empfehlung-titel">${emp.titel}</div>
-                                <div class="empfehlung-text">${emp.text}</div>
-                                ${emp.aktion ? `<div class="empfehlung-aktion">→ ${emp.aktion}</div>` : ''}
+                                <div class="empfehlung-titel">${escapeHTML(emp.titel)}</div>
+                                <div class="empfehlung-text">${escapeHTML(emp.text)}</div>
+                                ${emp.aktion ? `<div class="empfehlung-aktion">→ ${escapeHTML(emp.aktion)}</div>` : ''}
                             </div>
                         </div>
                     `).join('')}
@@ -192,7 +194,7 @@ export class PlanOutput {
                     return `
                         <div class="day-group">
                             <div class="day-header">
-                                <div class="day-date">${firstSession.datum_formatiert_lang}</div>
+                                <div class="day-date">${escapeHTML(firstSession.datum_formatiert_lang)}</div>
                                 <div class="day-meta">${daySessions.length} Session${daySessions.length > 1 ? 's' : ''}</div>
                             </div>
                             <div class="day-sessions">
@@ -208,23 +210,25 @@ export class PlanOutput {
     renderSessionCard(session) {
         const icon = session.typ === 'initial' ? '📖' : '🔄';
         const typLabel = session.typ === 'initial' ? 'Erste Session' : `Wiederholung ${session.zyklus}`;
+        const komplexität = sanitizeChoice(session.komplexität, ['leicht', 'mittel', 'schwer'], 'mittel');
+        const priorität = sanitizeChoice(session.priorität, ['niedrig', 'mittel', 'hoch'], 'mittel');
 
         return `
             <div class="session-card" data-session-id="${session.id}">
                 <div class="session-icon">${icon}</div>
                 <div class="session-content">
-                    <div class="session-title">${session.thema}</div>
+                    <div class="session-title">${escapeHTML(session.thema)}</div>
                     <div class="session-meta">
-                        <span class="session-typ">${typLabel}</span>
+                        <span class="session-typ">${escapeHTML(typLabel)}</span>
                         <span class="session-separator">•</span>
-                        <span class="session-time">${session.uhrzeit} - ${session.endzeit}</span>
+                        <span class="session-time">${escapeHTML(session.uhrzeit)} - ${escapeHTML(session.endzeit)}</span>
                         <span class="session-separator">•</span>
                         <span class="session-duration">${formatDuration(session.dauer)}</span>
                     </div>
                     <div class="session-tags">
-                        <span class="tag tag-komplexität tag-${session.komplexität}">${session.komplexität}</span>
-                        <span class="tag tag-priorität tag-${session.priorität}">${session.priorität}</span>
-                        ${session.pomodoros ? `<span class="tag tag-pomodoro">🍅 ${session.pomodoros}x</span>` : ''}
+                        <span class="tag tag-komplexität tag-${komplexität}">${escapeHTML(komplexität)}</span>
+                        <span class="tag tag-priorität tag-${priorität}">${escapeHTML(priorität)}</span>
+                        ${session.pomodoros ? `<span class="tag tag-pomodoro">🍅 ${escapeHTML(session.pomodoros)}</span>` : ''}
                     </div>
                 </div>
                 <div class="session-actions">
@@ -260,9 +264,9 @@ export class PlanOutput {
                         <div class="week-sessions">
                             ${sessionsByWeek[week].map(session => `
                                 <div class="calendar-session" data-session-id="${session.id}">
-                                    <div class="cal-session-time">${session.datum_formatiert}</div>
-                                    <div class="cal-session-title">${session.typ === 'initial' ? '📖' : '🔄'} ${session.thema}</div>
-                                    <div class="cal-session-duration">${session.uhrzeit} • ${formatDuration(session.dauer)}</div>
+                                    <div class="cal-session-time">${escapeHTML(session.datum_formatiert)}</div>
+                                    <div class="cal-session-title">${session.typ === 'initial' ? '📖' : '🔄'} ${escapeHTML(session.thema)}</div>
+                                    <div class="cal-session-duration">${escapeHTML(session.uhrzeit)} • ${formatDuration(session.dauer)}</div>
                                 </div>
                             `).join('')}
                         </div>
@@ -379,6 +383,8 @@ export class PlanOutput {
 
         const icon = session.typ === 'initial' ? '📖' : '🔄';
         const typLabel = session.typ === 'initial' ? 'Erste Lernsession' : `Wiederholung (Zyklus ${session.zyklus})`;
+        const komplexität = sanitizeChoice(session.komplexität, ['leicht', 'mittel', 'schwer'], 'mittel');
+        const priorität = sanitizeChoice(session.priorität, ['niedrig', 'mittel', 'hoch'], 'mittel');
 
         modalTitle.textContent = `${icon} ${session.thema}`;
         modalBody.innerHTML = `
@@ -386,15 +392,15 @@ export class PlanOutput {
                 <div class="detail-section">
                     <div class="detail-row">
                         <span class="detail-label">Typ:</span>
-                        <span class="detail-value">${typLabel}</span>
+                        <span class="detail-value">${escapeHTML(typLabel)}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Datum:</span>
-                        <span class="detail-value">${session.datum_formatiert_lang}</span>
+                        <span class="detail-value">${escapeHTML(session.datum_formatiert_lang)}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Uhrzeit:</span>
-                        <span class="detail-value">${session.uhrzeit} - ${session.endzeit} Uhr</span>
+                        <span class="detail-value">${escapeHTML(session.uhrzeit)} - ${escapeHTML(session.endzeit)} Uhr</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Dauer:</span>
@@ -402,22 +408,22 @@ export class PlanOutput {
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Komplexität:</span>
-                        <span class="detail-value"><span class="tag tag-${session.komplexität}">${session.komplexität}</span></span>
+                        <span class="detail-value"><span class="tag tag-${komplexität}">${escapeHTML(komplexität)}</span></span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Priorität:</span>
-                        <span class="detail-value"><span class="tag tag-${session.priorität}">${session.priorität}</span></span>
+                        <span class="detail-value"><span class="tag tag-${priorität}">${escapeHTML(priorität)}</span></span>
                     </div>
                 </div>
 
                 ${session.pomodoros ? `
                     <div class="detail-section">
                         <h4>🍅 Pomodoro-Struktur</h4>
-                        <p>${session.pomodoros} Pomodoro${session.pomodoros > 1 ? 's' : ''} à 25 Minuten</p>
+                        <p>${escapeHTML(session.pomodoros)} Pomodoro${session.pomodoros > 1 ? 's' : ''} à 25 Minuten</p>
                         ${session.pausen.length > 0 ? `
                             <div class="pausen-list">
                                 ${session.pausen.map(p => `
-                                    <div class="pause-item">Nach Pomodoro ${p.nach_pomodoro}: ${p.dauer} Min ${p.typ === 'lang' ? 'lange' : ''} Pause</div>
+                                    <div class="pause-item">Nach Pomodoro ${escapeHTML(p.nach_pomodoro)}: ${escapeHTML(p.dauer)} Min ${p.typ === 'lang' ? 'lange' : ''} Pause</div>
                                 `).join('')}
                             </div>
                         ` : ''}
@@ -429,14 +435,14 @@ export class PlanOutput {
                     ${session.aktivitäten.map(akt => `
                         <div class="aktivität-detail">
                             <div class="aktivität-header">
-                                <strong>${akt.name}</strong>
-                                <span class="aktivität-dauer">${akt.dauer_minuten} Min</span>
+                                <strong>${escapeHTML(akt.name)}</strong>
+                                <span class="aktivität-dauer">${escapeHTML(akt.dauer_minuten)} Min</span>
                             </div>
-                            <p class="aktivität-beschreibung">${akt.beschreibung}</p>
+                            <p class="aktivität-beschreibung">${escapeHTML(akt.beschreibung)}</p>
                             <div class="checkpunkte">
                                 <strong>Checkpunkte:</strong>
                                 <ul>
-                                    ${akt.checkpunkte.map(cp => `<li>${cp}</li>`).join('')}
+                                    ${akt.checkpunkte.map(cp => `<li>${escapeHTML(cp)}</li>`).join('')}
                                 </ul>
                             </div>
                         </div>
@@ -447,7 +453,7 @@ export class PlanOutput {
                     <div class="detail-section">
                         <h4>💡 Tipps</h4>
                         <ul class="tipps-list">
-                            ${session.tipps.map(tipp => `<li>${tipp}</li>`).join('')}
+                            ${session.tipps.map(tipp => `<li>${escapeHTML(tipp)}</li>`).join('')}
                         </ul>
                     </div>
                 ` : ''}
