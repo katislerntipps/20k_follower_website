@@ -14,7 +14,9 @@ let timerState = {
     endTime: null,
     lastTick: null,
     cycleCount: 0, // Track completed focus sessions (0-3 = short break, 4 = long break)
-    isInCycle: true // Track if we're in an active Pomodoro cycle
+    isInCycle: true, // Track if we're in an active Pomodoro cycle
+    totalCycleSessions: 0, // Track all focus sessions for the current day (doesn't reset on long break)
+    lastCycleSessionDate: new Date().toDateString()
 };
 
 // Tree State
@@ -293,6 +295,7 @@ function timerComplete() {
         // Update stats
         addSession();
         addPoints(10);
+        incrementDayCycleSessions();
 
         // Grow tree
         addBlossom();
@@ -426,6 +429,39 @@ function updateCycleIndicator() {
     cycleDotsContainer.appendChild(cycleText);
 }
 
+function getDayCycleSessions() {
+    const today = new Date().toDateString();
+
+    if (timerState.lastCycleSessionDate !== today) {
+        timerState.lastCycleSessionDate = today;
+        timerState.totalCycleSessions = 0;
+        saveTimerState();
+    }
+
+    if (Number.isFinite(timerState.totalCycleSessions)) {
+        return timerState.totalCycleSessions;
+    }
+
+    const stats = getStats();
+    if (stats.lastSessionDate === today) {
+        return stats.sessionsToday || 0;
+    }
+
+    return 0;
+}
+
+function incrementDayCycleSessions() {
+    const today = new Date().toDateString();
+
+    if (timerState.lastCycleSessionDate !== today) {
+        timerState.lastCycleSessionDate = today;
+        timerState.totalCycleSessions = 0;
+    }
+
+    timerState.totalCycleSessions += 1;
+    saveTimerState();
+}
+
 function updateTimerTreeImage() {
     const timerImage = document.getElementById('timer-tree-image');
     if (!timerImage) return;
@@ -436,9 +472,19 @@ function updateTimerTreeImage() {
         const completedProgress = Math.min(1, Math.max(0, 1 - (remainingSeconds / totalSeconds)));
 
         const modeMappings = treeImageMapping[state.mode] || [];
-        const match = modeMappings.find(entry => completedProgress >= entry.min && completedProgress < entry.max);
+        const mappings = modeMappings.length ? modeMappings : [{ key: `${state.mode}-wrapup`, min: 0, max: Infinity }];
 
-        if (match && treeImageSources[match.key]) return match.key;
+        const matchIndex = mappings.findIndex(entry => completedProgress >= entry.min && completedProgress < entry.max);
+        const progressIndex = matchIndex >= 0 ? matchIndex : mappings.length - 1;
+
+        const daySessions = getDayCycleSessions();
+        const hasLongRunningSignal = Number.isFinite(daySessions) && daySessions > 0;
+        const dayStage = hasLongRunningSignal ? Math.min(mappings.length - 1, Math.floor((daySessions - 1) / 2)) : null;
+        const preferredIndex = dayStage !== null ? Math.max(progressIndex, dayStage) : progressIndex;
+
+        const chosenEntry = mappings[preferredIndex] || mappings[progressIndex] || mappings[mappings.length - 1];
+
+        if (chosenEntry && treeImageSources[chosenEntry.key]) return chosenEntry.key;
 
         const fallbackKey = `${state.mode}-wrapup`;
         if (treeImageSources[fallbackKey]) return fallbackKey;
@@ -828,6 +874,16 @@ function loadTimerState() {
     const stored = localStorage.getItem('studytok_timer');
     if (stored) {
         const saved = JSON.parse(stored);
+        const today = new Date().toDateString();
+
+        if (!saved.lastCycleSessionDate) saved.lastCycleSessionDate = today;
+        if (!Number.isFinite(saved.totalCycleSessions)) saved.totalCycleSessions = 0;
+
+        if (saved.lastCycleSessionDate !== today) {
+            saved.totalCycleSessions = 0;
+            saved.lastCycleSessionDate = today;
+        }
+
         timerState = { ...timerState, ...saved, interval: null };
 
         // Resume timer if it was running and hasn't completed yet
@@ -907,7 +963,9 @@ function saveTimerState() {
         elapsedWithoutPause: timerState.elapsedWithoutPause,
         lastTick: timerState.lastTick,
         cycleCount: timerState.cycleCount,
-        isInCycle: timerState.isInCycle
+        isInCycle: timerState.isInCycle,
+        totalCycleSessions: timerState.totalCycleSessions,
+        lastCycleSessionDate: timerState.lastCycleSessionDate
     };
     localStorage.setItem('studytok_timer', JSON.stringify(toSave));
 }
