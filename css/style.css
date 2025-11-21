@@ -1698,6 +1698,33 @@ body.sakura-theme {
     transform: translateY(-2px);
 }
 
+.music-volume-control {
+    position: fixed;
+    bottom: 2rem;
+    right: 4.5rem;
+    background: var(--bg-card);
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 180px;
+    z-index: 998;
+}
+
+.music-volume-label {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.music-volume-slider {
+    width: 100%;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
 /* ===================================
    SHOP NOTIFICATIONS
    =================================== */
