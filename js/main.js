@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     animateTreePetals();
     updatePoints();
     initializeDarkMode();
+    cleanVideoTitles();
 });
 
 function applySakuraTheme() {
@@ -140,6 +141,17 @@ videoCards.forEach(card => {
         this.style.transform = 'translateY(0) scale(1)';
     });
 });
+
+// Remove leftover arrow markers from video titles
+function cleanVideoTitles() {
+    const videoTitles = document.querySelectorAll('.video-title');
+
+    videoTitles.forEach(title => {
+        title.textContent = title.textContent
+            .replace(/\s*->\s*$/, '')
+            .replace(/\s*→\s*$/, '');
+    });
+}
 
 // ===================================
 // SMOOTH SCROLL
