@@ -347,6 +347,25 @@
                         <span class="shop-item-purchased">✅ Gekauft</span>
                     </div>
                 </div>
+
+                <div class="shop-admin" aria-label="Admin Punkte hinzufügen">
+                    <div class="shop-admin-header">
+                        <div>
+                            <p class="modal-kicker">Nur für Tests</p>
+                            <h4>🔒 Admin-Punkte gutschreiben</h4>
+                        </div>
+                        <span class="shop-admin-badge" aria-hidden="true">Admin</span>
+                    </div>
+                    <p class="shop-admin-description">Füge dir zum Testen des Shops Punkte hinzu. Die Gutschrift ist durch einen Admin-Code geschützt.</p>
+                    <div class="shop-admin-form">
+                        <label class="sr-only" for="admin-points-input">Punktebetrag</label>
+                        <input id="admin-points-input" type="number" min="1" placeholder="Punktebetrag" inputmode="numeric">
+                        <label class="sr-only" for="admin-code-input">Admin-Code</label>
+                        <input id="admin-code-input" type="password" placeholder="Admin-Code">
+                        <button class="btn btn-secondary" id="admin-add-points-btn">Punkte gutschreiben</button>
+                    </div>
+                    <p class="shop-admin-hint">Nutze diesen Bereich nur als Admin, um neue Shop-Funktionen schneller testen zu können.</p>
+                </div>
             </div>
         </div>
     </div>

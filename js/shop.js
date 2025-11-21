@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBlossomVisibility();
 });
 
+const ADMIN_CODE = 'kati-admin';
+
 // ===================================
 // Shop State Management
 // ===================================
@@ -93,6 +95,46 @@ function initShop() {
     if (emailSubmit) {
         emailSubmit.addEventListener('click', submitEmail);
     }
+
+    // Setup admin add points
+    const adminAddPointsBtn = document.getElementById('admin-add-points-btn');
+    if (adminAddPointsBtn) {
+        adminAddPointsBtn.addEventListener('click', handleAdminPointsGrant);
+    }
+}
+
+function handleAdminPointsGrant() {
+    const amountInput = document.getElementById('admin-points-input');
+    const codeInput = document.getElementById('admin-code-input');
+
+    if (!amountInput || !codeInput) return;
+
+    const amount = parseInt(amountInput.value, 10);
+    const code = codeInput.value.trim();
+
+    if (!code) {
+        showNotification('Bitte gib den Admin-Code ein, um Punkte zu gutschreiben.', 'error');
+        return;
+    }
+
+    if (code !== ADMIN_CODE) {
+        showNotification('Falscher Admin-Code. Die Punkte wurden nicht gutgeschrieben.', 'error');
+        return;
+    }
+
+    if (!amount || amount <= 0) {
+        showNotification('Gib einen gültigen Punktebetrag ein.', 'error');
+        return;
+    }
+
+    const updatedPoints = addPoints(amount);
+    showNotification(`Dir wurden ${amount} Punkte gutgeschrieben. Gesamt: ${updatedPoints} Punkte.`, 'success');
+
+    amountInput.value = '';
+    codeInput.value = '';
+
+    // Refresh shop UI so neue Käufe sofort möglich sind
+    updateShopUI();
 }
 
 function setupModalClose(modal) {
