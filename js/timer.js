@@ -293,7 +293,10 @@ function timerComplete() {
         // Track daily total focus sessions beyond the current Pomodoro cycle
         const today = new Date().toDateString();
         const baseSessions = timerState.cycleDay === today ? timerState.totalCycleSessions : 0;
-        timerState.totalCycleSessions = baseSessions + 1;
+        const statsAfterSession = getStats();
+        const todaysSessionsFromStats = statsAfterSession.lastSessionDate === today ? statsAfterSession.sessionsToday : 0;
+
+        timerState.totalCycleSessions = Math.max(baseSessions + 1, todaysSessionsFromStats);
         timerState.cycleDay = today;
 
         // Grow tree
@@ -435,8 +438,9 @@ function updateTimerTreeImage() {
     const today = new Date().toDateString();
     const stats = getStats();
     const sessionsToday = stats.lastSessionDate === today ? stats.sessionsToday : 0;
-    const totalSessionsForDay = (timerState.cycleDay === today && typeof timerState.totalCycleSessions === 'number')
-        ? timerState.totalCycleSessions
+    const hasValidCycleTotal = timerState.cycleDay === today && Number.isFinite(timerState.totalCycleSessions);
+    const totalSessionsForDay = hasValidCycleTotal
+        ? Math.max(timerState.totalCycleSessions, sessionsToday)
         : sessionsToday;
 
     // Smooth visuals so "late" sessions keep their motif even after long breaks
@@ -850,8 +854,11 @@ function loadTimerState() {
             timerState.totalCycleSessions = sessionsToday;
             timerState.cycleDay = today;
         }
-        if (typeof timerState.totalCycleSessions !== 'number') {
+
+        if (!Number.isFinite(timerState.totalCycleSessions)) {
             timerState.totalCycleSessions = sessionsToday;
+        } else {
+            timerState.totalCycleSessions = Math.max(timerState.totalCycleSessions, sessionsToday);
         }
 
         // Resume timer if it was running and hasn't completed yet
