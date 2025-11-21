@@ -4,7 +4,7 @@ Platziere hier deine Hintergrundmusik-Datei.
 
 ## Anforderungen
 
-- Dateiname: `background-music.mp3`
+- Dateiname: `backgroundmusic.mp3`
 - Format: MP3
 - Empfohlen: Ruhige, nicht zu aufdringliche Musik für konzentriertes Lernen
 
