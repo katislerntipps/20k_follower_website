@@ -234,7 +234,7 @@ function sendEmailNotification(userEmail) {
     // Create mailto link to send notification
     const subject = 'Neue Rabattcode-Anfrage - StudyTok';
     const body = `Ein Nutzer hat den Astra AI Rabattcode gekauft!\n\nE-Mail des Nutzers: ${userEmail}\n\nBitte sende den Rabattcode an diese Adresse.`;
-    const mailtoLink = `mailto:test@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const mailtoLink = `mailto:20kwebshop@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     // Open mailto link (this will open the user's email client)
     window.location.href = mailtoLink;
