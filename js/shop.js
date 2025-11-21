@@ -19,7 +19,13 @@ const ADMIN_CODE = 'kati-admin';
 function getShopState() {
     const saved = localStorage.getItem('studytok_shop');
     if (saved) {
-        return JSON.parse(saved);
+        const state = JSON.parse(saved);
+
+        if (state.musicVolume === undefined) {
+            state.musicVolume = 0.3;
+        }
+
+        return state;
     }
     return {
         purchases: {
@@ -29,7 +35,8 @@ function getShopState() {
             blossoms: false
         },
         rabattcodeEmail: null,
-        musicEnabled: true
+        musicEnabled: true,
+        musicVolume: 0.3
     };
 }
 
@@ -355,7 +362,8 @@ function setupBackgroundMusic() {
     if (!backgroundMusic) {
         backgroundMusic = new Audio('audio/backgroundmusic.mp3');
         backgroundMusic.loop = true;
-        backgroundMusic.volume = 0.3;
+        const shopState = getShopState();
+        backgroundMusic.volume = shopState.musicVolume ?? 0.3;
     }
 
     const shopState = getShopState();
@@ -387,6 +395,8 @@ function showMusicToggle() {
     document.body.appendChild(toggleBtn);
 
     toggleBtn.addEventListener('click', toggleMusic);
+
+    createMusicVolumeControl(shopState.musicVolume ?? 0.3, shopState.musicEnabled);
 }
 
 function toggleMusic() {
@@ -401,12 +411,64 @@ function toggleMusic() {
         if (backgroundMusic) {
             backgroundMusic.play().catch(err => console.log('Play error:', err));
         }
+        setMusicVolumeControlDisabled(false);
     } else {
         toggleBtn.innerHTML = '🔇';
         if (backgroundMusic) {
             backgroundMusic.pause();
         }
+        setMusicVolumeControlDisabled(true);
     }
+}
+
+function createMusicVolumeControl(initialVolume, isEnabled) {
+    if (document.querySelector('.music-volume-control')) {
+        return;
+    }
+
+    const container = document.createElement('div');
+    container.className = 'music-volume-control';
+
+    const label = document.createElement('label');
+    label.className = 'music-volume-label';
+    label.textContent = `Lautstärke: ${Math.round(initialVolume * 100)}%`;
+    label.setAttribute('for', 'music-volume-slider');
+
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = '0';
+    slider.max = '100';
+    slider.value = Math.round(initialVolume * 100).toString();
+    slider.id = 'music-volume-slider';
+    slider.className = 'music-volume-slider';
+    slider.setAttribute('aria-label', 'Lautstärke der Hintergrundmusik einstellen');
+    slider.disabled = !isEnabled;
+
+    slider.addEventListener('input', (event) => {
+        const volume = parseInt(event.target.value, 10) / 100;
+        updateMusicVolume(volume);
+        label.textContent = `Lautstärke: ${Math.round(volume * 100)}%`;
+    });
+
+    container.appendChild(label);
+    container.appendChild(slider);
+    document.body.appendChild(container);
+}
+
+function updateMusicVolume(volume) {
+    const shopState = getShopState();
+    shopState.musicVolume = volume;
+    saveShopState(shopState);
+
+    if (backgroundMusic) {
+        backgroundMusic.volume = volume;
+    }
+}
+
+function setMusicVolumeControlDisabled(isDisabled) {
+    const slider = document.getElementById('music-volume-slider');
+    if (!slider) return;
+    slider.disabled = isDisabled;
 }
 
 // ===================================
