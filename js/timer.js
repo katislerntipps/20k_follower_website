@@ -729,19 +729,49 @@ function getStats() {
         unlockedAchievements: [], // Array of unlocked achievement IDs
         sessionsToday: 0,
         lastSessionDate: new Date().toDateString(),
-        consecutiveSessions: 0 // Sessions without interruption
+        consecutiveSessions: 0, // Sessions without interruption
+        dailyLoginClaimed: false
     };
 
     const stored = localStorage.getItem('studytok_stats');
-    const stats = stored ? JSON.parse(stored) : defaultStats;
+    if (stored) {
+        const stats = JSON.parse(stored);
 
-    // Ensure new properties exist
-    if (!stats.unlockedAchievements) stats.unlockedAchievements = [];
-    if (!stats.sessionsToday) stats.sessionsToday = 0;
-    if (!stats.lastSessionDate) stats.lastSessionDate = new Date().toDateString();
-    if (!stats.consecutiveSessions) stats.consecutiveSessions = 0;
+        // Ensure new properties exist
+        if (!stats.unlockedAchievements) stats.unlockedAchievements = [];
+        if (!stats.sessionsToday) stats.sessionsToday = 0;
+        if (!stats.lastSessionDate) stats.lastSessionDate = new Date().toDateString();
+        if (!stats.consecutiveSessions) stats.consecutiveSessions = 0;
+        if (stats.dailyLoginClaimed === undefined) stats.dailyLoginClaimed = false;
 
-    return stats;
+        const today = new Date().toDateString();
+
+        // Check if it's a new day
+        if (stats.lastActive !== today) {
+            const lastActiveDate = new Date(stats.lastActive);
+            const todayDate = new Date(today);
+            const daysDiff = Math.floor((todayDate - lastActiveDate) / (1000 * 60 * 60 * 24));
+
+            // Update streak based on days passed
+            if (daysDiff === 1) {
+                stats.streak += 1;
+            } else if (daysDiff > 1) {
+                stats.streak = 1;
+            }
+
+            // Reset daily counters
+            stats.sessionsToday = 0;
+            stats.dailyLoginClaimed = false;
+            stats.lastActive = today;
+
+            saveStats(stats);
+        }
+
+        return stats;
+    }
+
+    saveStats(defaultStats);
+    return defaultStats;
 }
 
 function saveStats(stats) {
