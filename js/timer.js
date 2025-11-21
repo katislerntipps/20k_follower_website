@@ -38,6 +38,8 @@ const treeImageSources = {
     'focus-mid': 'image/3.png',
     'focus-late': 'image/5.png',
     'focus-finale': 'image/6.png',
+    'focus-early': 'image/1.png',
+    'focus-wrapup': 'image/6.png',
     'break-short': 'image/3.png',
     'break-short-active': 'image/4.png',
     'break-long': 'image/5.png',
@@ -51,7 +53,11 @@ const treeImageMapping = {
         { key: 'focus-warming', matches: state => (state.visualCycleIndex ?? state.cycleCount) === 0 && state.isRunning },
         { key: 'focus-mid', matches: state => (state.visualCycleIndex ?? state.cycleCount) === 1 },
         { key: 'focus-late', matches: state => (state.visualCycleIndex ?? state.cycleCount) === 2 },
-        { key: 'focus-finale', matches: state => (state.visualCycleIndex ?? state.cycleCount) >= 3 }
+        { key: 'focus-finale', matches: state => (state.visualCycleIndex ?? state.cycleCount) >= 3 },
+        { key: 'focus-early', min: 0, max: 0.25 },
+        { key: 'focus-mid', min: 0.25, max: 0.6 },
+        { key: 'focus-late', min: 0.6, max: 0.9 },
+        { key: 'focus-wrapup', min: 0.9, max: Infinity }
     ],
     short: [
         { key: 'break-short-active', matches: state => state.isRunning },
@@ -443,19 +449,31 @@ function updateTimerTreeImage() {
         ? Math.max(timerState.totalCycleSessions, sessionsToday)
         : sessionsToday;
 
+    const remainingSeconds = (timerState.minutes * 60) + timerState.seconds;
+    const sessionProgress = timerState.totalSeconds
+        ? Math.min(Math.max(1 - (remainingSeconds / timerState.totalSeconds), 0), 1)
+        : 0;
+
     // Smooth visuals so "late" sessions keep their motif even after long breaks
     const visualCycleIndex = Math.max(
         timerState.cycleCount,
         Math.min(3, Math.max(0, totalSessionsForDay - 1))
     );
 
-    const stateForMapping = { ...timerState, visualCycleIndex };
+    const stateForMapping = { ...timerState, visualCycleIndex, sessionProgress };
 
     const resolveKey = (state) => {
         const modeMappings = treeImageMapping[state.mode] || [];
-        const match = modeMappings.find(entry => entry.matches(state));
+        const match = modeMappings.find(entry => typeof entry.matches === 'function' && entry.matches(state));
 
         if (match) return match.key;
+
+        const progressMatch = modeMappings.find(entry =>
+            typeof entry.min === 'number' && typeof entry.max === 'number' &&
+            state.sessionProgress >= entry.min && state.sessionProgress < entry.max
+        );
+
+        if (progressMatch) return progressMatch.key;
 
         const fallback = treeImageMapping.focus?.find(entry => entry.key) || {};
         return fallback.key || 'default';
