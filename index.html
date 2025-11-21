@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyTok Companion - Dein Lern-Buddy</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://www.tiktok.com; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self';">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
-    <script async src="https://www.tiktok.com/embed.js"></script>
+    <script src="js/vendor/gsap-lite.js" defer></script>
 </head>
 <body>
     <div class="blossom-background" aria-hidden="true"></div>
@@ -104,7 +100,7 @@
                 <div class="hero-visual">
                     <div class="tree-container">
                         <div class="tree-visual-stage home-tree-stage" id="home-cherry-tree">
-                            <img id="home-level-image" src="image/1.png" alt="Level Bild" style="width: 100%; height: 100%; object-fit: contain;">
+                            <img id="home-level-image" class="level-image" src="image/1.png" alt="Level Bild">
                         </div>
                         <div class="hero-floating-petals"></div>
                         <div class="tree-info">
@@ -188,9 +184,14 @@
                 <div class="video-card">
                     <a href="https://www.tiktok.com/@katislerntipps/video/7573783708772207894" target="_blank" rel="noopener noreferrer" class="video-link">
                         <div class="video-thumbnail">
-                            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@katislerntipps/video/7573783708772207894" data-video-id="7573783708772207894" style="max-width: 605px;min-width: 325px;">
-                                <section></section>
-                            </blockquote>
+                            <iframe
+                                class="tiktok-iframe"
+                                src="https://www.tiktok.com/embed/v2/7573783708772207894"
+                                title="TikTok Video 7573783708772207894"
+                                frameborder="0"
+                                loading="lazy"
+                                allow="encrypted-media;"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                         <h4 class="video-title">Markier jemanden der paar Ideen braucht 👀</h4>
                         <p class="video-meta">347.8K views</p>
@@ -199,9 +200,14 @@
                 <div class="video-card">
                     <a href="https://www.tiktok.com/@katislerntipps/video/7573028369600679190" target="_blank" rel="noopener noreferrer" class="video-link">
                         <div class="video-thumbnail">
-                            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@katislerntipps/video/7573028369600679190" data-video-id="7573028369600679190" style="max-width: 605px;min-width: 325px;">
-                                <section></section>
-                            </blockquote>
+                            <iframe
+                                class="tiktok-iframe"
+                                src="https://www.tiktok.com/embed/v2/7573028369600679190"
+                                title="TikTok Video 7573028369600679190"
+                                frameborder="0"
+                                loading="lazy"
+                                allow="encrypted-media;"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                         <h4 class="video-title">Markier jemanden der diese Hacks braucht 🤝</h4>
                         <p class="video-meta">52.8K views</p>
@@ -210,9 +216,14 @@
                 <div class="video-card">
                     <a href="https://www.tiktok.com/@katislerntipps/video/7572200114773658902" target="_blank" rel="noopener noreferrer" class="video-link">
                         <div class="video-thumbnail">
-                            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@katislerntipps/video/7572200114773658902" data-video-id="7572200114773658902" style="max-width: 605px;min-width: 325px;">
-                                <section></section>
-                            </blockquote>
+                            <iframe
+                                class="tiktok-iframe"
+                                src="https://www.tiktok.com/embed/v2/7572200114773658902"
+                                title="TikTok Video 7572200114773658902"
+                                frameborder="0"
+                                loading="lazy"
+                                allow="encrypted-media;"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                         <h4 class="video-title">Vertraut mir, diese Methode ist anders krass 🧠🤝</h4>
                         <p class="video-meta">149.5K views</p>
@@ -221,9 +232,14 @@
                 <div class="video-card">
                     <a href="https://www.tiktok.com/@katislerntipps/video/7571567256912661762" target="_blank" rel="noopener noreferrer" class="video-link">
                         <div class="video-thumbnail">
-                            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@katislerntipps/video/7571567256912661762" data-video-id="7571567256912661762" style="max-width: 605px;min-width: 325px;">
-                                <section></section>
-                            </blockquote>
+                            <iframe
+                                class="tiktok-iframe"
+                                src="https://www.tiktok.com/embed/v2/7571567256912661762"
+                                title="TikTok Video 7571567256912661762"
+                                frameborder="0"
+                                loading="lazy"
+                                allow="encrypted-media;"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                         <h4 class="video-title">Wer sollte dafür zahlen? Zuschauerin wollte eure Meinung</h4>
                         <p class="video-meta">117.3K views</p>
@@ -295,7 +311,7 @@
                         <button class="btn btn-primary shop-buy-btn" data-price="650" data-item="rabattcode">
                             Kaufen
                         </button>
-                        <span class="shop-item-purchased" style="display: none;">✅ Gekauft</span>
+                        <span class="shop-item-purchased">✅ Gekauft</span>
                     </div>
                     <div class="shop-item" data-item="achievement">
                         <div class="shop-item-header">
@@ -306,7 +322,7 @@
                         <button class="btn btn-primary shop-buy-btn" data-price="1000" data-item="achievement">
                             Kaufen
                         </button>
-                        <span class="shop-item-purchased" style="display: none;">✅ Gekauft</span>
+                        <span class="shop-item-purchased">✅ Gekauft</span>
                     </div>
                     <div class="shop-item" data-item="music">
                         <div class="shop-item-header">
@@ -317,7 +333,7 @@
                         <button class="btn btn-primary shop-buy-btn" data-price="250" data-item="music">
                             Kaufen
                         </button>
-                        <span class="shop-item-purchased" style="display: none;">✅ Gekauft</span>
+                        <span class="shop-item-purchased">✅ Gekauft</span>
                     </div>
                     <div class="shop-item" data-item="blossoms">
                         <div class="shop-item-header">
@@ -328,7 +344,7 @@
                         <button class="btn btn-primary shop-buy-btn" data-price="150" data-item="blossoms">
                             Kaufen
                         </button>
-                        <span class="shop-item-purchased" style="display: none;">✅ Gekauft</span>
+                        <span class="shop-item-purchased">✅ Gekauft</span>
                     </div>
                 </div>
             </div>
