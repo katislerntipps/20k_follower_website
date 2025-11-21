@@ -31,33 +31,39 @@ const treeImages = {
 };
 
 const treeImageSources = {
-    'focus-idle': 'image/1.png',
-    'focus-warming': 'image/2.png',
-    'focus-mid': 'image/3.png',
-    'focus-late': 'image/5.png',
-    'focus-finale': 'image/6.png',
-    'break-short': 'image/3.png',
-    'break-short-active': 'image/4.png',
-    'break-long': 'image/5.png',
-    'break-long-active': 'image/6.png',
+    'focus-early': 'image/1.png',
+    'focus-mid': 'image/2.png',
+    'focus-late': 'image/3.png',
+    'focus-wrapup': 'image/5.png',
+    'short-early': 'image/3.png',
+    'short-mid': 'image/3.png',
+    'short-late': 'image/4.png',
+    'short-wrapup': 'image/4.png',
+    'long-early': 'image/5.png',
+    'long-mid': 'image/5.png',
+    'long-late': 'image/6.png',
+    'long-wrapup': 'image/6.png',
     default: 'image/1.png'
 };
 
 const treeImageMapping = {
     focus: [
-        { key: 'focus-idle', matches: state => state.cycleCount === 0 && !state.isRunning },
-        { key: 'focus-warming', matches: state => state.cycleCount === 0 && state.isRunning },
-        { key: 'focus-mid', matches: state => state.cycleCount === 1 },
-        { key: 'focus-late', matches: state => state.cycleCount === 2 },
-        { key: 'focus-finale', matches: state => state.cycleCount >= 3 }
+        { key: 'focus-early', min: 0, max: 0.25 },
+        { key: 'focus-mid', min: 0.25, max: 0.6 },
+        { key: 'focus-late', min: 0.6, max: 0.9 },
+        { key: 'focus-wrapup', min: 0.9, max: Infinity }
     ],
     short: [
-        { key: 'break-short-active', matches: state => state.isRunning },
-        { key: 'break-short', matches: () => true }
+        { key: 'short-early', min: 0, max: 0.25 },
+        { key: 'short-mid', min: 0.25, max: 0.6 },
+        { key: 'short-late', min: 0.6, max: 0.9 },
+        { key: 'short-wrapup', min: 0.9, max: Infinity }
     ],
     long: [
-        { key: 'break-long-active', matches: state => state.isRunning },
-        { key: 'break-long', matches: () => true }
+        { key: 'long-early', min: 0, max: 0.25 },
+        { key: 'long-mid', min: 0.25, max: 0.6 },
+        { key: 'long-late', min: 0.6, max: 0.9 },
+        { key: 'long-wrapup', min: 0.9, max: Infinity }
     ]
 };
 
@@ -425,13 +431,19 @@ function updateTimerTreeImage() {
     if (!timerImage) return;
 
     const resolveKey = (state) => {
+        const remainingSeconds = Math.max(0, (state.minutes * 60) + state.seconds);
+        const totalSeconds = Math.max(1, state.totalSeconds || (state.minutes * 60));
+        const completedProgress = Math.min(1, Math.max(0, 1 - (remainingSeconds / totalSeconds)));
+
         const modeMappings = treeImageMapping[state.mode] || [];
-        const match = modeMappings.find(entry => entry.matches(state));
+        const match = modeMappings.find(entry => completedProgress >= entry.min && completedProgress < entry.max);
 
-        if (match) return match.key;
+        if (match && treeImageSources[match.key]) return match.key;
 
-        const fallback = treeImageMapping.focus?.find(entry => entry.key) || {};
-        return fallback.key || 'default';
+        const fallbackKey = `${state.mode}-wrapup`;
+        if (treeImageSources[fallbackKey]) return fallbackKey;
+
+        return 'default';
     };
 
     const imageKey = resolveKey(timerState);
