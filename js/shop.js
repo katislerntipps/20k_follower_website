@@ -311,7 +311,7 @@ function initMusicPlayer() {
 function setupBackgroundMusic() {
     // Create audio element
     if (!backgroundMusic) {
-        backgroundMusic = new Audio('audio/background-music.mp3');
+        backgroundMusic = new Audio('audio/backgroundmusic.mp3');
         backgroundMusic.loop = true;
         backgroundMusic.volume = 0.3;
     }
