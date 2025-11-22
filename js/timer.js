@@ -112,17 +112,12 @@ const throttledSaveTimerState = throttle(() => saveTimerState(), TIMER_SAVE_THRO
 
 // Progress ring helpers
 function initializeProgressRings() {
-    const rings = [
-        document.getElementById('timer-progress'),
-        document.getElementById('tree-progress')
-    ];
+    const timerRing = document.getElementById('timer-progress');
+    if (!timerRing || typeof timerRing.getTotalLength !== 'function') return;
 
-    rings.forEach(ring => {
-        if (!ring || typeof ring.getTotalLength !== 'function') return;
-        const length = ring.getTotalLength();
-        ring.style.strokeDasharray = length;
-        ring.dataset.circumference = length;
-    });
+    const length = timerRing.getTotalLength();
+    timerRing.style.strokeDasharray = length;
+    timerRing.dataset.circumference = length;
 }
 
 function getRingLength(ringElement, fallback) {
@@ -465,12 +460,6 @@ function updateDisplay() {
     if (progressRing) {
         const ringLength = getRingLength(progressRing, 534);
         progressRing.style.strokeDashoffset = ringLength - (ringLength * progress);
-    }
-
-    const treeRing = document.getElementById('tree-progress');
-    if (treeRing) {
-        const ringLength = getRingLength(treeRing, 720);
-        treeRing.style.strokeDashoffset = ringLength - (ringLength * progress);
     }
 
     const treeProgressText = document.getElementById('tree-progress-text');
