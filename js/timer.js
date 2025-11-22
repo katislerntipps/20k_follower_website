@@ -253,7 +253,7 @@ function startTimer() {
 }
 
 function pauseTimer(options = {}) {
-    const { showPauseImage = true } = options;
+    const { showPauseImage = true, resetConsecutive = true } = options;
     timerState.isRunning = false;
     timerState.isPaused = showPauseImage;
     clearInterval(timerState.interval);
@@ -269,10 +269,12 @@ function pauseTimer(options = {}) {
     timerState.elapsedWithoutPause = 0;
     updateTreeGrowth();
 
-    // Reset consecutive sessions on interruption (pause)
-    const stats = getStats();
-    stats.consecutiveSessions = 0;
-    saveStats(stats);
+    // Reset consecutive sessions only when user truly pauses/interrupts
+    if (resetConsecutive) {
+        const stats = getStats();
+        stats.consecutiveSessions = 0;
+        saveStats(stats);
+    }
 
     updateTimerTreeImage();
     saveTimerState();
@@ -360,7 +362,7 @@ function tick() {
 }
 
 function timerComplete() {
-    pauseTimer({ showPauseImage: false });
+    pauseTimer({ showPauseImage: false, resetConsecutive: false });
 
     // Play sound if enabled
     const soundEnabled = document.getElementById('sound-enabled').checked;
