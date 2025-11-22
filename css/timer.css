@@ -325,13 +325,15 @@
 
 #timer-tree-image {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     transition: opacity 0.3s ease;
 }
 
 .tree-progress-label {
     position: absolute;
-    bottom: 18%;
+    left: 50%;
+    bottom: 1.25rem;
+    transform: translateX(-50%);
     background: rgba(255, 255, 255, 0.9);
     color: var(--text-primary);
     padding: 0.45rem 0.9rem;
@@ -340,6 +342,8 @@
     font-size: 0.9rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(8px);
+    z-index: 3;
+    pointer-events: none;
 }
 
 .timer-petal-layer {
