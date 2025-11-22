@@ -311,39 +311,44 @@ function isValidEmail(email) {
 }
 
 async function sendEmailNotification(userEmail) {
-    const subject = 'Neue Rabattcode-Anfrage - StudyTok';
-    const body = `Ein Nutzer hat den Astra AI Rabattcode gekauft!\n\nE-Mail des Nutzers: ${userEmail}\n\nBitte sende den Rabattcode an diese Adresse.`;
-
-    const formData = new FormData();
-    formData.append('_subject', subject);
-    formData.append('_captcha', 'false');
-    formData.append('_template', 'table');
-    formData.append('reply_to', userEmail);
-    formData.append('email', userEmail);
-    formData.append('message', body);
+    const payload = {
+        userEmail,
+        context: 'shop-rabattcode'
+    };
 
     let response;
     try {
-        response = await fetch('https://formsubmit.co/ajax/20kwebshop@gmail.com', {
+        response = await fetch('/api/discount-email', {
             method: 'POST',
             headers: {
-                'Accept': 'application/json'
+                'Content-Type': 'application/json'
             },
-            body: formData
+            body: JSON.stringify(payload)
         });
     } catch (networkError) {
+        console.error('Rabattcode-Endpunkt nicht erreichbar:', networkError);
         throw new Error(`E-Mail konnte nicht gesendet werden (Netzwerkfehler): ${networkError.message}`);
     }
 
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Fehler beim Senden der E-Mail: ${response.status} ${response.statusText} - ${errorText}`);
+    let data;
+    try {
+        data = await response.json();
+    } catch (parseError) {
+        console.error('Antwort des Rabattcode-Endpunkts konnte nicht geparst werden:', parseError);
+        throw new Error('Ungültige Antwort vom E-Mail-Service erhalten.');
     }
 
-    const data = await response.json();
+    if (!response.ok) {
+        const errorMessage = data?.message || `${response.status} ${response.statusText}`;
+        const details = data?.details ? ` (${data.details})` : '';
+        console.error('Rabattcode-Endpunkt hat einen Fehler zurückgegeben:', errorMessage, details);
+        throw new Error(`Fehler beim Senden der E-Mail: ${errorMessage}${details}`);
+    }
+
     const success = data.success === true || data.success === 'true';
     if (!success) {
         const errorMessage = data?.message || 'E-Mail-Zustellung wurde vom Dienst abgelehnt.';
+        console.error('Rabattcode-Endpunkt meldet fehlgeschlagenen Versand:', errorMessage, data);
         throw new Error(errorMessage);
     }
 }
