@@ -7,6 +7,7 @@ let timerState = {
     minutes: 25,
     seconds: 0,
     isRunning: false,
+    isPaused: false,
     mode: 'focus', // 'focus', 'short', 'long'
     interval: null,
     totalSeconds: 25 * 60,
@@ -26,47 +27,10 @@ let treeState = {
     totalSessions: 0
 };
 
-const treeImages = {
-    focus: ['image/1.png', 'image/2.png', 'image/3.png', 'image/5.png', 'image/6.png'],
-    short: ['image/3.png', 'image/4.png'],
-    long: ['image/5.png', 'image/6.png']
-};
-
-const treeImageSources = {
-    'focus-early': 'image/1.png',
-    'focus-mid': 'image/2.png',
-    'focus-late': 'image/3.png',
-    'focus-wrapup': 'image/5.png',
-    'short-early': 'image/3.png',
-    'short-mid': 'image/3.png',
-    'short-late': 'image/4.png',
-    'short-wrapup': 'image/4.png',
-    'long-early': 'image/5.png',
-    'long-mid': 'image/5.png',
-    'long-late': 'image/6.png',
-    'long-wrapup': 'image/6.png',
-    default: 'image/1.png'
-};
-
-const treeImageMapping = {
-    focus: [
-        { key: 'focus-early', min: 0, max: 0.25 },
-        { key: 'focus-mid', min: 0.25, max: 0.6 },
-        { key: 'focus-late', min: 0.6, max: 0.9 },
-        { key: 'focus-wrapup', min: 0.9, max: Infinity }
-    ],
-    short: [
-        { key: 'short-early', min: 0, max: 0.25 },
-        { key: 'short-mid', min: 0.25, max: 0.6 },
-        { key: 'short-late', min: 0.6, max: 0.9 },
-        { key: 'short-wrapup', min: 0.9, max: Infinity }
-    ],
-    long: [
-        { key: 'long-early', min: 0, max: 0.25 },
-        { key: 'long-mid', min: 0.25, max: 0.6 },
-        { key: 'long-late', min: 0.6, max: 0.9 },
-        { key: 'long-wrapup', min: 0.9, max: Infinity }
-    ]
+const TIMER_IMAGE_THRESHOLDS = [0, 5, 10, 15, 20];
+const TIMER_IMAGE_SOURCES = {
+    default: 'image/1.png',
+    pause: 'image/pause.png'
 };
 
 let treeTimeline;
@@ -93,8 +57,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function preloadTreeImages() {
     const loaded = new Set();
+    const sources = [
+        'image/1.png',
+        'image/2.png',
+        'image/3.png',
+        'image/4.png',
+        'image/5.png',
+        TIMER_IMAGE_SOURCES.pause
+    ];
 
-    Object.values(treeImages).flat().forEach(src => {
+    sources.forEach(src => {
         if (loaded.has(src)) return;
 
         const img = new Image();
@@ -163,6 +135,7 @@ function initializeTimer() {
 function startTimer() {
     if (!timerState.isRunning) {
         timerState.isRunning = true;
+        timerState.isPaused = false;
 
         const currentSeconds = (timerState.minutes * 60) + timerState.seconds;
         const now = Date.now();
@@ -179,8 +152,10 @@ function startTimer() {
     }
 }
 
-function pauseTimer() {
+function pauseTimer(options = {}) {
+    const { showPauseImage = true } = options;
     timerState.isRunning = false;
+    timerState.isPaused = showPauseImage;
     clearInterval(timerState.interval);
 
     updateRemainingTime();
@@ -199,11 +174,12 @@ function pauseTimer() {
     stats.consecutiveSessions = 0;
     saveStats(stats);
 
+    updateTimerTreeImage();
     saveTimerState();
 }
 
 function resetTimer() {
-    pauseTimer();
+    pauseTimer({ showPauseImage: false });
 
     // Reset to focus mode and restart the entire Pomodoro cycle
     timerState.mode = 'focus';
@@ -214,6 +190,7 @@ function resetTimer() {
     timerState.elapsedWithoutPause = 0;
     timerState.endTime = null;
     timerState.lastTick = null;
+    timerState.isPaused = false;
 
     updateDisplay();
     updateTreeGrowth();
@@ -227,6 +204,7 @@ function changeMode(mode) {
     timerState.mode = mode;
     timerState.endTime = null;
     timerState.lastTick = null;
+    timerState.isPaused = false;
 
     switch(mode) {
         case 'focus':
@@ -282,7 +260,7 @@ function tick() {
 }
 
 function timerComplete() {
-    pauseTimer();
+    pauseTimer({ showPauseImage: false });
 
     // Play sound if enabled
     const soundEnabled = document.getElementById('sound-enabled').checked;
@@ -466,38 +444,27 @@ function updateTimerTreeImage() {
     const timerImage = document.getElementById('timer-tree-image');
     if (!timerImage) return;
 
-    const resolveKey = (state) => {
-        const remainingSeconds = Math.max(0, (state.minutes * 60) + state.seconds);
-        const totalSeconds = Math.max(1, state.totalSeconds || (state.minutes * 60));
-        const completedProgress = Math.min(1, Math.max(0, 1 - (remainingSeconds / totalSeconds)));
+    const resolveImageSrc = () => {
+        if (timerState.isPaused) {
+            return TIMER_IMAGE_SOURCES.pause;
+        }
 
-        const modeMappings = treeImageMapping[state.mode] || [];
-        const mappings = modeMappings.length ? modeMappings : [{ key: `${state.mode}-wrapup`, min: 0, max: Infinity }];
+        const remainingSeconds = Math.max(0, (timerState.minutes * 60) + timerState.seconds);
+        const totalSeconds = Math.max(1, timerState.totalSeconds || (timerState.minutes * 60));
+        const elapsedSeconds = Math.max(0, totalSeconds - remainingSeconds);
 
-        const matchIndex = mappings.findIndex(entry => completedProgress >= entry.min && completedProgress < entry.max);
-        const progressIndex = matchIndex >= 0 ? matchIndex : mappings.length - 1;
-
-        const daySessions = getDayCycleSessions();
-        const hasLongRunningSignal = Number.isFinite(daySessions) && daySessions > 0;
-        const dayStage = hasLongRunningSignal ? Math.min(mappings.length - 1, Math.floor((daySessions - 1) / 2)) : null;
-        const preferredIndex = dayStage !== null ? Math.max(progressIndex, dayStage) : progressIndex;
-
-        const chosenEntry = mappings[preferredIndex] || mappings[progressIndex] || mappings[mappings.length - 1];
-
-        if (chosenEntry && treeImageSources[chosenEntry.key]) return chosenEntry.key;
-
-        const fallbackKey = `${state.mode}-wrapup`;
-        if (treeImageSources[fallbackKey]) return fallbackKey;
-
-        return 'default';
+        if (elapsedSeconds >= TIMER_IMAGE_THRESHOLDS[4] * 60) return 'image/5.png';
+        if (elapsedSeconds >= TIMER_IMAGE_THRESHOLDS[3] * 60) return 'image/4.png';
+        if (elapsedSeconds >= TIMER_IMAGE_THRESHOLDS[2] * 60) return 'image/3.png';
+        if (elapsedSeconds >= TIMER_IMAGE_THRESHOLDS[1] * 60) return 'image/2.png';
+        return TIMER_IMAGE_SOURCES.default;
     };
 
-    const imageKey = resolveKey(timerState);
-    const imageSrc = treeImageSources[imageKey] || treeImageSources.default;
+    const imageSrc = resolveImageSrc();
 
-    if (timerImage.dataset.currentKey === imageKey && timerImage.src.endsWith(imageSrc)) return;
+    if (timerImage.dataset.currentSrc === imageSrc && timerImage.src.endsWith(imageSrc)) return;
 
-    timerImage.dataset.currentKey = imageKey;
+    timerImage.dataset.currentSrc = imageSrc;
     timerImage.style.opacity = '0';
 
     const handleLoad = () => {
@@ -507,7 +474,7 @@ function updateTimerTreeImage() {
 
     timerImage.addEventListener('load', handleLoad);
     timerImage.src = imageSrc;
-    timerImage.alt = `Timer-Baum Motiv: ${imageKey}`;
+    timerImage.alt = timerState.isPaused ? 'Timer pausiert' : 'Timer-Baum Fortschritt';
 
     if (timerImage.complete && timerImage.naturalWidth !== 0) {
         handleLoad();
@@ -878,6 +845,7 @@ function loadTimerState() {
 
         if (!saved.lastCycleSessionDate) saved.lastCycleSessionDate = today;
         if (!Number.isFinite(saved.totalCycleSessions)) saved.totalCycleSessions = 0;
+        if (typeof saved.isPaused !== 'boolean') saved.isPaused = false;
 
         if (saved.lastCycleSessionDate !== today) {
             saved.totalCycleSessions = 0;
@@ -959,6 +927,7 @@ function saveTimerState() {
         mode: timerState.mode,
         totalSeconds: timerState.totalSeconds,
         isRunning: timerState.isRunning,
+        isPaused: timerState.isPaused,
         endTime: timerState.endTime,
         elapsedWithoutPause: timerState.elapsedWithoutPause,
         lastTick: timerState.lastTick,

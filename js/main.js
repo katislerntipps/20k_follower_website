@@ -161,8 +161,7 @@ function getLevelEmoji(level) {
         case 3: return '🌳';
         case 4: return '🌸';
         case 5: return '🌸🌸';
-        case 6: return '🌸🌸🌸';
-        default: return level > 6 ? '🌸🌸🌸' : '🌱';
+        default: return level > 5 ? '🌸🌸' : '🌱';
     }
 }
 
@@ -196,8 +195,8 @@ function updateHomeLevelImage(level) {
     const levelImage = document.getElementById('home-level-image');
     if (!levelImage) return;
 
-    // Level 1-6: show corresponding image, Level 6+: always show 6.png
-    const imageNumber = Math.min(level, 6);
+    // Level 1-5: show corresponding image, Level 5+: always show 5.png
+    const imageNumber = Math.min(level, 5);
     levelImage.src = `image/${imageNumber}.png`;
     levelImage.alt = `Level ${level} Bild`;
 }
