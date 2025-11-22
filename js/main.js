@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeDarkMode();
     initializePointsHistory();
     initializeFloatingTimer();
+    initializeMusicRewards();
 });
 
 function applySakuraTheme() {
@@ -389,6 +390,45 @@ function initializePointsHistory() {
             closeModal();
         }
     });
+}
+
+// ===================================
+// MUSIK & YT REWARD SYSTEM
+// ===================================
+
+const MUSIC_REWARD_STORAGE_KEY = 'studytok_music_last_reward';
+const MUSIC_REWARD_COOLDOWN_MS = 30 * 60 * 1000; // 30 Minuten
+const MUSIC_REWARD_POINTS = 5;
+
+function initializeMusicRewards() {
+    const isMusicPage = window.location.pathname.endsWith('musik.html');
+    if (!isMusicPage) return;
+
+    const musicLinks = document.querySelectorAll('section.dashboard a.btn, section.features a.btn');
+    if (!musicLinks.length) return;
+
+    musicLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            handleMusicReward();
+        });
+    });
+}
+
+function handleMusicReward() {
+    const now = Date.now();
+    const lastReward = parseInt(localStorage.getItem(MUSIC_REWARD_STORAGE_KEY) || '0', 10);
+    const timeSinceLastReward = now - lastReward;
+
+    if (timeSinceLastReward < MUSIC_REWARD_COOLDOWN_MS) {
+        const remainingMs = MUSIC_REWARD_COOLDOWN_MS - timeSinceLastReward;
+        const remainingMinutes = Math.ceil(remainingMs / 60000);
+        showNotification(`Du kannst in ${remainingMinutes} Min. wieder Musik-Punkte sammeln.`, 'error');
+        return;
+    }
+
+    addPoints(MUSIC_REWARD_POINTS);
+    localStorage.setItem(MUSIC_REWARD_STORAGE_KEY, now.toString());
+    showNotification('🎵 +5 Punkte für Fokusmusik! Weiter so.', 'success');
 }
 
 // ===================================
