@@ -251,7 +251,7 @@ function handleItemPurchase(itemName) {
 // Email Submission for Rabattcode
 // ===================================
 
-function submitEmail() {
+async function submitEmail() {
     const emailInput = document.getElementById('email-input');
     const email = emailInput.value.trim();
 
@@ -264,13 +264,16 @@ function submitEmail() {
     shopState.rabattcodeEmail = email;
     saveShopState(shopState);
 
-    // Send email (using mailto as a simple solution)
-    sendEmailNotification(email);
+    try {
+        await sendEmailNotification(email);
+        showNotification('E-Mail erfolgreich übermittelt! Du erhältst deinen Rabattcode in Kürze.', 'success');
+    } catch (error) {
+        console.error('Rabattcode-E-Mail konnte nicht gesendet werden:', error);
+        showNotification('Ups, das hat nicht geklappt. Bitte versuche es später erneut oder schreibe uns direkt an 20kwebshop@gmail.com.', 'error');
+    }
 
     const emailModal = document.getElementById('email-modal');
     closeModal(emailModal);
-
-    showNotification('E-Mail erfolgreich übermittelt! Du erhältst deinen Rabattcode in Kürze.', 'success');
     emailInput.value = '';
 }
 
@@ -279,14 +282,40 @@ function isValidEmail(email) {
     return re.test(email);
 }
 
-function sendEmailNotification(userEmail) {
-    // Create mailto link to send notification
+async function sendEmailNotification(userEmail) {
     const subject = 'Neue Rabattcode-Anfrage - StudyTok';
     const body = `Ein Nutzer hat den Astra AI Rabattcode gekauft!\n\nE-Mail des Nutzers: ${userEmail}\n\nBitte sende den Rabattcode an diese Adresse.`;
-    const mailtoLink = `mailto:20kwebshop@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const payload = {
+        email: userEmail,
+        _replyto: userEmail,
+        _subject: subject,
+        message: body,
+        _captcha: 'false',
+        _template: 'table'
+    };
 
-    // Open mailto link (this will open the user's email client)
-    window.location.href = mailtoLink;
+    const response = await fetch('https://formsubmit.co/ajax/20kwebshop@gmail.com', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        mode: 'cors',
+        referrerPolicy: 'no-referrer'
+    });
+
+    if (!response.ok) {
+        throw new Error(`Fehler beim Senden der E-Mail: ${response.status} ${response.statusText}`);
+    }
+
+    // FormSubmit responds with JSON when the Accept header is set correctly
+    const data = await response.json();
+    const success = data.success === true || data.success === 'true';
+
+    if (!success) {
+        throw new Error(data.message || 'E-Mail-Zustellung wurde vom Dienst abgelehnt.');
+    }
 }
 
 // ===================================
