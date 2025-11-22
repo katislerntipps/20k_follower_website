@@ -473,6 +473,8 @@ function updateDisplay() {
         treeRing.style.strokeDashoffset = ringLength - (ringLength * progress);
     }
 
+    updateHeroProgress(progress);
+
     const treeProgressText = document.getElementById('tree-progress-text');
     if (treeProgressText) {
         const modeLabels = {
@@ -487,6 +489,24 @@ function updateDisplay() {
             ? `${readableLabel} • ${percentage}%`
             : `${readableLabel} bereit`;
     }
+}
+
+function updateHeroProgress(progress) {
+    const heroProgress = document.getElementById('tree-hero-progress');
+    if (!heroProgress) return;
+
+    const clampedProgress = Math.max(0, Math.min(progress, 1));
+    const percentage = Math.round(clampedProgress * 100);
+
+    // Animate from pink to teal as the timer fills
+    const startHue = 330;
+    const endHue = 180;
+    const hue = startHue - (clampedProgress * (startHue - endHue));
+    const primaryColor = `hsl(${hue}, 78%, 58%)`;
+
+    heroProgress.style.setProperty('--tree-progress', `${percentage}%`);
+    heroProgress.style.setProperty('--tree-progress-color', primaryColor);
+    heroProgress.style.setProperty('--tree-progress-soft', `hsla(${hue}, 78%, 58%, 0.32)`);
 }
 
 function updateCycleIndicator() {
