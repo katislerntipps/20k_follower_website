@@ -314,27 +314,37 @@ async function sendEmailNotification(userEmail) {
     const subject = 'Neue Rabattcode-Anfrage - StudyTok';
     const body = `Ein Nutzer hat den Astra AI Rabattcode gekauft!\n\nE-Mail des Nutzers: ${userEmail}\n\nBitte sende den Rabattcode an diese Adresse.`;
 
-    const response = await fetch('https://formsubmit.co/ajax/20kwebshop@gmail.com', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            subject,
-            email: userEmail,
-            message: body
-        })
-    });
+    const formData = new FormData();
+    formData.append('_subject', subject);
+    formData.append('_captcha', 'false');
+    formData.append('_template', 'table');
+    formData.append('reply_to', userEmail);
+    formData.append('email', userEmail);
+    formData.append('message', body);
+
+    let response;
+    try {
+        response = await fetch('https://formsubmit.co/ajax/20kwebshop@gmail.com', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json'
+            },
+            body: formData
+        });
+    } catch (networkError) {
+        throw new Error(`E-Mail konnte nicht gesendet werden (Netzwerkfehler): ${networkError.message}`);
+    }
 
     if (!response.ok) {
-        throw new Error(`Fehler beim Senden der E-Mail: ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(`Fehler beim Senden der E-Mail: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
     const success = data.success === true || data.success === 'true';
     if (!success) {
-        throw new Error('E-Mail-Zustellung wurde vom Dienst abgelehnt.');
+        const errorMessage = data?.message || 'E-Mail-Zustellung wurde vom Dienst abgelehnt.';
+        throw new Error(errorMessage);
     }
 }
 
