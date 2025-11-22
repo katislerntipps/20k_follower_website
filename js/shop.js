@@ -251,7 +251,7 @@ function handleItemPurchase(itemName) {
 // Email Submission for Rabattcode
 // ===================================
 
-function submitEmail() {
+async function submitEmail() {
     const emailInput = document.getElementById('email-input');
     const email = emailInput.value.trim();
 
@@ -264,13 +264,16 @@ function submitEmail() {
     shopState.rabattcodeEmail = email;
     saveShopState(shopState);
 
-    // Send email (using mailto as a simple solution)
-    sendEmailNotification(email);
+    try {
+        await sendEmailNotification(email);
+        showNotification('E-Mail erfolgreich übermittelt! Du erhältst deinen Rabattcode in Kürze.', 'success');
+    } catch (error) {
+        console.error('Rabattcode-E-Mail konnte nicht gesendet werden:', error);
+        showNotification('Ups, das hat nicht geklappt. Bitte versuche es später erneut oder schreibe uns direkt an 20kwebshop@gmail.com.', 'error');
+    }
 
     const emailModal = document.getElementById('email-modal');
     closeModal(emailModal);
-
-    showNotification('E-Mail erfolgreich übermittelt! Du erhältst deinen Rabattcode in Kürze.', 'success');
     emailInput.value = '';
 }
 
@@ -279,14 +282,32 @@ function isValidEmail(email) {
     return re.test(email);
 }
 
-function sendEmailNotification(userEmail) {
-    // Create mailto link to send notification
+async function sendEmailNotification(userEmail) {
     const subject = 'Neue Rabattcode-Anfrage - StudyTok';
     const body = `Ein Nutzer hat den Astra AI Rabattcode gekauft!\n\nE-Mail des Nutzers: ${userEmail}\n\nBitte sende den Rabattcode an diese Adresse.`;
-    const mailtoLink = `mailto:20kwebshop@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    // Open mailto link (this will open the user's email client)
-    window.location.href = mailtoLink;
+    const response = await fetch('https://formsubmit.co/ajax/20kwebshop@gmail.com', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            subject,
+            email: userEmail,
+            message: body
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Fehler beim Senden der E-Mail: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const success = data.success === true || data.success === 'true';
+    if (!success) {
+        throw new Error('E-Mail-Zustellung wurde vom Dienst abgelehnt.');
+    }
 }
 
 // ===================================
