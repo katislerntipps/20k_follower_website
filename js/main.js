@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTreeDisplay();
     initializeDarkMode();
     initializePointsHistory();
+    initializeFloatingTimer();
 });
 
 function applySakuraTheme() {
@@ -133,6 +134,89 @@ function addPoints(points) {
     saveStats(stats);
     updatePoints();
     return stats.points;
+}
+
+// ===================================
+// FLOATING TIMER (GLOBAL)
+// ===================================
+
+function initializeFloatingTimer() {
+    // Avoid showing the floating timer on the dedicated timer page
+    const isTimerPage = window.location.pathname.endsWith('timer.html');
+    if (isTimerPage) return;
+
+    const existing = document.getElementById('floating-timer');
+    if (existing) existing.remove();
+
+    const floatingTimer = document.createElement('div');
+    floatingTimer.id = 'floating-timer';
+    floatingTimer.setAttribute('aria-live', 'polite');
+    floatingTimer.innerHTML = `
+        <div class="floating-timer-content">
+            <div class="floating-timer-running">⏱️ Läuft</div>
+            <div class="floating-timer-label">
+                <div class="floating-timer-mode" id="floating-timer-mode">Fokus</div>
+                <div class="floating-timer-status" id="floating-timer-status">Der Timer zählt weiter</div>
+            </div>
+            <div class="floating-timer-time" id="floating-timer-time">25:00</div>
+            <button class="floating-timer-link" type="button" aria-label="Zum Timer wechseln">Zum Timer</button>
+        </div>
+    `;
+
+    document.body.appendChild(floatingTimer);
+
+    const timeEl = floatingTimer.querySelector('#floating-timer-time');
+    const modeEl = floatingTimer.querySelector('#floating-timer-mode');
+    const statusEl = floatingTimer.querySelector('#floating-timer-status');
+    const linkBtn = floatingTimer.querySelector('.floating-timer-link');
+
+    linkBtn.addEventListener('click', () => {
+        window.location.href = 'timer.html';
+    });
+
+    const modeLabels = {
+        focus: 'Fokus',
+        short: 'Kurze Pause',
+        long: 'Lange Pause'
+    };
+
+    function getStoredTimer() {
+        const stored = localStorage.getItem('studytok_timer');
+        if (!stored) return null;
+        return JSON.parse(stored);
+    }
+
+    function formatTime(totalSeconds) {
+        const safeSeconds = Math.max(0, totalSeconds);
+        const minutes = Math.floor(safeSeconds / 60);
+        const seconds = safeSeconds % 60;
+        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function updateFloatingTimer() {
+        const state = getStoredTimer();
+
+        if (!state || !state.isRunning || !state.endTime) {
+            floatingTimer.style.display = 'none';
+            return;
+        }
+
+        const remainingSeconds = Math.max(0, Math.round((state.endTime - Date.now()) / 1000));
+        timeEl.textContent = formatTime(remainingSeconds);
+        modeEl.textContent = modeLabels[state.mode] || 'Timer';
+
+        if (remainingSeconds === 0) {
+            statusEl.textContent = 'Session abgeschlossen';
+        } else {
+            statusEl.textContent = 'Der Timer läuft weiter';
+        }
+
+        floatingTimer.style.display = 'flex';
+    }
+
+    updateFloatingTimer();
+    setInterval(updateFloatingTimer, 1000);
+    window.addEventListener('storage', updateFloatingTimer);
 }
 
 // ===================================
