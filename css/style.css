@@ -1798,7 +1798,7 @@ body.sakura-theme {
 
 .music-toggle-btn {
     position: fixed;
-    bottom: 2rem;
+    bottom: 7rem;
     right: 2rem;
     width: 56px;
     height: 56px;
@@ -1826,7 +1826,7 @@ body.sakura-theme {
 
 .music-volume-control {
     position: fixed;
-    bottom: 2rem;
+    bottom: 7rem;
     right: 4.5rem;
     background: var(--bg-card);
     padding: 0.85rem 1rem;
