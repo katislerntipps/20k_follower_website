@@ -471,19 +471,30 @@ function generateBlossomPetals() {
     const container = document.querySelector('.blossom-background');
     if (!container) return;
 
+    const treeState = getTreeState();
+    const hasReachedLevelFive = treeState.level >= 5;
+
     // Check if blossom rain is purchased
     const shopState = safeGetItem('studytok_shop');
     if (shopState) {
         const shop = safeParseJSON(shopState, {}, 'studytok_shop') || {};
         const purchases = shop.purchases || {};
 
-        if (!purchases.blossoms) {
+        if (!purchases.blossoms || !hasReachedLevelFive) {
             container.style.display = 'none';
+            container.innerHTML = '';
             return;
         }
     } else {
         // Not purchased yet, hide it
         container.style.display = 'none';
+        container.innerHTML = '';
+        return;
+    }
+
+    if (!hasReachedLevelFive) {
+        container.style.display = 'none';
+        container.innerHTML = '';
         return;
     }
 

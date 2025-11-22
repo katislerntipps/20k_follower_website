@@ -549,9 +549,30 @@ function updateTimerTreeImage() {
     timerImage.src = imageSrc;
     timerImage.alt = timerState.isPaused ? 'Timer pausiert' : 'Timer-Baum Fortschritt';
 
+    updateTimerPetalsVisibility(imageSrc);
+
     if (timerImage.complete && timerImage.naturalWidth !== 0) {
         handleLoad();
     }
+}
+
+function updateTimerPetalsVisibility(imageSrc) {
+    const fallingLayer = document.getElementById('timer-petal-layer');
+    if (!fallingLayer) return;
+
+    const shouldShowPetals = imageSrc.endsWith('image/5.png');
+
+    if (!shouldShowPetals) {
+        fallingLayer.style.display = 'none';
+        fallingLayer.innerHTML = '';
+        return;
+    }
+
+    if (!fallingLayer.children.length) {
+        addFallingPetals();
+    }
+
+    fallingLayer.style.display = 'block';
 }
 
 // ===================================
@@ -773,9 +794,9 @@ function renderTimerCherryTree() {
         wrapper.appendChild(fallingLayer);
     }
 
-    addFallingPetals();
     setupTreeTimeline();
     updateTreeGrowth();
+    updateTimerPetalsVisibility(document.getElementById('timer-tree-image')?.src || '');
 }
 
 function playBloomFinale() {
