@@ -15,21 +15,42 @@ const DISCOUNT_CODE = 'T-E-S-T-1-2-3';
 const MUSIC_STATE_KEY = 'studytok_music_state';
 
 // ===================================
+// SAFE STORAGE HELPERS
+// ===================================
+
+function safeGetItem(key, fallback = null) {
+    try {
+        const value = localStorage.getItem(key);
+        return value !== null ? value : fallback;
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${key} nicht auslesen, nutze Fallback.`, error);
+        return fallback;
+    }
+}
+
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${key} nicht speichern.`, error);
+    }
+}
+
+function safeParseJSON(value, fallback, label = 'Wert') {
+    try {
+        return JSON.parse(value);
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${label} nicht parsen, nutze Fallback.`, error);
+        return fallback;
+    }
+}
+
+// ===================================
 // Shop State Management
 // ===================================
 
 function getShopState() {
-    const saved = localStorage.getItem('studytok_shop');
-    if (saved) {
-        const state = JSON.parse(saved);
-
-        if (state.musicVolume === undefined) {
-            state.musicVolume = 0.3;
-        }
-
-        return state;
-    }
-    return {
+    const defaultState = {
         purchases: {
             rabattcode: false,
             achievement: false,
@@ -39,10 +60,22 @@ function getShopState() {
         musicEnabled: true,
         musicVolume: 0.3
     };
+
+    const saved = safeGetItem('studytok_shop');
+    if (saved) {
+        const state = safeParseJSON(saved, { ...defaultState }, 'studytok_shop');
+
+        if (state.musicVolume === undefined) {
+            state.musicVolume = 0.3;
+        }
+
+        return state;
+    }
+    return defaultState;
 }
 
 function saveShopState(state) {
-    localStorage.setItem('studytok_shop', JSON.stringify(state));
+    safeSetItem('studytok_shop', JSON.stringify(state));
 }
 
 function getSavedMusicState() {
@@ -74,11 +107,7 @@ function saveCurrentMusicState() {
 
 // Get stats from main.js
 function getStats() {
-    const saved = localStorage.getItem('studytok_stats');
-    if (saved) {
-        return JSON.parse(saved);
-    }
-    return {
+    const defaultStats = {
         sessions: 0,
         focusTime: 0,
         points: 0,
@@ -88,10 +117,16 @@ function getStats() {
         unlockedAchievements: [],
         dailyLoginClaimed: false
     };
+
+    const saved = safeGetItem('studytok_stats');
+    if (saved) {
+        return safeParseJSON(saved, { ...defaultStats }, 'studytok_stats');
+    }
+    return defaultStats;
 }
 
 function saveStats(stats) {
-    localStorage.setItem('studytok_stats', JSON.stringify(stats));
+    safeSetItem('studytok_stats', JSON.stringify(stats));
 }
 
 // ===================================

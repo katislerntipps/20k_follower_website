@@ -22,6 +22,37 @@ function applySakuraTheme() {
 }
 
 // ===================================
+// SAFE STORAGE HELPERS
+// ===================================
+
+function safeGetItem(key, fallback = null) {
+    try {
+        const value = localStorage.getItem(key);
+        return value !== null ? value : fallback;
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${key} nicht auslesen, nutze Fallback.`, error);
+        return fallback;
+    }
+}
+
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${key} nicht speichern.`, error);
+    }
+}
+
+function safeParseJSON(value, fallback, label = 'Wert') {
+    try {
+        return JSON.parse(value);
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${label} nicht parsen, nutze Fallback.`, error);
+        return fallback;
+    }
+}
+
+// ===================================
 // STATS MANAGEMENT
 // ===================================
 
@@ -48,9 +79,10 @@ function getStats() {
         dailyLoginClaimed: false
     };
 
-    const stored = localStorage.getItem('studytok_stats');
-    if (stored) {
-        const stats = JSON.parse(stored);
+    const stored = safeGetItem('studytok_stats');
+    const stats = stored ? safeParseJSON(stored, { ...defaultStats }, 'studytok_stats') : { ...defaultStats };
+
+    if (stats) {
 
         // Ensure new properties exist
         if (!stats.unlockedAchievements) stats.unlockedAchievements = [];
@@ -99,7 +131,7 @@ function getStats() {
 }
 
 function saveStats(stats) {
-    localStorage.setItem('studytok_stats', JSON.stringify(stats));
+    safeSetItem('studytok_stats', JSON.stringify(stats));
 }
 
 function updateStatsDisplay(stats) {
@@ -182,9 +214,9 @@ function initializeFloatingTimer() {
     };
 
     function getStoredTimer() {
-        const stored = localStorage.getItem('studytok_timer');
+        const stored = safeGetItem('studytok_timer');
         if (!stored) return null;
-        return JSON.parse(stored);
+        return safeParseJSON(stored, null, 'studytok_timer');
     }
 
     function formatTime(totalSeconds) {
@@ -231,12 +263,12 @@ function getTreeState() {
         totalSessions: 0
     };
 
-    const stored = localStorage.getItem('studytok_tree');
+    const stored = safeGetItem('studytok_tree');
     if (stored) {
-        return JSON.parse(stored);
+        return safeParseJSON(stored, { ...defaultTreeState }, 'studytok_tree');
     }
 
-    return defaultTreeState;
+    return { ...defaultTreeState };
 }
 
 function getLevelEmoji(level) {
@@ -416,7 +448,7 @@ function initializeMusicRewards() {
 
 function handleMusicReward() {
     const now = Date.now();
-    const lastReward = parseInt(localStorage.getItem(MUSIC_REWARD_STORAGE_KEY) || '0', 10);
+    const lastReward = parseInt(safeGetItem(MUSIC_REWARD_STORAGE_KEY, '0') || '0', 10);
     const timeSinceLastReward = now - lastReward;
 
     if (timeSinceLastReward < MUSIC_REWARD_COOLDOWN_MS) {
@@ -427,7 +459,7 @@ function handleMusicReward() {
     }
 
     addPoints(MUSIC_REWARD_POINTS);
-    localStorage.setItem(MUSIC_REWARD_STORAGE_KEY, now.toString());
+    safeSetItem(MUSIC_REWARD_STORAGE_KEY, now.toString());
     showNotification('🎵 +5 Punkte für Fokusmusik! Weiter so.', 'success');
 }
 
@@ -440,9 +472,9 @@ function generateBlossomPetals() {
     if (!container) return;
 
     // Check if blossom rain is purchased
-    const shopState = localStorage.getItem('studytok_shop');
+    const shopState = safeGetItem('studytok_shop');
     if (shopState) {
-        const shop = JSON.parse(shopState) || {};
+        const shop = safeParseJSON(shopState, {}, 'studytok_shop') || {};
         const purchases = shop.purchases || {};
 
         if (!purchases.blossoms) {
@@ -839,7 +871,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeDarkMode() {
     const themeToggle = document.getElementById('theme-toggle');
-    const savedTheme = localStorage.getItem('studytok_theme') || 'light';
+    const savedTheme = safeGetItem('studytok_theme', 'light');
 
     // Apply saved theme
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -856,7 +888,7 @@ function toggleTheme() {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
     document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('studytok_theme', newTheme);
+    safeSetItem('studytok_theme', newTheme);
     updateThemeIcon(newTheme);
 }
 
