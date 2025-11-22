@@ -1747,6 +1747,51 @@ body.sakura-theme {
     border-color: var(--primary);
 }
 
+.discount-code-inline {
+    display: none;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 2px dashed rgba(255, 183, 197, 0.4);
+    border-radius: var(--radius-md);
+    background: rgba(255, 183, 197, 0.08);
+}
+
+.discount-code-label {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.discount-code-value {
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    font-weight: 800;
+    color: var(--primary-dark);
+    background: rgba(255, 183, 197, 0.15);
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    margin-bottom: 0.35rem;
+}
+
+.discount-code-hint {
+    margin: 0.35rem 0 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.discount-code-display {
+    font-size: 1.4rem;
+    letter-spacing: 0.16em;
+    font-weight: 900;
+    text-align: center;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(255, 183, 197, 0.2), rgba(255, 183, 197, 0.4));
+    color: var(--primary-dark);
+    box-shadow: var(--shadow-md);
+    margin: 0.75rem 0 0.5rem;
+}
+
 /* ===================================
    MUSIC TOGGLE BUTTON
    =================================== */

@@ -307,11 +307,17 @@
                             <h4>🎁 Astra AI Rabattcode</h4>
                             <span class="shop-item-price">650 Punkte</span>
                         </div>
-                        <p class="shop-item-description">Erhalte einen exklusiven Rabattcode für Astra AI per E-Mail!</p>
+                        <p class="shop-item-description">Sichere dir den Astra AI Rabattcode – ganz ohne E-Mail, direkt nach dem Kauf.</p>
                         <button class="btn btn-primary shop-buy-btn" data-price="650" data-item="rabattcode">
                             Kaufen
                         </button>
                         <span class="shop-item-purchased">✅ Gekauft</span>
+                        <div class="discount-code-inline" aria-live="polite">
+                            <p class="discount-code-label">Dein Rabattcode:</p>
+                            <div class="discount-code-value">T-E-S-T-1-2-3</div>
+                            <p class="discount-code-hint">Du kannst den Code jederzeit hier im Shop abrufen.</p>
+                            <button class="btn btn-secondary" data-action="show-discount-code">Code groß anzeigen</button>
+                        </div>
                     </div>
                     <div class="shop-item" data-item="achievement">
                         <div class="shop-item-header">
@@ -370,20 +376,20 @@
         </div>
     </div>
 
-    <!-- Email Input Modal for Rabattcode -->
-    <div class="modal-overlay" id="email-modal" aria-hidden="true" role="dialog" aria-label="E-Mail eingeben">
+    <!-- Rabattcode Modal -->
+    <div class="modal-overlay" id="discount-modal" aria-hidden="true" role="dialog" aria-label="Rabattcode anzeigen">
         <div class="modal" role="document">
             <div class="modal-header">
                 <div>
-                    <p class="modal-kicker">Rabattcode erhalten</p>
-                    <h3>📧 E-Mail Adresse</h3>
+                    <p class="modal-kicker">Dein Kauf</p>
+                    <h3>🎁 Rabattcode freigeschaltet</h3>
                 </div>
                 <button class="modal-close" aria-label="Schließen">×</button>
             </div>
             <div class="modal-body">
-                <p>Gib deine E-Mail Adresse ein, um den Astra AI Rabattcode zu erhalten:</p>
-                <input type="email" id="email-input" class="email-input" placeholder="deine@email.de" required>
-                <button class="btn btn-primary" id="email-submit">Absenden</button>
+                <p>Hier ist dein Rabattcode. Viel Spaß beim Einlösen!</p>
+                <div class="discount-code-display" id="discount-code-text">T-E-S-T-1-2-3</div>
+                <p class="discount-code-hint">Der Code bleibt im Shop sichtbar, falls du ihn später noch einmal brauchst.</p>
             </div>
         </div>
     </div>
