@@ -111,6 +111,37 @@ const lerntipps = [
     { title: 'Zahlen-Formen', description: 'Verbinde Zahlen mit Formen. 0=Ei, 1=Kerze, 2=Schwan... Erstelle visuelle Geschichten!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🔢' }
 ];
 
+// ===================================
+// SAFE STORAGE HELPERS
+// ===================================
+
+function safeGetItem(key, fallback = null) {
+    try {
+        const value = localStorage.getItem(key);
+        return value !== null ? value : fallback;
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${key} nicht auslesen, nutze Fallback.`, error);
+        return fallback;
+    }
+}
+
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${key} nicht speichern.`, error);
+    }
+}
+
+function safeParseJSON(value, fallback, label = 'Wert') {
+    try {
+        return JSON.parse(value);
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${label} nicht parsen, nutze Fallback.`, error);
+        return fallback;
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     console.log('=== TIPPS.JS DOMContentLoaded ===');
@@ -150,7 +181,7 @@ function initializeGenerator() {
                 showRandomTip(randomTip);
 
                 // Check cooldown for bonus points (10 minutes = 600000 milliseconds)
-                const lastBonusTime = parseInt(localStorage.getItem('studytok_tip_bonus_time') || '0');
+                const lastBonusTime = parseInt(safeGetItem('studytok_tip_bonus_time', '0') || '0');
                 const currentTime = Date.now();
                 const cooldownPeriod = 10 * 60 * 1000; // 10 minutes in milliseconds
                 const timeSinceLastBonus = currentTime - lastBonusTime;
@@ -158,7 +189,7 @@ function initializeGenerator() {
                 if (timeSinceLastBonus >= cooldownPeriod) {
                     // Cooldown has passed, give bonus
                     addPoints(2);
-                    localStorage.setItem('studytok_tip_bonus_time', currentTime.toString());
+                    safeSetItem('studytok_tip_bonus_time', currentTime.toString());
                     showNotification('💡 Neuer Lerntipp generiert! +2 Punkte Bonus!');
                 } else {
                     // Still in cooldown
@@ -329,22 +360,22 @@ function initializeFavorites() {
 }
 
 function getFavorites() {
-    const stored = localStorage.getItem('studytok_favorites');
-    return stored ? JSON.parse(stored) : [];
+    const stored = safeGetItem('studytok_favorites');
+    return stored ? safeParseJSON(stored, [], 'studytok_favorites') : [];
 }
 
 function addFavorite(title) {
     const favorites = getFavorites();
     if (!favorites.includes(title)) {
         favorites.push(title);
-        localStorage.setItem('studytok_favorites', JSON.stringify(favorites));
+        safeSetItem('studytok_favorites', JSON.stringify(favorites));
     }
 }
 
 function removeFavorite(title) {
     let favorites = getFavorites();
     favorites = favorites.filter(f => f !== title);
-    localStorage.setItem('studytok_favorites', JSON.stringify(favorites));
+    safeSetItem('studytok_favorites', JSON.stringify(favorites));
 }
 
 // ===================================
@@ -395,8 +426,8 @@ function getStats() {
         consecutiveSessions: 0
     };
 
-    const stored = localStorage.getItem('studytok_stats');
-    const stats = stored ? JSON.parse(stored) : defaultStats;
+    const stored = safeGetItem('studytok_stats');
+    const stats = stored ? safeParseJSON(stored, { ...defaultStats }, 'studytok_stats') : { ...defaultStats };
 
     // Ensure new properties exist
     if (!stats.unlockedAchievements) stats.unlockedAchievements = [];
@@ -408,7 +439,7 @@ function getStats() {
 }
 
 function saveStats(stats) {
-    localStorage.setItem('studytok_stats', JSON.stringify(stats));
+    safeSetItem('studytok_stats', JSON.stringify(stats));
 }
 
 function addPoints(points) {
@@ -497,7 +528,7 @@ document.head.appendChild(tippsAnimationStyle);
 
 function initializeDarkMode() {
     const themeToggle = document.getElementById('theme-toggle');
-    const savedTheme = localStorage.getItem('studytok_theme') || 'light';
+    const savedTheme = safeGetItem('studytok_theme', 'light');
 
     // Apply saved theme
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -514,7 +545,7 @@ function toggleTheme() {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
     document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('studytok_theme', newTheme);
+    safeSetItem('studytok_theme', newTheme);
     updateThemeIcon(newTheme);
 }
 

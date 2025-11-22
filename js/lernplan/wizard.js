@@ -11,6 +11,45 @@ import { Step6Zusätzliches } from './steps/Step6Zusätzliches.js';
 import { PlanOutput } from './components/PlanOutput.js';
 import { generateLernplan } from './utils/planGenerator.js';
 
+// ===================================
+// SAFE STORAGE HELPERS
+// ===================================
+
+function safeGetItem(key, fallback = null) {
+    try {
+        const value = localStorage.getItem(key);
+        return value !== null ? value : fallback;
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${key} nicht auslesen, nutze Fallback.`, error);
+        return fallback;
+    }
+}
+
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${key} nicht speichern.`, error);
+    }
+}
+
+function safeRemoveItem(key) {
+    try {
+        localStorage.removeItem(key);
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${key} nicht löschen.`, error);
+    }
+}
+
+function safeParseJSON(value, fallback, label = 'Wert') {
+    try {
+        return JSON.parse(value);
+    } catch (error) {
+        console.warn(`[Storage] Konnte ${label} nicht parsen, nutze Fallback.`, error);
+        return fallback;
+    }
+}
+
 export class LernplanWizard {
     constructor(container) {
         this.container = container;
@@ -288,7 +327,7 @@ export class LernplanWizard {
 
     awardPoints() {
         // Check cooldown (aus plan.html übernommen)
-        const lastPlanTimestamp = localStorage.getItem('studytok_last_plan_points');
+        const lastPlanTimestamp = safeGetItem('studytok_last_plan_points');
 
         if (!lastPlanTimestamp) {
             this.addPointsToUser(30);
@@ -315,7 +354,7 @@ export class LernplanWizard {
             addPoints(points);
         }
 
-        localStorage.setItem('studytok_last_plan_points', Date.now().toString());
+        safeSetItem('studytok_last_plan_points', Date.now().toString());
 
         if (typeof showNotification === 'function') {
             showNotification(`🎯 Lernplan erstellt! +${points} Punkte`);
@@ -372,15 +411,15 @@ export class LernplanWizard {
 
     // Local Storage Management
     saveFormData() {
-        localStorage.setItem('lernplan_wizard_data', JSON.stringify(this.formData));
+        safeSetItem('lernplan_wizard_data', JSON.stringify(this.formData));
     }
 
     loadFormData() {
-        const stored = localStorage.getItem('lernplan_wizard_data');
-        return stored ? JSON.parse(stored) : null;
+        const stored = safeGetItem('lernplan_wizard_data');
+        return stored ? safeParseJSON(stored, null, 'lernplan_wizard_data') : null;
     }
 
     clearFormData() {
-        localStorage.removeItem('lernplan_wizard_data');
+        safeRemoveItem('lernplan_wizard_data');
     }
 }
