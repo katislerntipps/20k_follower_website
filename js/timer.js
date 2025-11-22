@@ -110,6 +110,37 @@ function safeParseJSON(value, fallback, label = 'Wert') {
 const TIMER_SAVE_THROTTLE_MS = 5000;
 const throttledSaveTimerState = throttle(() => saveTimerState(), TIMER_SAVE_THROTTLE_MS);
 
+// Progress ring helpers
+function initializeProgressRings() {
+    const rings = [
+        document.getElementById('timer-progress'),
+        document.getElementById('tree-progress')
+    ];
+
+    rings.forEach(ring => {
+        if (!ring || typeof ring.getTotalLength !== 'function') return;
+        const length = ring.getTotalLength();
+        ring.style.strokeDasharray = length;
+        ring.dataset.circumference = length;
+    });
+}
+
+function getRingLength(ringElement, fallback) {
+    if (!ringElement) return fallback;
+
+    const storedValue = parseFloat(ringElement.dataset?.circumference);
+    if (!Number.isNaN(storedValue)) return storedValue;
+
+    if (typeof ringElement.getTotalLength === 'function') {
+        const length = ringElement.getTotalLength();
+        ringElement.dataset.circumference = length;
+        ringElement.style.strokeDasharray = length;
+        return length;
+    }
+
+    return fallback;
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     preloadTreeImages();
@@ -118,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTimer();
     initializeTree();
     setupTreeTimeline();
+    initializeProgressRings();
     updateDisplay();
     updateStats();
     updateTreeGrowth();
@@ -428,11 +460,32 @@ function updateDisplay() {
     // Update progress ring
     const currentSeconds = (timerState.minutes * 60) + timerState.seconds;
     const progress = 1 - (currentSeconds / timerState.totalSeconds);
-    const offset = 534 - (534 * progress);
 
     const progressRing = document.getElementById('timer-progress');
     if (progressRing) {
-        progressRing.style.strokeDashoffset = offset;
+        const ringLength = getRingLength(progressRing, 534);
+        progressRing.style.strokeDashoffset = ringLength - (ringLength * progress);
+    }
+
+    const treeRing = document.getElementById('tree-progress');
+    if (treeRing) {
+        const ringLength = getRingLength(treeRing, 720);
+        treeRing.style.strokeDashoffset = ringLength - (ringLength * progress);
+    }
+
+    const treeProgressText = document.getElementById('tree-progress-text');
+    if (treeProgressText) {
+        const modeLabels = {
+            focus: 'Fokus läuft',
+            short: 'Kurze Pause',
+            long: 'Lange Pause'
+        };
+        const readableLabel = modeLabels[timerState.mode] || 'Timer bereit';
+        const percentage = Math.round(progress * 100);
+        const isActive = timerState.isRunning && !timerState.isPaused;
+        treeProgressText.textContent = isActive
+            ? `${readableLabel} • ${percentage}%`
+            : `${readableLabel} bereit`;
     }
 }
 
