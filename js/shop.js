@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const ADMIN_CODE = 'kati-admin';
 const MUSIC_STATE_KEY = 'studytok_music_state';
+const DISCOUNT_CODE = 'T-E-S-T-1-2-3';
 
 // ===================================
 // Shop State Management
@@ -26,6 +27,9 @@ function getShopState() {
             state.musicVolume = 0.3;
         }
 
+        // Legacy cleanup: remove nicht mehr genutzte Felder
+        delete state.rabattcodeEmail;
+
         return state;
     }
     return {
@@ -35,7 +39,6 @@ function getShopState() {
             music: false,
             blossoms: false
         },
-        rabattcodeEmail: null,
         musicEnabled: true,
         musicVolume: 0.3
     };
@@ -101,7 +104,6 @@ function saveStats(stats) {
 function initShop() {
     const shopTrigger = document.getElementById('shop-trigger');
     const shopModal = document.getElementById('shop-modal');
-    const emailModal = document.getElementById('email-modal');
 
     if (!shopTrigger || !shopModal) return;
 
@@ -113,7 +115,6 @@ function initShop() {
 
     // Close modals when clicking overlay or close button
     setupModalClose(shopModal);
-    setupModalClose(emailModal);
 
     // Setup buy buttons
     const buyButtons = document.querySelectorAll('.shop-buy-btn');
@@ -124,12 +125,6 @@ function initShop() {
             purchaseItem(itemName, price);
         });
     });
-
-    // Setup email submit
-    const emailSubmit = document.getElementById('email-submit');
-    if (emailSubmit) {
-        emailSubmit.addEventListener('click', submitEmail);
-    }
 
     // Setup admin add points
     const adminAddPointsBtn = document.getElementById('admin-add-points-btn');
@@ -251,11 +246,7 @@ function handleItemPurchase(itemName) {
 
     switch(itemName) {
         case 'rabattcode':
-            // Open email modal
-            const shopModal = document.getElementById('shop-modal');
-            const emailModal = document.getElementById('email-modal');
-            closeModal(shopModal);
-            openModal(emailModal);
+            revealDiscountCode({ showToast: true });
             break;
 
         case 'achievement':
@@ -276,75 +267,20 @@ function handleItemPurchase(itemName) {
 }
 
 // ===================================
-// Email Submission for Rabattcode
+// Rabattcode-Ausgabe
 // ===================================
 
-async function submitEmail() {
-    const emailInput = document.getElementById('email-input');
-    const email = emailInput.value.trim();
+function revealDiscountCode({ showToast = false } = {}) {
+    const discountWrapper = document.querySelector('.discount-code[data-item="rabattcode"]');
+    const discountValue = discountWrapper?.querySelector('.discount-code-value');
 
-    if (!email || !isValidEmail(email)) {
-        showNotification('Bitte gib eine gültige E-Mail Adresse ein!', 'error');
-        return;
-    }
+    if (!discountWrapper || !discountValue) return;
 
-    const shopState = getShopState();
-    shopState.rabattcodeEmail = email;
-    saveShopState(shopState);
+    discountValue.textContent = DISCOUNT_CODE;
+    discountWrapper.classList.add('visible');
 
-    try {
-        await sendEmailNotification(email);
-        showNotification('E-Mail erfolgreich übermittelt! Du erhältst deinen Rabattcode in Kürze.', 'success');
-    } catch (error) {
-        console.error('Rabattcode-E-Mail konnte nicht gesendet werden:', error);
-        showNotification('Ups, das hat nicht geklappt. Bitte versuche es später erneut oder schreibe uns direkt an 20kwebshop@gmail.com.', 'error');
-    }
-
-    const emailModal = document.getElementById('email-modal');
-    closeModal(emailModal);
-    emailInput.value = '';
-}
-
-function isValidEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-async function sendEmailNotification(userEmail) {
-    const subject = 'Neue Rabattcode-Anfrage - StudyTok';
-    const body = `Ein Nutzer hat den Astra AI Rabattcode gekauft!\n\nE-Mail des Nutzers: ${userEmail}\n\nBitte sende den Rabattcode an diese Adresse.`;
-
-    const formData = new FormData();
-    formData.append('_subject', subject);
-    formData.append('_captcha', 'false');
-    formData.append('_template', 'table');
-    formData.append('reply_to', userEmail);
-    formData.append('email', userEmail);
-    formData.append('message', body);
-
-    let response;
-    try {
-        response = await fetch('https://formsubmit.co/ajax/20kwebshop@gmail.com', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json'
-            },
-            body: formData
-        });
-    } catch (networkError) {
-        throw new Error(`E-Mail konnte nicht gesendet werden (Netzwerkfehler): ${networkError.message}`);
-    }
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Fehler beim Senden der E-Mail: ${response.status} ${response.statusText} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    const success = data.success === true || data.success === 'true';
-    if (!success) {
-        const errorMessage = data?.message || 'E-Mail-Zustellung wurde vom Dienst abgelehnt.';
-        throw new Error(errorMessage);
+    if (showToast) {
+        showNotification(`Dein Rabattcode: ${DISCOUNT_CODE}`, 'success');
     }
 }
 
@@ -619,6 +555,10 @@ function updateShopUI() {
             buyBtn.style.display = 'none';
             purchasedLabel.style.display = 'block';
             shopItem.classList.add('purchased');
+
+            if (itemName === 'rabattcode') {
+                revealDiscountCode({ showToast: false });
+            }
         } else {
             // Not purchased yet
             const price = parseInt(buyBtn.dataset.price);

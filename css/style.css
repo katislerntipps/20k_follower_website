@@ -1538,6 +1538,35 @@ body.sakura-theme {
     border-color: var(--secondary);
 }
 
+.discount-code {
+    display: none;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border: 1px dashed rgba(255, 107, 142, 0.4);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 107, 142, 0.06);
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.discount-code.visible {
+    display: block;
+}
+
+.discount-code-value {
+    font-family: 'Fira Code', 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-weight: 700;
+    letter-spacing: 0.15rem;
+    font-size: 1.05rem;
+    padding: 0.35rem 0;
+}
+
+.discount-code-hint {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
 .shop-item-header {
     display: flex;
     justify-content: space-between;
