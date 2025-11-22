@@ -13,14 +13,52 @@ document.addEventListener('DOMContentLoaded', () => {
 const ADMIN_CODE = 'kati-admin';
 const MUSIC_STATE_KEY = 'studytok_music_state';
 
+function safeGetItem(key, fallback = null) {
+    try {
+        const value = localStorage.getItem(key);
+        return value !== null ? value : fallback;
+    } catch (error) {
+        console.warn(`[Storage] Failed to read ${key}:`, error);
+        return fallback;
+    }
+}
+
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, value);
+        return true;
+    } catch (error) {
+        console.warn(`[Storage] Failed to write ${key}:`, error);
+        return false;
+    }
+}
+
+function safeParseJSON(value, fallback = null) {
+    try {
+        return value ? JSON.parse(value) : fallback;
+    } catch (error) {
+        console.warn('[Storage] Failed to parse stored JSON:', error);
+        return fallback;
+    }
+}
+
 // ===================================
 // Shop State Management
 // ===================================
 
 function getShopState() {
-    const saved = localStorage.getItem('studytok_shop');
+    const saved = safeGetItem('studytok_shop');
     if (saved) {
-        const state = JSON.parse(saved);
+        const state = safeParseJSON(saved, null);
+
+        if (!state) {
+            return {
+                purchases: {},
+                rabattcodeEmail: null,
+                musicEnabled: true,
+                musicVolume: 0.3
+            };
+        }
 
         if (state.musicVolume === undefined) {
             state.musicVolume = 0.3;
@@ -42,7 +80,7 @@ function getShopState() {
 }
 
 function saveShopState(state) {
-    localStorage.setItem('studytok_shop', JSON.stringify(state));
+    safeSetItem('studytok_shop', JSON.stringify(state));
 }
 
 function getSavedMusicState() {
@@ -74,9 +112,9 @@ function saveCurrentMusicState() {
 
 // Get stats from main.js
 function getStats() {
-    const saved = localStorage.getItem('studytok_stats');
+    const saved = safeGetItem('studytok_stats');
     if (saved) {
-        return JSON.parse(saved);
+        return safeParseJSON(saved, null) || { points: 0 };
     }
     return {
         sessions: 0,
@@ -91,7 +129,7 @@ function getStats() {
 }
 
 function saveStats(stats) {
-    localStorage.setItem('studytok_stats', JSON.stringify(stats));
+    safeSetItem('studytok_stats', JSON.stringify(stats));
 }
 
 // ===================================

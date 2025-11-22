@@ -37,6 +37,35 @@ let treeTimeline;
 let treeScrubTween;
 let treeLoopTimelines = [];
 
+function safeGetItem(key, fallback = null) {
+    try {
+        const value = localStorage.getItem(key);
+        return value !== null ? value : fallback;
+    } catch (error) {
+        console.warn(`[Storage] Failed to read ${key}:`, error);
+        return fallback;
+    }
+}
+
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, value);
+        return true;
+    } catch (error) {
+        console.warn(`[Storage] Failed to write ${key}:`, error);
+        return false;
+    }
+}
+
+function safeParseJSON(value, fallback = null) {
+    try {
+        return value ? JSON.parse(value) : fallback;
+    } catch (error) {
+        console.warn('[Storage] Failed to parse stored JSON:', error);
+        return fallback;
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     preloadTreeImages();
@@ -758,9 +787,10 @@ function getStats() {
         dailyLoginClaimed: false
     };
 
-    const stored = localStorage.getItem('studytok_stats');
-    if (stored) {
-        const stats = JSON.parse(stored);
+    const stored = safeGetItem('studytok_stats');
+    const parsedStats = safeParseJSON(stored, null);
+    if (parsedStats) {
+        const stats = parsedStats;
 
         // Ensure new properties exist
         if (!stats.unlockedAchievements) stats.unlockedAchievements = [];
@@ -800,7 +830,7 @@ function getStats() {
 }
 
 function saveStats(stats) {
-    localStorage.setItem('studytok_stats', JSON.stringify(stats));
+    safeSetItem('studytok_stats', JSON.stringify(stats));
 }
 
 function addSession() {
@@ -838,9 +868,12 @@ function addPoints(points) {
 }
 
 function loadTimerState() {
-    const stored = localStorage.getItem('studytok_timer');
+    const stored = safeGetItem('studytok_timer');
     if (stored) {
-        const saved = JSON.parse(stored);
+        const saved = safeParseJSON(stored, null);
+        if (!saved) {
+            return;
+        }
         const today = new Date().toDateString();
 
         if (!saved.lastCycleSessionDate) saved.lastCycleSessionDate = today;
@@ -936,18 +969,18 @@ function saveTimerState() {
         totalCycleSessions: timerState.totalCycleSessions,
         lastCycleSessionDate: timerState.lastCycleSessionDate
     };
-    localStorage.setItem('studytok_timer', JSON.stringify(toSave));
+    safeSetItem('studytok_timer', JSON.stringify(toSave));
 }
 
 function loadTreeState() {
-    const stored = localStorage.getItem('studytok_tree');
+    const stored = safeGetItem('studytok_tree');
     if (stored) {
-        treeState = JSON.parse(stored);
+        treeState = safeParseJSON(stored, treeState) || treeState;
     }
 }
 
 function saveTreeState() {
-    localStorage.setItem('studytok_tree', JSON.stringify(treeState));
+    safeSetItem('studytok_tree', JSON.stringify(treeState));
 }
 
 // ===================================
@@ -1295,7 +1328,7 @@ function playCompletionSound() {
 
 function initializeDarkMode() {
     const themeToggle = document.getElementById('theme-toggle');
-    const savedTheme = localStorage.getItem('studytok_theme') || 'light';
+    const savedTheme = safeGetItem('studytok_theme', 'light');
 
     // Apply saved theme
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -1312,7 +1345,7 @@ function toggleTheme() {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
     document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('studytok_theme', newTheme);
+    safeSetItem('studytok_theme', newTheme);
     updateThemeIcon(newTheme);
 }
 
