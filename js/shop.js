@@ -368,8 +368,8 @@ function unlockSecretAchievement() {
         stats.achievements = stats.unlockedAchievements.length;
         saveStats(stats);
 
-        // Show achievement notification
-        showAchievementNotification();
+        // Show achievement notification without overriding the main handler
+        showSecretAchievementNotification();
 
         // Update achievement UI if on timer page
         if (typeof updateAchievementUI === 'function') {
@@ -378,7 +378,7 @@ function unlockSecretAchievement() {
     }
 }
 
-function showAchievementNotification() {
+function showSecretAchievementNotification() {
     // Create achievement notification
     const notification = document.createElement('div');
     notification.className = 'achievement-notification';
