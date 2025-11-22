@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const ADMIN_CODE = 'kati-admin';
+const MUSIC_STATE_KEY = 'studytok_music_state';
 
 // ===================================
 // Shop State Management
@@ -42,6 +43,33 @@ function getShopState() {
 
 function saveShopState(state) {
     localStorage.setItem('studytok_shop', JSON.stringify(state));
+}
+
+function getSavedMusicState() {
+    const defaultState = { currentTime: 0, isPlaying: false };
+
+    try {
+        const saved = sessionStorage.getItem(MUSIC_STATE_KEY);
+        return saved ? { ...defaultState, ...JSON.parse(saved) } : defaultState;
+    } catch (error) {
+        console.warn('Konnte Musik-Status nicht laden:', error);
+        return defaultState;
+    }
+}
+
+function saveCurrentMusicState() {
+    if (!backgroundMusic) return;
+
+    const state = {
+        currentTime: backgroundMusic.currentTime,
+        isPlaying: !backgroundMusic.paused
+    };
+
+    try {
+        sessionStorage.setItem(MUSIC_STATE_KEY, JSON.stringify(state));
+    } catch (error) {
+        console.warn('Konnte Musik-Status nicht speichern:', error);
+    }
 }
 
 // Get stats from main.js
@@ -368,33 +396,80 @@ function showAchievementNotification() {
 // ===================================
 
 let backgroundMusic = null;
+let musicPersistenceInitialized = false;
 
 function initMusicPlayer() {
     const shopState = getShopState();
 
     if (shopState.purchases.music) {
+        setupMusicPersistence();
         showMusicToggle();
         setupBackgroundMusic();
     }
 }
 
+function setupMusicPersistence() {
+    if (musicPersistenceInitialized) return;
+
+    window.addEventListener('beforeunload', saveCurrentMusicState);
+    musicPersistenceInitialized = true;
+}
+
 function setupBackgroundMusic() {
+    const savedMusicState = getSavedMusicState();
+
     // Create audio element
     if (!backgroundMusic) {
         backgroundMusic = new Audio('audio/backgroundmusic.mp3');
         backgroundMusic.loop = true;
         const shopState = getShopState();
         backgroundMusic.volume = shopState.musicVolume ?? 0.3;
+
+        backgroundMusic.addEventListener('loadedmetadata', () => applySavedMusicState(savedMusicState));
+        backgroundMusic.addEventListener('play', saveCurrentMusicState);
+        backgroundMusic.addEventListener('pause', saveCurrentMusicState);
+        backgroundMusic.addEventListener('timeupdate', saveCurrentMusicState);
     }
 
     const shopState = getShopState();
+    applySavedMusicState(savedMusicState);
 
     // Auto-play if enabled
-    if (shopState.musicEnabled) {
+    const shouldPlay = savedMusicState.isPlaying ?? shopState.musicEnabled;
+
+    if (shopState.musicEnabled && shouldPlay) {
         // Note: Auto-play might be blocked by browser
         backgroundMusic.play().catch(err => {
             console.log('Auto-play prevented:', err);
         });
+    }
+}
+
+function applySavedMusicState(savedMusicState) {
+    if (!backgroundMusic || !savedMusicState) return;
+
+    const targetTime = Math.max(0, savedMusicState.currentTime || 0);
+
+    if (backgroundMusic.readyState >= 1) {
+        setMusicTimeSafely(targetTime);
+    } else {
+        const setTimeHandler = () => {
+            setMusicTimeSafely(targetTime);
+            backgroundMusic.removeEventListener('loadedmetadata', setTimeHandler);
+        };
+        backgroundMusic.addEventListener('loadedmetadata', setTimeHandler);
+    }
+}
+
+function setMusicTimeSafely(targetTime) {
+    if (!backgroundMusic || Number.isNaN(targetTime)) return;
+
+    const duration = backgroundMusic.duration;
+
+    if (Number.isFinite(duration) && duration > 0) {
+        backgroundMusic.currentTime = Math.min(targetTime, duration - 0.1);
+    } else {
+        backgroundMusic.currentTime = targetTime;
     }
 }
 
