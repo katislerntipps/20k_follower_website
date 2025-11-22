@@ -285,22 +285,20 @@ function isValidEmail(email) {
 async function sendEmailNotification(userEmail) {
     const subject = 'Neue Rabattcode-Anfrage - StudyTok';
     const body = `Ein Nutzer hat den Astra AI Rabattcode gekauft!\n\nE-Mail des Nutzers: ${userEmail}\n\nBitte sende den Rabattcode an diese Adresse.`;
-    const payload = {
-        email: userEmail,
-        _replyto: userEmail,
-        _subject: subject,
-        message: body,
-        _captcha: 'false',
-        _template: 'table'
-    };
+    const formData = new FormData();
+    formData.append('email', userEmail);
+    formData.append('_replyto', userEmail);
+    formData.append('_subject', subject);
+    formData.append('message', body);
+    formData.append('_captcha', 'false');
+    formData.append('_template', 'table');
 
     const response = await fetch('https://formsubmit.co/ajax/20kwebshop@gmail.com', {
         method: 'POST',
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Accept': 'application/json'
         },
-        body: JSON.stringify(payload),
+        body: formData,
         mode: 'cors',
         referrerPolicy: 'no-referrer'
     });
