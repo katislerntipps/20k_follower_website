@@ -329,39 +329,6 @@
     transition: opacity 0.3s ease;
 }
 
-.tree-progress-visual {
-    position: absolute;
-    width: 420px;
-    height: 420px;
-    display: grid;
-    place-items: center;
-    pointer-events: none;
-    filter: drop-shadow(0 8px 25px rgba(102, 126, 234, 0.25));
-}
-
-.tree-progress-ring {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-}
-
-.tree-progress-ring-bg {
-    fill: none;
-    stroke: rgba(102, 126, 234, 0.12);
-    stroke-width: 12;
-}
-
-.tree-progress-ring-progress {
-    fill: none;
-    stroke: url(#gradient);
-    stroke-width: 12;
-    stroke-linecap: round;
-    stroke-dasharray: 720;
-    stroke-dashoffset: 720;
-    transition: stroke-dashoffset 1s linear;
-    filter: drop-shadow(0 4px 16px rgba(102, 126, 234, 0.35));
-}
-
 .tree-progress-label {
     position: absolute;
     bottom: 18%;
