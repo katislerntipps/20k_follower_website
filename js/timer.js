@@ -37,6 +37,51 @@ let treeTimeline;
 let treeScrubTween;
 let treeLoopTimelines = [];
 
+// Utility Helpers
+function throttle(func, wait, options = {}) {
+    const { leading = true, trailing = true } = options;
+    let timeout = null;
+    let lastCallTime = 0;
+    let lastArgs;
+    let lastThis;
+
+    const invoke = () => {
+        lastCallTime = Date.now();
+        func.apply(lastThis, lastArgs);
+        lastArgs = lastThis = undefined;
+    };
+
+    return function throttled(...args) {
+        const now = Date.now();
+        if (!lastCallTime && !leading) {
+            lastCallTime = now;
+        }
+
+        const remaining = wait - (now - lastCallTime);
+        lastArgs = args;
+        lastThis = this;
+
+        if (remaining <= 0 || remaining > wait) {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+            invoke();
+        } else if (!timeout && trailing) {
+            timeout = setTimeout(() => {
+                timeout = null;
+                if (!leading) {
+                    lastCallTime = 0;
+                }
+                invoke();
+            }, remaining);
+        }
+    };
+}
+
+const TIMER_SAVE_THROTTLE_MS = 5000;
+const throttledSaveTimerState = throttle(() => saveTimerState(), TIMER_SAVE_THROTTLE_MS);
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     preloadTreeImages();
@@ -252,7 +297,7 @@ function tick() {
     updateDisplay();
     updateTreeGrowth();
     updateTimerTreeImage();
-    saveTimerState();
+    throttledSaveTimerState();
 
     if (remainingSeconds <= 0) {
         timerComplete();
