@@ -69,12 +69,12 @@
 
 .timer-ring-progress {
     fill: none;
-    stroke: url(#gradient);
+    stroke: var(--timer-progress-color, #667eea);
     stroke-width: 12;
     stroke-linecap: round;
     stroke-dasharray: 534;
     stroke-dashoffset: 534;
-    transition: stroke-dashoffset 1s linear;
+    transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
 }
 
 .timer-time {
@@ -310,16 +310,64 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .timer-tree-wrapper {
     position: relative;
     width: 100%;
-    max-width: 350px;
-    height: 450px;
+    max-width: 380px;
+    height: 460px;
     display: flex;
     align-items: flex-end;
     justify-content: center;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.tree-progress-visual {
+    position: absolute;
+    inset: -14%;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    filter: drop-shadow(0 8px 25px rgba(102, 126, 234, 0.25));
+}
+
+.tree-progress-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.tree-progress-ring-bg {
+    fill: none;
+    stroke: rgba(102, 126, 234, 0.12);
+    stroke-width: 12;
+}
+
+.tree-progress-ring-progress {
+    fill: none;
+    stroke: var(--tree-progress-color, #667eea);
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 720;
+    stroke-dashoffset: 720;
+    transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+    filter: drop-shadow(0 4px 16px rgba(102, 126, 234, 0.35));
+}
+
+.tree-progress-label {
+    position: absolute;
+    bottom: 14%;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-primary);
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(8px);
 }
 
 #timer-tree-image {
@@ -463,6 +511,11 @@
     background: linear-gradient(180deg, rgba(199, 169, 255, 0.12) 0%, rgba(17, 16, 45, 0.92) 100%);
     border-color: rgba(255, 46, 230, 0.16);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .tree-progress-label {
+    background: rgba(17, 24, 39, 0.85);
+    color: var(--text-primary);
 }
 
 [data-theme="dark"] .achievements-section {
