@@ -561,7 +561,9 @@ function updateTimerTreeImage() {
     const timerImage = document.getElementById('timer-tree-image');
     if (!timerImage) return;
 
-    const resolveImageSrc = () => {
+    const resolveImageSrc = (overrideSrc = null) => {
+        if (overrideSrc) return overrideSrc;
+
         if (timerState.isPaused) {
             return TIMER_IMAGE_SOURCES.pause;
         }
@@ -576,6 +578,32 @@ function updateTimerTreeImage() {
         if (elapsedSeconds >= TIMER_IMAGE_THRESHOLDS[1] * 60) return 'image/2.png';
         return TIMER_IMAGE_SOURCES.default;
     };
+
+    if (timerState.mode === 'short' || timerState.mode === 'long') {
+        const pauseImageSrc = resolveImageSrc(TIMER_IMAGE_SOURCES.pause);
+
+        if (timerImage.dataset.currentSrc === pauseImageSrc && timerImage.src.endsWith(pauseImageSrc)) return;
+
+        timerImage.dataset.currentSrc = pauseImageSrc;
+        timerImage.style.opacity = '0';
+
+        const handleLoad = () => {
+            timerImage.style.opacity = '1';
+            timerImage.removeEventListener('load', handleLoad);
+        };
+
+        timerImage.addEventListener('load', handleLoad);
+        timerImage.src = pauseImageSrc;
+        timerImage.alt = 'Timer pausiert';
+
+        updateTimerPetalsVisibility();
+
+        if (timerImage.complete && timerImage.naturalWidth !== 0) {
+            handleLoad();
+        }
+
+        return;
+    }
 
     const imageSrc = resolveImageSrc();
 
