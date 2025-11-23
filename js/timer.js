@@ -593,18 +593,22 @@ function updateTimerTreeImage() {
     timerImage.src = imageSrc;
     timerImage.alt = timerState.isPaused ? 'Timer pausiert' : 'Timer-Baum Fortschritt';
 
-    updateTimerPetalsVisibility(imageSrc);
+    updateTimerPetalsVisibility();
 
     if (timerImage.complete && timerImage.naturalWidth !== 0) {
         handleLoad();
     }
 }
 
-function updateTimerPetalsVisibility(imageSrc) {
+function updateTimerPetalsVisibility() {
     const fallingLayer = document.getElementById('timer-petal-layer');
     if (!fallingLayer) return;
 
-    const shouldShowPetals = imageSrc.endsWith('image/5.png');
+    const remainingSeconds = Math.max(0, (timerState.minutes * 60) + timerState.seconds);
+    const isFinalFiveMinutes = remainingSeconds <= 5 * 60;
+    const animationUnlocked = treeState.level >= 5;
+
+    const shouldShowPetals = animationUnlocked && timerState.isRunning && !timerState.isPaused && isFinalFiveMinutes;
 
     if (!shouldShowPetals) {
         fallingLayer.style.display = 'none';
@@ -840,7 +844,7 @@ function renderTimerCherryTree() {
 
     setupTreeTimeline();
     updateTreeGrowth();
-    updateTimerPetalsVisibility(document.getElementById('timer-tree-image')?.src || '');
+    updateTimerPetalsVisibility();
 }
 
 function playBloomFinale() {
