@@ -1500,6 +1500,13 @@ const ACHIEVEMENTS = [
         check: (stats) => stats.consecutiveSessions >= 10
     },
     {
+        id: 'focus-veteran',
+        name: 'Fokus-Veteran',
+        description: '15 Pomodoro-Sessions abgeschlossen',
+        emoji: '🛡️',
+        check: (stats) => stats.sessions >= 15
+    },
+    {
         id: 'study-king',
         name: 'Studier-König',
         description: '7 Tage Streak',
