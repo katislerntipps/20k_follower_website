@@ -282,6 +282,11 @@ function getLevelEmoji(level) {
     }
 }
 
+function isTreeAnimationUnlocked() {
+    const treeState = getTreeState();
+    return treeState.level >= 5;
+}
+
 function updateTreeDisplay() {
     // Only update tree display on the homepage
     if (!window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
@@ -512,6 +517,13 @@ function renderCherryTree() {
     if (!treeStage) return;
 
     const petalLayer = treeStage.parentElement?.querySelector('.hero-floating-petals');
+    if (!isTreeAnimationUnlocked()) {
+        if (petalLayer) {
+            petalLayer.innerHTML = '';
+        }
+        return;
+    }
+
     if (petalLayer && !petalLayer.children.length) {
         const petalTotal = 10;
         for (let i = 0; i < petalTotal; i++) {
@@ -532,6 +544,8 @@ function setupHomeTreeAnimation() {
 
     const stage = document.getElementById('home-cherry-tree');
     if (!stage) return;
+
+    if (!isTreeAnimationUnlocked()) return;
 
     const trunk = stage.querySelector('.tree-layer-trunk');
     const branches = stage.querySelector('.tree-layer-branches');
