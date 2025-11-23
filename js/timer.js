@@ -1500,6 +1500,13 @@ const ACHIEVEMENTS = [
         check: (stats) => stats.consecutiveSessions >= 10
     },
     {
+        id: 'iron-streak',
+        name: 'Iron Streak',
+        description: '20 Sessions ohne Unterbrechung',
+        emoji: '🛡️',
+        check: (stats) => stats.consecutiveSessions >= 20
+    },
+    {
         id: 'study-king',
         name: 'Studier-König',
         description: '7 Tage Streak',
