@@ -817,7 +817,7 @@ function renderTree() {
     const treeLevelElement = document.getElementById('tree-level');
     if (treeLevelElement) {
         const levelEmoji = getLevelEmoji(treeState.level);
-        treeLevelElement.textContent = `Level ${treeState.level} ${levelEmoji}`;
+        treeLevelElement.textContent = `${treeState.level} ${levelEmoji}`;
     }
 
     const blossomsCountElement = document.getElementById('blossoms-count');
