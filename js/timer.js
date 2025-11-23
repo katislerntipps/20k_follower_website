@@ -1525,6 +1525,13 @@ const ACHIEVEMENTS = [
         check: (stats) => stats.sessionsToday >= 5
     },
     {
+        id: 'focus-veteran',
+        name: 'Fokus-Veteran',
+        description: '15 Sessions insgesamt abgeschlossen',
+        emoji: '🏅',
+        check: (stats) => stats.sessions >= 15
+    },
+    {
         id: 'focus-master',
         name: 'Fokus-Meister',
         description: '10 Sessions ohne Unterbrechung',
