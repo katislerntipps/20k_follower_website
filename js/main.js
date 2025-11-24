@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updatePoints();
     updateTreeDisplay();
     initializeDarkMode();
+    initializeMobileMenu();
     initializePointsHistory();
     initializeFloatingTimer();
     initializeMusicRewards();
@@ -916,4 +917,52 @@ function updateThemeIcon(theme) {
         themeToggle.setAttribute('aria-pressed', isDark);
         themeToggle.setAttribute('aria-label', isDark ? 'Light Mode aktivieren' : 'Dark Mode aktivieren');
     }
+}
+
+// ===================================
+// MOBILE NAVIGATION
+// ===================================
+
+function initializeMobileMenu() {
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    const navOverlay = document.getElementById('nav-overlay');
+
+    if (!navToggle || !navMenu || !navOverlay) return;
+
+    const setMenuState = (isOpen) => {
+        navMenu.classList.toggle('is-open', isOpen);
+        navOverlay.classList.toggle('is-active', isOpen);
+        navToggle.classList.toggle('is-active', isOpen);
+        navToggle.setAttribute('aria-expanded', isOpen);
+        navMenu.setAttribute('aria-hidden', (!isOpen).toString());
+        navOverlay.setAttribute('aria-hidden', (!isOpen).toString());
+        document.body.classList.toggle('menu-open', isOpen);
+    };
+
+    setMenuState(false);
+
+    navToggle.addEventListener('click', () => {
+        const isOpen = navMenu.classList.contains('is-open');
+        setMenuState(!isOpen);
+    });
+
+    navOverlay.addEventListener('click', () => setMenuState(false));
+
+    navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => setMenuState(false));
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && navMenu.classList.contains('is-open')) {
+            setMenuState(false);
+            navToggle.focus();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            setMenuState(false);
+        }
+    });
 }

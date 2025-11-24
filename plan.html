@@ -22,62 +22,70 @@
                     <span class="logo-emoji">🌸</span>
                 </a>
             </div>
-            <ul class="nav-menu">
-                <li><a href="index.html" class="nav-link">Home</a></li>
-                <li><a href="timer.html" class="nav-link">Timer</a></li>
-                <li><a href="tipps.html" class="nav-link">Lerntipps</a></li>
-                <li><a href="plan.html" class="nav-link active">Lernplan</a></li>
-                <li><a href="musik.html" class="nav-link">Musik &amp; YT</a></li>
-            </ul>
-            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode" aria-pressed="false">
-                <span class="toggle-track" aria-hidden="true">
-                    <span class="sky sky-day">
-                        <span class="sun"></span>
-                        <span class="cloud cloud-1"></span>
-                        <span class="cloud cloud-2"></span>
+            <div class="nav-actions">
+                <button class="nav-toggle" id="nav-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-menu">
+                    <span class="nav-toggle-box" aria-hidden="true">
+                        <span class="nav-toggle-bar"></span>
                     </span>
-                    <span class="sky sky-night">
-                        <span class="moon"></span>
-                        <span class="star star-1"></span>
-                        <span class="star star-2"></span>
-                        <span class="star star-3"></span>
+                </button>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="timer.html" class="nav-link">Timer</a></li>
+                    <li><a href="tipps.html" class="nav-link">Lerntipps</a></li>
+                    <li><a href="plan.html" class="nav-link active">Lernplan</a></li>
+                    <li><a href="musik.html" class="nav-link">Musik &amp; YT</a></li>
+                </ul>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode" aria-pressed="false">
+                    <span class="toggle-track" aria-hidden="true">
+                        <span class="sky sky-day">
+                            <span class="sun"></span>
+                            <span class="cloud cloud-1"></span>
+                            <span class="cloud cloud-2"></span>
+                        </span>
+                        <span class="sky sky-night">
+                            <span class="moon"></span>
+                            <span class="star star-1"></span>
+                            <span class="star star-2"></span>
+                            <span class="star star-3"></span>
+                        </span>
                     </span>
-                </span>
-                <span class="toggle-thumb" aria-hidden="true"></span>
-            </button>
-            <div class="user-points" id="points-history-trigger" role="button" tabindex="0" aria-label="Punkteregeln anzeigen">
-                <span class="points-icon">
-                    <svg class="coin-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <radialGradient id="coinRim" cx="50%" cy="50%" r="70%">
-                                <stop offset="0%" stop-color="#FFE769" />
-                                <stop offset="60%" stop-color="#FFC933" />
-                                <stop offset="100%" stop-color="#F2A900" />
-                            </radialGradient>
-                            <radialGradient id="coinFace" cx="45%" cy="35%" r="60%">
-                                <stop offset="0%" stop-color="#FFF4A8" />
-                                <stop offset="100%" stop-color="#FFB020" />
-                            </radialGradient>
-                            <linearGradient id="coinShine" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="rgba(255,255,255,0.9)" />
-                                <stop offset="50%" stop-color="rgba(255,255,255,0.4)" />
-                                <stop offset="100%" stop-color="rgba(255,255,255,0)" />
-                            </linearGradient>
-                        </defs>
-                        <ellipse cx="60" cy="70" rx="34" ry="12" fill="rgba(0, 0, 0, 0.18)" />
-                        <circle cx="60" cy="58" r="46" fill="url(#coinRim)" />
-                        <circle cx="60" cy="58" r="38" fill="url(#coinFace)" stroke="#FFD646" stroke-width="4" />
-                        <circle cx="60" cy="58" r="28" fill="none" stroke="#FFED95" stroke-width="3" opacity="0.75" />
-                        <text x="60" y="74" text-anchor="middle" font-family="'Poppins','Segoe UI',sans-serif" font-size="54" font-weight="700" fill="#F6A401" stroke="#D57F00" stroke-width="2" stroke-linejoin="round">$</text>
-                        <ellipse class="coin-shine" cx="46" cy="38" rx="16" ry="10" fill="url(#coinShine)" />
-                    </svg>
-                </span>
-                <span class="points-value">0</span>
+                    <span class="toggle-thumb" aria-hidden="true"></span>
+                </button>
+                <div class="user-points" id="points-history-trigger" role="button" tabindex="0" aria-label="Punkteregeln anzeigen">
+                    <span class="points-icon">
+                        <svg class="coin-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <radialGradient id="coinRim" cx="50%" cy="50%" r="70%">
+                                    <stop offset="0%" stop-color="#FFE769" />
+                                    <stop offset="60%" stop-color="#FFC933" />
+                                    <stop offset="100%" stop-color="#F2A900" />
+                                </radialGradient>
+                                <radialGradient id="coinFace" cx="45%" cy="35%" r="60%">
+                                    <stop offset="0%" stop-color="#FFF4A8" />
+                                    <stop offset="100%" stop-color="#FFB020" />
+                                </radialGradient>
+                                <linearGradient id="coinShine" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="rgba(255,255,255,0.9)" />
+                                    <stop offset="50%" stop-color="rgba(255,255,255,0.4)" />
+                                    <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+                                </linearGradient>
+                            </defs>
+                            <ellipse cx="60" cy="70" rx="34" ry="12" fill="rgba(0, 0, 0, 0.18)" />
+                            <circle cx="60" cy="58" r="46" fill="url(#coinRim)" />
+                            <circle cx="60" cy="58" r="38" fill="url(#coinFace)" stroke="#FFD646" stroke-width="4" />
+                            <circle cx="60" cy="58" r="28" fill="none" stroke="#FFED95" stroke-width="3" opacity="0.75" />
+                            <text x="60" y="74" text-anchor="middle" font-family="'Poppins','Segoe UI',sans-serif" font-size="54" font-weight="700" fill="#F6A401" stroke="#D57F00" stroke-width="2" stroke-linejoin="round">$</text>
+                            <ellipse class="coin-shine" cx="46" cy="38" rx="16" ry="10" fill="url(#coinShine)" />
+                        </svg>
+                    </span>
+                    <span class="points-value">0</span>
+                </div>
+                <button class="shop-trigger-btn" id="shop-trigger" aria-label="Shop öffnen">
+                    <span class="shop-icon">🛍️</span>
+                </button>
             </div>
-            <button class="shop-trigger-btn" id="shop-trigger" aria-label="Shop öffnen">
-                <span class="shop-icon">🛍️</span>
-            </button>
         </div>
+        <div class="nav-overlay" id="nav-overlay" aria-hidden="true"></div>
     </nav>
 
     <!-- Hero Section -->
