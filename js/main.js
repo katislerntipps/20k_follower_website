@@ -927,8 +927,20 @@ function initializeMobileMenu() {
     const navToggle = document.getElementById('nav-toggle');
     const navMenu = document.getElementById('nav-menu');
     const navOverlay = document.getElementById('nav-overlay');
+    const navMenuClose = document.getElementById('nav-menu-close');
 
     if (!navToggle || !navMenu || !navOverlay) return;
+
+    // Focusable elements within menu
+    const focusableElements = 'button, a, [tabindex]:not([tabindex="-1"])';
+    let firstFocusableElement = null;
+    let lastFocusableElement = null;
+
+    const updateFocusableElements = () => {
+        const focusable = navMenu.querySelectorAll(focusableElements);
+        firstFocusableElement = focusable[0];
+        lastFocusableElement = focusable[focusable.length - 1];
+    };
 
     const setMenuState = (isOpen) => {
         navMenu.classList.toggle('is-open', isOpen);
@@ -938,28 +950,117 @@ function initializeMobileMenu() {
         navMenu.setAttribute('aria-hidden', (!isOpen).toString());
         navOverlay.setAttribute('aria-hidden', (!isOpen).toString());
         document.body.classList.toggle('menu-open', isOpen);
+
+        if (isOpen) {
+            updateFocusableElements();
+            // Focus close button when menu opens
+            setTimeout(() => {
+                if (navMenuClose) navMenuClose.focus();
+            }, 100);
+        } else {
+            // Return focus to toggle button when menu closes
+            navToggle.focus();
+        }
     };
 
     setMenuState(false);
 
+    // Toggle button click
     navToggle.addEventListener('click', () => {
         const isOpen = navMenu.classList.contains('is-open');
         setMenuState(!isOpen);
     });
 
+    // Close button click
+    if (navMenuClose) {
+        navMenuClose.addEventListener('click', () => setMenuState(false));
+    }
+
+    // Overlay click
     navOverlay.addEventListener('click', () => setMenuState(false));
 
+    // Close menu when clicking nav links
     navMenu.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => setMenuState(false));
     });
 
+    // Keyboard navigation - Escape key
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && navMenu.classList.contains('is-open')) {
             setMenuState(false);
-            navToggle.focus();
         }
     });
 
+    // Focus trap - Tab key
+    navMenu.addEventListener('keydown', (event) => {
+        if (!navMenu.classList.contains('is-open')) return;
+
+        if (event.key === 'Tab') {
+            if (event.shiftKey) {
+                // Shift + Tab
+                if (document.activeElement === firstFocusableElement) {
+                    event.preventDefault();
+                    lastFocusableElement.focus();
+                }
+            } else {
+                // Tab
+                if (document.activeElement === lastFocusableElement) {
+                    event.preventDefault();
+                    firstFocusableElement.focus();
+                }
+            }
+        }
+    });
+
+    // Touch gestures for swipe to close
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let isDragging = false;
+    let currentTranslateX = 0;
+
+    navMenu.addEventListener('touchstart', (e) => {
+        if (!navMenu.classList.contains('is-open')) return;
+        touchStartX = e.touches[0].clientX;
+        isDragging = true;
+    }, { passive: true });
+
+    navMenu.addEventListener('touchmove', (e) => {
+        if (!isDragging || !navMenu.classList.contains('is-open')) return;
+
+        touchEndX = e.touches[0].clientX;
+        const diff = touchEndX - touchStartX;
+
+        // Only allow swiping to the right (closing direction)
+        if (diff > 0) {
+            currentTranslateX = diff;
+            navMenu.style.transform = `translateX(${diff}px)`;
+
+            // Fade overlay based on swipe distance
+            const opacity = Math.max(0, 1 - (diff / navMenu.offsetWidth));
+            navOverlay.style.opacity = opacity;
+        }
+    }, { passive: true });
+
+    navMenu.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const swipeThreshold = navMenu.offsetWidth * 0.3; // 30% of menu width
+
+        if (currentTranslateX > swipeThreshold) {
+            // Close menu
+            setMenuState(false);
+        }
+
+        // Reset transform
+        navMenu.style.transform = '';
+        navOverlay.style.opacity = '';
+        currentTranslateX = 0;
+        touchStartX = 0;
+        touchEndX = 0;
+    });
+
+    // Close menu on window resize
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
             setMenuState(false);
