@@ -1122,7 +1122,7 @@ body.sakura-theme {
     height: 100%;
     border: none;
     max-width: 605px;
-    min-width: 325px;
+    min-width: 0;
 }
 
 .placeholder-thumbnail {
