@@ -375,16 +375,40 @@ function renderPointsRules() {
     rules.forEach(rule => {
         const li = document.createElement('li');
         li.className = 'history-item';
-        li.innerHTML = `
-            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                <span style="font-size: 24px; line-height: 1;">${rule.icon}</span>
-                <div>
-                    <p class="history-title">${rule.title}</p>
-                    <p class="history-meta">${rule.description}</p>
-                </div>
-            </div>
-            <span class="history-points">+${rule.points}</span>
-        `;
+
+        // SECURITY: Verwende DOM-Manipulation statt innerHTML
+        const container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.alignItems = 'flex-start';
+        container.style.gap = '12px';
+
+        const iconSpan = document.createElement('span');
+        iconSpan.style.fontSize = '24px';
+        iconSpan.style.lineHeight = '1';
+        iconSpan.textContent = rule.icon;
+
+        const textDiv = document.createElement('div');
+
+        const title = document.createElement('p');
+        title.className = 'history-title';
+        title.textContent = rule.title;
+
+        const description = document.createElement('p');
+        description.className = 'history-meta';
+        description.textContent = rule.description;
+
+        textDiv.appendChild(title);
+        textDiv.appendChild(description);
+
+        container.appendChild(iconSpan);
+        container.appendChild(textDiv);
+
+        const pointsSpan = document.createElement('span');
+        pointsSpan.className = 'history-points';
+        pointsSpan.textContent = `+${rule.points}`;
+
+        li.appendChild(container);
+        li.appendChild(pointsSpan);
         list.appendChild(li);
     });
 }

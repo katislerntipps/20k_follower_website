@@ -10,9 +10,64 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBlossomVisibility();
 });
 
-const ADMIN_CODE = 'kati-admin';
+// SECURITY: Admin-Code ist nun als SHA-256 Hash gespeichert
+// Um einen neuen Admin-Code zu setzen, nutze: await hashAdminCode('dein-neuer-code')
+// Aktueller Hash ist für: 'kati-admin-2025'
+const ADMIN_CODE_HASH = '802ada2759abdc90e8fd574f7e731d8ee954ab0722127d3ac0b08f567df079a4';
+
+// TODO: WICHTIG! Dieser Code sollte später vom Server kommen!
+// Für Produktion: Erstelle eine Server-API die den Code generiert und validiert
 const DISCOUNT_CODE = 'T-E-S-T-1-2-3';
 const MUSIC_STATE_KEY = 'studytok_music_state';
+
+// ===================================
+// SECURITY: Admin-Code Hashing
+// ===================================
+
+/**
+ * Hash einen String mit SHA-256
+ * @param {string} text - Der zu hashende Text
+ * @returns {Promise<string>} Hex-String des Hashes
+ */
+async function hashString(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
+
+/**
+ * Verifiziere den Admin-Code
+ * @param {string} inputCode - Der eingegebene Code
+ * @returns {Promise<boolean>} True wenn korrekt
+ */
+async function verifyAdminCode(inputCode) {
+    if (!inputCode || typeof inputCode !== 'string') {
+        return false;
+    }
+
+    try {
+        const inputHash = await hashString(inputCode.trim());
+        return inputHash === ADMIN_CODE_HASH;
+    } catch (error) {
+        console.error('Fehler bei Admin-Code Verifikation:', error);
+        return false;
+    }
+}
+
+/**
+ * Hilfsfunktion zum Generieren eines neuen Admin-Code Hashes
+ * Nutze das in der Browser-Console: await hashAdminCode('dein-code')
+ * @param {string} code - Der neue Admin-Code
+ */
+async function hashAdminCode(code) {
+    const hash = await hashString(code);
+    console.log('Neuer Admin-Code Hash:', hash);
+    console.log('Ersetze ADMIN_CODE_HASH in shop.js mit diesem Wert');
+    return hash;
+}
 
 // ===================================
 // SAFE STORAGE HELPERS
@@ -174,7 +229,7 @@ function initShop() {
     }
 }
 
-function handleAdminPointsGrant() {
+async function handleAdminPointsGrant() {
     const amountInput = document.getElementById('admin-points-input');
     const codeInput = document.getElementById('admin-code-input');
 
@@ -188,8 +243,27 @@ function handleAdminPointsGrant() {
         return;
     }
 
-    if (code !== ADMIN_CODE) {
-        showNotification('Falscher Admin-Code. Die Punkte wurden nicht gutgeschrieben.', 'error');
+    // Zeige Loading-Indikator während Verifikation
+    const originalButtonText = document.getElementById('admin-add-points-btn')?.textContent;
+    const addButton = document.getElementById('admin-add-points-btn');
+    if (addButton) {
+        addButton.disabled = true;
+        addButton.textContent = 'Prüfe Code...';
+    }
+
+    // SECURITY: Async Verifikation mit Hash
+    const isValid = await verifyAdminCode(code);
+
+    // Setze Button zurück
+    if (addButton) {
+        addButton.disabled = false;
+        addButton.textContent = originalButtonText || 'Punkte gutschreiben';
+    }
+
+    if (!isValid) {
+        showNotification('❌ Falscher Admin-Code. Die Punkte wurden nicht gutgeschrieben.', 'error');
+        // Lösche Eingabe bei falschem Code
+        codeInput.value = '';
         return;
     }
 
@@ -199,7 +273,7 @@ function handleAdminPointsGrant() {
     }
 
     const updatedPoints = addPoints(amount);
-    showNotification(`Dir wurden ${amount} Punkte gutgeschrieben. Gesamt: ${updatedPoints} Punkte.`, 'success');
+    showNotification(`✅ Dir wurden ${amount} Punkte gutgeschrieben. Gesamt: ${updatedPoints} Punkte.`, 'success');
 
     amountInput.value = '';
     codeInput.value = '';
@@ -244,42 +318,97 @@ function closeModal(modal) {
 // Purchase Logic
 // ===================================
 
-function purchaseItem(itemName, price) {
+async function purchaseItem(itemName, price) {
     const stats = getStats();
     const shopState = getShopState();
 
     // Check if already purchased
     if (shopState.purchases[itemName]) {
-        showNotification('Du hast dieses Item bereits gekauft!', 'info');
+        if (typeof showEnhancedNotification === 'function') {
+            showEnhancedNotification('Du hast dieses Item bereits gekauft!', 'info');
+        } else {
+            showNotification('Du hast dieses Item bereits gekauft!', 'info');
+        }
         return;
     }
 
     // Check if enough points
     if (stats.points < price) {
-        showNotification(`Du hast nicht genug Punkte! Du brauchst ${price} Punkte.`, 'error');
+        const needed = price - stats.points;
+        if (typeof showEnhancedNotification === 'function') {
+            showEnhancedNotification(
+                `Du hast nicht genug Punkte! Du brauchst noch ${needed} Punkte mehr.`,
+                'error',
+                { duration: 4000 }
+            );
+        } else {
+            showNotification(`Du hast nicht genug Punkte! Du brauchst ${price} Punkte.`, 'error');
+        }
         return;
     }
 
-    // Deduct points
-    stats.points -= price;
-    saveStats(stats);
-
-    // Mark as purchased
-    shopState.purchases[itemName] = true;
-    saveShopState(shopState);
-
-    // Update points display
-    if (typeof updatePoints === 'function') {
-        updatePoints();
+    // LOADING STATE: Zeige Loading während Kauf
+    let loader = null;
+    if (typeof showLoading === 'function') {
+        loader = showLoading('Kaufe Item...');
     }
 
-    // Handle specific item actions
-    handleItemPurchase(itemName);
+    // Simuliere kurze Verzögerung für bessere UX (gibt Zeit für Feedback)
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Update shop UI
-    updateShopUI();
+    try {
+        // Deduct points
+        stats.points -= price;
+        saveStats(stats);
 
-    showNotification('Erfolgreich gekauft!', 'success');
+        // Mark as purchased
+        shopState.purchases[itemName] = true;
+        saveShopState(shopState);
+
+        // Update points display
+        if (typeof updatePoints === 'function') {
+            updatePoints();
+        }
+
+        // Handle specific item actions
+        handleItemPurchase(itemName);
+
+        // Update shop UI
+        updateShopUI();
+
+        // Hide loader
+        if (typeof hideLoading === 'function') {
+            hideLoading();
+        }
+
+        // Success notification
+        if (typeof showEnhancedNotification === 'function') {
+            showEnhancedNotification('✅ Erfolgreich gekauft!', 'success', { duration: 2000 });
+        } else {
+            showNotification('Erfolgreich gekauft!', 'success');
+        }
+    } catch (error) {
+        console.error('Fehler beim Kauf:', error);
+
+        // Hide loader
+        if (typeof hideLoading === 'function') {
+            hideLoading();
+        }
+
+        // Error notification
+        if (typeof showEnhancedNotification === 'function') {
+            showEnhancedNotification(
+                '❌ Fehler beim Kauf. Bitte versuche es erneut.',
+                'error',
+                {
+                    actionText: 'Nochmal versuchen',
+                    onAction: () => purchaseItem(itemName, price)
+                }
+            );
+        } else {
+            showNotification('Fehler beim Kauf!', 'error');
+        }
+    }
 }
 
 function handleItemPurchase(itemName) {
@@ -350,18 +479,35 @@ function unlockSecretAchievement() {
 }
 
 function showSecretAchievementNotification() {
-    // Create achievement notification
+    // SECURITY: Verwende DOM-Manipulation statt innerHTML
     const notification = document.createElement('div');
     notification.className = 'achievement-notification';
-    notification.innerHTML = `
-        <div class="achievement-content">
-            <div class="achievement-icon">💎</div>
-            <div class="achievement-text">
-                <div class="achievement-title">Achievement freigeschaltet!</div>
-                <div class="achievement-name">Filthy Rich</div>
-            </div>
-        </div>
-    `;
+
+    const content = document.createElement('div');
+    content.className = 'achievement-content';
+
+    const icon = document.createElement('div');
+    icon.className = 'achievement-icon';
+    icon.textContent = '💎';
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'achievement-text';
+
+    const title = document.createElement('div');
+    title.className = 'achievement-title';
+    title.textContent = 'Achievement freigeschaltet!';
+
+    const name = document.createElement('div');
+    name.className = 'achievement-name';
+    name.textContent = 'Filthy Rich';
+
+    textDiv.appendChild(title);
+    textDiv.appendChild(name);
+
+    content.appendChild(icon);
+    content.appendChild(textDiv);
+
+    notification.appendChild(content);
 
     document.body.appendChild(notification);
 
@@ -404,17 +550,42 @@ function setupMusicPersistence() {
 function setupBackgroundMusic() {
     const savedMusicState = getSavedMusicState();
 
-    // Create audio element
+    // Create audio element with optimized format selection
     if (!backgroundMusic) {
-        backgroundMusic = new Audio('audio/backgroundmusic.mp3');
+        backgroundMusic = new Audio();
         backgroundMusic.loop = true;
         const shopState = getShopState();
         backgroundMusic.volume = shopState.musicVolume ?? 0.3;
+
+        // PERFORMANCE: Wähle bestes verfügbares Audio-Format
+        // WebM/Opus: Beste Kompression (~900KB), moderne Browser
+        // MP3: Universelle Kompatibilität (~1.5MB wenn optimiert)
+        if (backgroundMusic.canPlayType('audio/webm; codecs="opus"')) {
+            backgroundMusic.src = 'audio/backgroundmusic.webm';
+            console.log('🎵 Using WebM/Opus (optimal compression)');
+        } else if (backgroundMusic.canPlayType('audio/ogg; codecs="vorbis"')) {
+            backgroundMusic.src = 'audio/backgroundmusic.ogg';
+            console.log('🎵 Using OGG/Vorbis (good compression)');
+        } else {
+            backgroundMusic.src = 'audio/backgroundmusic.mp3';
+            console.log('🎵 Using MP3 (universal fallback)');
+        }
 
         backgroundMusic.addEventListener('loadedmetadata', () => applySavedMusicState(savedMusicState));
         backgroundMusic.addEventListener('play', saveCurrentMusicState);
         backgroundMusic.addEventListener('pause', saveCurrentMusicState);
         backgroundMusic.addEventListener('timeupdate', saveCurrentMusicState);
+
+        // Error handling
+        backgroundMusic.addEventListener('error', (e) => {
+            console.error('Audio-Fehler:', e);
+            console.log('Versuche Fallback zu MP3...');
+
+            // Fallback to MP3 if primary format fails
+            if (!backgroundMusic.src.endsWith('.mp3')) {
+                backgroundMusic.src = 'audio/backgroundmusic.mp3';
+            }
+        });
     }
 
     const shopState = getShopState();
