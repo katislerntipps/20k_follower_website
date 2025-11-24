@@ -261,7 +261,7 @@ async function handleAdminPointsGrant() {
     }
 
     if (!isValid) {
-        showNotification('❌ Falscher Admin-Code. Die Punkte wurden nicht gutgeschrieben.', 'error');
+        showNotification('Falscher Admin-Code. Die Punkte wurden nicht gutgeschrieben.', 'error');
         // Lösche Eingabe bei falschem Code
         codeInput.value = '';
         return;
@@ -273,7 +273,7 @@ async function handleAdminPointsGrant() {
     }
 
     const updatedPoints = addPoints(amount);
-    showNotification(`✅ Dir wurden ${amount} Punkte gutgeschrieben. Gesamt: ${updatedPoints} Punkte.`, 'success');
+    showNotification(`Dir wurden ${amount} Punkte gutgeschrieben. Gesamt: ${updatedPoints} Punkte.`, 'success');
 
     amountInput.value = '';
     codeInput.value = '';
@@ -383,7 +383,7 @@ async function purchaseItem(itemName, price) {
 
         // Success notification
         if (typeof showEnhancedNotification === 'function') {
-            showEnhancedNotification('✅ Erfolgreich gekauft!', 'success', { duration: 2000 });
+            showEnhancedNotification('Erfolgreich gekauft!', 'success', { duration: 2000 });
         } else {
             showNotification('Erfolgreich gekauft!', 'success');
         }
@@ -398,7 +398,7 @@ async function purchaseItem(itemName, price) {
         // Error notification
         if (typeof showEnhancedNotification === 'function') {
             showEnhancedNotification(
-                '❌ Fehler beim Kauf. Bitte versuche es erneut.',
+                'Fehler beim Kauf. Bitte versuche es erneut.',
                 'error',
                 {
                     actionText: 'Nochmal versuchen',
