@@ -1,0 +1,252 @@
+/* ===================================
+   UTILS.CSS - Styles für Utility-Komponenten
+   ================================== */
+
+/* ===================================
+   LOADING STATES
+   ================================== */
+
+.global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.global-loader.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.loader-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.loader-spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-top-color: var(--primary, #667eea);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loader-message {
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Button Loading State */
+.btn.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+    position: relative;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+/* ===================================
+   ENHANCED NOTIFICATIONS
+   ================================== */
+
+.enhanced-notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    max-width: 400px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    padding: 1rem 1.5rem;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.enhanced-notification.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+[data-theme="dark"] .enhanced-notification {
+    background: var(--bg-card, #2c3e50);
+    color: var(--text-primary, #ecf0f1);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.notification-message {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.notification-action {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+}
+
+.notification-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.notification-action:active {
+    transform: translateY(0);
+}
+
+.notification-close {
+    font-size: 1.5rem;
+    line-height: 1;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: var(--text-secondary, #5a6c7d);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+}
+
+.notification-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--text-primary, #2c3e50);
+}
+
+[data-theme="dark"] .notification-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary, #ecf0f1);
+}
+
+/* Notification Type Colors */
+.enhanced-notification-success {
+    border-left: 4px solid #4CAF50;
+}
+
+.enhanced-notification-error {
+    border-left: 4px solid #FF5252;
+}
+
+.enhanced-notification-warning {
+    border-left: 4px solid #FFC107;
+}
+
+.enhanced-notification-info {
+    border-left: 4px solid #2196F3;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .enhanced-notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+
+    .loader-spinner {
+        width: 50px;
+        height: 50px;
+    }
+
+    .loader-message {
+        font-size: 1rem;
+    }
+}
+
+/* ===================================
+   ACCESSIBILITY
+   ================================== */
+
+/* Focus styles for interactive elements */
+.notification-action:focus-visible,
+.notification-close:focus-visible {
+    outline: 2px solid var(--primary, #667eea);
+    outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .global-loader,
+    .enhanced-notification,
+    .loader-spinner,
+    .btn.loading::after {
+        animation: none;
+        transition: none;
+    }
+
+    .enhanced-notification {
+        transform: none;
+    }
+
+    .enhanced-notification.visible {
+        opacity: 1;
+    }
+}

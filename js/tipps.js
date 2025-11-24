@@ -217,19 +217,41 @@ function showRandomTip(tip) {
     console.log('Setting tipDisplay to visible');
     tipDisplay.style.display = 'block';
 
-    console.log('Creating HTML content');
-    tipDisplay.innerHTML = `
-        <div class="tip-card-flip">
-            <div class="tip-card-front">
-                <div class="tip-icon">${tip.icon}</div>
-                <h3 class="tip-title">${tip.title}</h3>
-                <p class="tip-category">${getCategoryName(tip.category)} • ${getDifficultyName(tip.difficulty)}</p>
-            </div>
-            <div class="tip-description">
-                ${tip.description}
-            </div>
-        </div>
-    `;
+    console.log('Creating HTML content - SECURITY: Using DOM manipulation');
+    // SECURITY: Verwende DOM-Manipulation statt innerHTML
+    tipDisplay.innerHTML = ''; // Clear previous content
+
+    const cardFlip = document.createElement('div');
+    cardFlip.className = 'tip-card-flip';
+
+    // Front of card
+    const cardFront = document.createElement('div');
+    cardFront.className = 'tip-card-front';
+
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'tip-icon';
+    iconDiv.textContent = tip.icon;
+
+    const titleH3 = document.createElement('h3');
+    titleH3.className = 'tip-title';
+    titleH3.textContent = tip.title;
+
+    const categoryP = document.createElement('p');
+    categoryP.className = 'tip-category';
+    categoryP.textContent = `${getCategoryName(tip.category)} • ${getDifficultyName(tip.difficulty)}`;
+
+    cardFront.appendChild(iconDiv);
+    cardFront.appendChild(titleH3);
+    cardFront.appendChild(categoryP);
+
+    // Description
+    const descriptionDiv = document.createElement('div');
+    descriptionDiv.className = 'tip-description';
+    descriptionDiv.textContent = tip.description;
+
+    cardFlip.appendChild(cardFront);
+    cardFlip.appendChild(descriptionDiv);
+    tipDisplay.appendChild(cardFlip);
 
     console.log('Scrolling to tip');
     // Scroll to tip
