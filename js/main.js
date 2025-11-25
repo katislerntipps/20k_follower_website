@@ -2,8 +2,14 @@
 // MAIN.JS - Homepage Functionality
 // ===================================
 
+// Import analytics
+import analytics from './modules/analytics.js';
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
+    // Track page view
+    analytics.trackPageView();
+
     applySakuraTheme();
     renderCherryTree();
     generateBlossomPetals();

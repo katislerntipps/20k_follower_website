@@ -2,6 +2,9 @@
 // UTILS.JS - Zentrale Utility-Funktionen
 // ===================================
 
+// Import analytics for error tracking
+import analytics from './modules/analytics.js';
+
 // ===================================
 // SECURITY: Safe HTML Rendering
 // ===================================
@@ -382,6 +385,22 @@ window.addEventListener('error', (event) => {
 
     console.error('Error details:', errorInfo);
 
+    // Track error in analytics
+    try {
+        analytics.trackError(
+            event.message || 'Unknown error',
+            event.error?.stack || String(event.error),
+            {
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno,
+                type: 'global_error'
+            }
+        );
+    } catch (analyticsError) {
+        console.warn('Failed to track error in analytics:', analyticsError);
+    }
+
     // Show user-friendly notification
     if (typeof showEnhancedNotification === 'function') {
         showEnhancedNotification(
@@ -425,6 +444,19 @@ window.addEventListener('unhandledrejection', (event) => {
         reason: event.reason,
         promise: event.promise
     });
+
+    // Track error in analytics
+    try {
+        analytics.trackError(
+            'Unhandled Promise Rejection',
+            event.reason?.stack || String(event.reason),
+            {
+                type: 'promise_rejection'
+            }
+        );
+    } catch (analyticsError) {
+        console.warn('Failed to track promise rejection in analytics:', analyticsError);
+    }
 
     // Show user-friendly notification
     if (typeof showEnhancedNotification === 'function') {
