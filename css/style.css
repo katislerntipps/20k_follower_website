@@ -415,6 +415,7 @@ body.sakura-theme {
     transition: all 0.3s ease;
     font-weight: 500;
     font-size: 0.95rem;
+    white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -426,6 +427,10 @@ body.sakura-theme {
 .nav-link.active {
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: white;
+}
+
+.nav-menu-header {
+    display: none;
 }
 
 .user-points {
