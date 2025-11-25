@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - StudyTok</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            padding: 2rem;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            color: #27ae60;
+            margin-top: 0.5rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar-label {
+            min-width: 150px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        .bar-visual {
+            flex: 1;
+            height: 30px;
+            background: #e0e7ff;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .bar-count {
+            min-width: 50px;
+            text-align: right;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .controls {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #d5dbdb;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .event-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            padding: 1rem;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 0.85rem;
+        }
+
+        .event-name {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 0.25rem;
+        }
+
+        .event-time {
+            color: #95a5a6;
+            font-size: 0.75rem;
+        }
+
+        .event-props {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #95a5a6;
+        }
+
+        .funnel {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .funnel-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .funnel-bar {
+            flex: 1;
+            height: 50px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            color: white;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .funnel-rate {
+            position: absolute;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>📊 Analytics Dashboard</h1>
+
+        <div class="controls">
+            <button class="btn-primary" onclick="refreshData()">🔄 Aktualisieren</button>
+            <button class="btn-secondary" onclick="exportData()">💾 Daten exportieren</button>
+            <button class="btn-danger" onclick="clearData()">🗑️ Alle Daten löschen</button>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <!-- Wird dynamisch gefüllt -->
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">📈 Top Events (letzte 24h)</div>
+            <div class="bar-chart" id="topEvents">
+                <!-- Wird dynamisch gefüllt -->
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">🎯 Conversion Funnel</div>
+            <div class="funnel" id="conversionFunnel">
+                <!-- Wird dynamisch gefüllt -->
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">📄 Events nach Seite</div>
+            <div class="bar-chart" id="pageStats">
+                <!-- Wird dynamisch gefüllt -->
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">🌐 Browser-Statistik</div>
+            <div class="bar-chart" id="browserStats">
+                <!-- Wird dynamisch gefüllt -->
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">📋 Letzte Events</div>
+            <div class="event-list" id="eventList">
+                <!-- Wird dynamisch gefüllt -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import analytics from './js/modules/analytics.js';
+
+        // Dashboard laden
+        function loadDashboard() {
+            const report = analytics.getReport();
+
+            console.log('Analytics Report:', report);
+
+            // Summary Stats
+            renderStats(report.summary);
+
+            // Top Events
+            renderTopEvents(report.topEvents);
+
+            // Conversion Funnel
+            renderConversionFunnel(report.conversionFunnel);
+
+            // Page Stats
+            renderBarChart('pageStats', report.byPage);
+
+            // Browser Stats
+            renderBarChart('browserStats', report.browserStats);
+
+            // Event List
+            renderEventList(report.last24Hours);
+        }
+
+        function renderStats(summary) {
+            const statsGrid = document.getElementById('statsGrid');
+
+            const stats = [
+                {
+                    label: 'Gesamte Events',
+                    value: summary.totalEvents.toLocaleString(),
+                    change: null
+                },
+                {
+                    label: 'Unique Sessions',
+                    value: summary.uniqueSessions.toLocaleString(),
+                    change: null
+                },
+                {
+                    label: 'Zeitraum',
+                    value: formatDuration(summary.timeRange.end - summary.timeRange.start),
+                    change: null
+                }
+            ];
+
+            statsGrid.innerHTML = stats.map(stat => `
+                <div class="stat-card">
+                    <div class="stat-label">${stat.label}</div>
+                    <div class="stat-value">${stat.value}</div>
+                    ${stat.change ? `<div class="stat-change">${stat.change}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderTopEvents(events) {
+            const container = document.getElementById('topEvents');
+
+            if (!events || events.length === 0) {
+                container.innerHTML = '<div class="no-data">Keine Events vorhanden</div>';
+                return;
+            }
+
+            const maxCount = events[0].count;
+
+            container.innerHTML = events.map(event => {
+                const percentage = (event.count / maxCount) * 100;
+                return `
+                    <div class="bar-item">
+                        <div class="bar-label">${event.name}</div>
+                        <div class="bar-visual">
+                            <div class="bar-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="bar-count">${event.count}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderConversionFunnel(funnel) {
+            const container = document.getElementById('conversionFunnel');
+
+            if (!funnel) {
+                container.innerHTML = '<div class="no-data">Keine Funnel-Daten</div>';
+                return;
+            }
+
+            const steps = [
+                { name: 'Page Views', count: funnel.steps.page_views, rate: '100%' },
+                { name: 'Timer Starts', count: funnel.steps.timer_starts, rate: funnel.conversionRate.view_to_timer + '%' },
+                { name: 'Timer Completes', count: funnel.steps.timer_completes, rate: funnel.conversionRate.timer_completion + '%' },
+                { name: 'Shop Views', count: funnel.steps.shop_views, rate: '-' },
+                { name: 'Purchases', count: funnel.steps.shop_purchases, rate: funnel.conversionRate.shop_conversion + '%' }
+            ];
+
+            const maxCount = steps[0].count || 1;
+
+            container.innerHTML = steps.map(step => {
+                const percentage = (step.count / maxCount) * 100;
+                return `
+                    <div class="funnel-step">
+                        <div class="funnel-bar" style="width: ${percentage}%">
+                            ${step.name}: ${step.count}
+                            <span class="funnel-rate">${step.rate}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderBarChart(containerId, data) {
+            const container = document.getElementById(containerId);
+
+            if (!data || Object.keys(data).length === 0) {
+                container.innerHTML = '<div class="no-data">Keine Daten vorhanden</div>';
+                return;
+            }
+
+            const entries = Object.entries(data);
+            const maxCount = Math.max(...entries.map(([, count]) => count));
+
+            container.innerHTML = entries.map(([name, count]) => {
+                const percentage = (count / maxCount) * 100;
+                return `
+                    <div class="bar-item">
+                        <div class="bar-label">${name}</div>
+                        <div class="bar-visual">
+                            <div class="bar-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="bar-count">${count}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderEventList(events) {
+            const container = document.getElementById('eventList');
+
+            if (!events || events.length === 0) {
+                container.innerHTML = '<div class="no-data">Keine Events in den letzten 24h</div>';
+                return;
+            }
+
+            // Zeige neueste zuerst
+            const sorted = [...events].reverse().slice(0, 50);
+
+            container.innerHTML = sorted.map(event => `
+                <div class="event-item">
+                    <div class="event-name">${event.name}</div>
+                    <div class="event-time">${formatTime(event.timestamp)} • ${event.page}</div>
+                    ${Object.keys(event.properties).length > 0 ?
+                        `<div class="event-props">${JSON.stringify(event.properties, null, 2)}</div>`
+                        : ''}
+                </div>
+            `).join('');
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) return 'Gerade eben';
+            if (diff < 3600000) return Math.floor(diff / 60000) + ' Min her';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + ' Std her';
+
+            return date.toLocaleString('de-DE');
+        }
+
+        function formatDuration(ms) {
+            const hours = Math.floor(ms / 3600000);
+            const minutes = Math.floor((ms % 3600000) / 60000);
+
+            if (hours > 24) {
+                const days = Math.floor(hours / 24);
+                return `${days} Tag${days > 1 ? 'e' : ''}`;
+            }
+            if (hours > 0) return `${hours} Std ${minutes} Min`;
+            return `${minutes} Min`;
+        }
+
+        // Global functions
+        window.refreshData = loadDashboard;
+
+        window.exportData = function() {
+            const report = analytics.getReport();
+            const dataStr = JSON.stringify(report, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `analytics-${Date.now()}.json`;
+            a.click();
+        };
+
+        window.clearData = function() {
+            if (confirm('Wirklich ALLE Analytics-Daten löschen?')) {
+                analytics.clear();
+                loadDashboard();
+                alert('Alle Daten wurden gelöscht.');
+            }
+        };
+
+        // Initial load
+        loadDashboard();
+
+        // Auto-refresh alle 30 Sekunden
+        setInterval(loadDashboard, 30000);
+    </script>
+</body>
+</html>

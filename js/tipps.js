@@ -2,6 +2,9 @@
 // TIPPS.JS - Lerntipps Page Functionality
 // ===================================
 
+// Import analytics
+import analytics from './modules/analytics.js';
+
 // Lerntipps Data - 100 verschiedene Tipps von konventionell bis unkonventionell
 const lerntipps = [
     // Konventionelle Lernmethoden (1-30)
@@ -179,6 +182,9 @@ function initializeGenerator() {
 
                 // Display tip
                 showRandomTip(randomTip);
+
+                // Track tip generation
+                analytics.trackTipGenerated(randomTip.category, randomTip.difficulty);
 
                 // Check cooldown for bonus points (10 minutes = 600000 milliseconds)
                 const lastBonusTime = parseInt(safeGetItem('studytok_tip_bonus_time', '0') || '0');
@@ -391,6 +397,10 @@ function addFavorite(title) {
     if (!favorites.includes(title)) {
         favorites.push(title);
         safeSetItem('studytok_favorites', JSON.stringify(favorites));
+
+        // Track favorite added
+        analytics.trackTipFavorited(title);
+        analytics.trackConversion('tip_favorited');
     }
 }
 

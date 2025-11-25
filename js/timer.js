@@ -2,6 +2,9 @@
 // TIMER.JS - Pomodoro Timer Functionality
 // ===================================
 
+// Import analytics
+import analytics from './modules/analytics.js';
+
 // Timer State
 let timerState = {
     minutes: 25,
@@ -248,6 +251,9 @@ function startTimer() {
 
         timerState.interval = setInterval(tick, 1000);
 
+        // Track timer start
+        analytics.trackTimerStart(timerState.mode, timerState.minutes);
+
         saveTimerState();
     }
 }
@@ -259,6 +265,7 @@ function pauseTimer(options = {}) {
     clearInterval(timerState.interval);
 
     updateRemainingTime();
+    const timeElapsed = timerState.totalSeconds - ((timerState.minutes * 60) + timerState.seconds);
     timerState.endTime = null;
     timerState.lastTick = null;
 
@@ -274,6 +281,9 @@ function pauseTimer(options = {}) {
         const stats = getStats();
         stats.consecutiveSessions = 0;
         saveStats(stats);
+
+        // Track timer pause (only for user-initiated pauses)
+        analytics.trackTimerPause(timerState.mode, Math.floor(timeElapsed / 60));
     }
 
     updateTimerTreeImage();
@@ -372,6 +382,10 @@ function timerComplete() {
 
     if (timerState.mode === 'focus') {
         // Focus session completed
+        // Track timer completion
+        analytics.trackTimerComplete('focus', 25, false);
+        analytics.trackConversion('timer_completion');
+
         // Update stats
         addSession();
         addPoints(10);
@@ -412,6 +426,10 @@ function timerComplete() {
 
     } else {
         // Break completed
+        // Track break completion
+        const breakDuration = timerState.mode === 'long' ? 15 : 5;
+        analytics.trackTimerComplete(timerState.mode, breakDuration, false);
+
         showBrowserNotification('☕ Pause beendet! Bereit für die nächste Focus-Session?');
 
         // Reset cycle count after long break
@@ -1598,6 +1616,13 @@ function unlockAchievement(achievementId) {
         stats.unlockedAchievements.push(achievementId);
         stats.achievements = stats.unlockedAchievements.length;
         saveStats(stats);
+
+        // Track achievement unlock
+        const achievement = ACHIEVEMENTS.find(a => a.id === achievementId);
+        if (achievement) {
+            analytics.trackAchievementUnlocked(achievementId, achievement.name);
+        }
+
         updateAchievementUI();
         updateStats();
     }

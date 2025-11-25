@@ -2,6 +2,9 @@
 // Shop System
 // ===================================
 
+// Import analytics
+import analytics from './modules/analytics.js';
+
 // Initialize shop on page load
 document.addEventListener('DOMContentLoaded', () => {
     initShop();
@@ -196,6 +199,9 @@ function initShop() {
 
     // Open shop modal
     shopTrigger.addEventListener('click', () => {
+        // Track shop view
+        analytics.trackShopView();
+
         openModal(shopModal);
         updateShopUI();
     });
@@ -209,6 +215,10 @@ function initShop() {
         btn.addEventListener('click', (e) => {
             const itemName = e.target.dataset.item;
             const price = parseInt(e.target.dataset.price);
+
+            // Track item view (when user clicks to buy)
+            analytics.trackShopItemView(itemName, price);
+
             purchaseItem(itemName, price);
         });
     });
@@ -372,6 +382,11 @@ async function purchaseItem(itemName, price) {
 
         // Handle specific item actions
         handleItemPurchase(itemName);
+
+        // Track successful purchase
+        const remainingPoints = stats.points;
+        analytics.trackShopPurchase(itemName, price, remainingPoints);
+        analytics.trackConversion('shop_purchase', price);
 
         // Update shop UI
         updateShopUI();
