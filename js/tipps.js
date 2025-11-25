@@ -154,8 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeViewToggle();
     console.log('Updating points...');
     updatePoints();
-    console.log('Initializing dark mode...');
-    initializeDarkMode();
+    // initializeDarkMode is called by main.js which loads on all pages
     console.log('=== TIPPS.JS Initialization complete ===');
 });
 
