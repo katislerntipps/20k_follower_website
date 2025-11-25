@@ -550,6 +550,26 @@
     background: var(--bg-primary);
 }
 
+/* Desktop: Show input, hide select */
+.weekday-hours-desktop {
+    display: block;
+}
+
+.weekday-hours-mobile {
+    display: none;
+}
+
+/* Mobile: Hide input, show select */
+@media (max-width: 768px) {
+    .weekday-hours-desktop {
+        display: none;
+    }
+
+    .weekday-hours-mobile {
+        display: block;
+    }
+}
+
 .hours-label {
     font-size: 0.875rem;
     color: var(--text-secondary);
