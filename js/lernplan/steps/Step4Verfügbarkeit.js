@@ -36,6 +36,17 @@ export class Step4Verfügbarkeit {
         const wochentage = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
         const labels = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
+        // Generate options for hours (0 to 10 in 0.5 steps)
+        const generateHoursOptions = (selectedValue) => {
+            let options = '';
+            for (let i = 0; i <= 10; i += 0.5) {
+                const value = i.toFixed(1);
+                const selected = parseFloat(value) === parseFloat(selectedValue) ? 'selected' : '';
+                options += `<option value="${value}" ${selected}>${value}</option>`;
+            }
+            return options;
+        };
+
         const html = `
             <div class="wizard-step" id="step-4">
                 <h2 class="step-title">📅 Wöchentliche Verfügbarkeit</h2>
@@ -57,9 +68,10 @@ export class Step4Verfügbarkeit {
                                                ${verfügbar ? 'checked' : ''}>
                                         <span class="weekday-name">${labels[index]}</span>
                                     </label>
-                                    <input type="number" class="weekday-hours" data-tag="${tag}"
-                                           min="0.5" max="8" step="0.5" value="${stunden}"
+                                    <select class="weekday-hours" data-tag="${tag}"
                                            ${!verfügbar ? 'disabled' : ''}>
+                                        ${generateHoursOptions(stunden)}
+                                    </select>
                                     <span class="hours-label">Std</span>
                                 </div>
                             `;

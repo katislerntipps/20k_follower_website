@@ -206,6 +206,12 @@ export class LernplanWizard {
         this.updateNavigationButtons();
         this.updateProgressSteps();
 
+        // Scroll to top of wizard content to prevent jump
+        const wizardContent = this.container.querySelector('.wizard-content');
+        if (wizardContent) {
+            wizardContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
         // Save state
         this.saveFormData();
     }
