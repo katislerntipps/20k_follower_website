@@ -1,10 +1,10 @@
 // ===================================
 // SERVICE WORKER - Offline Support
-// Version: 1.1.0
+// Version: 1.1.1
 // ===================================
 
-const CACHE_NAME = 'studytok-v1.1.0';
-const RUNTIME_CACHE = 'studytok-runtime-v1.1';
+const CACHE_NAME = 'studytok-v1.1.1';
+const RUNTIME_CACHE = 'studytok-runtime-v1.1.1';
 
 // Assets to cache immediately on install
 const PRECACHE_ASSETS = [
