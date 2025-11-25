@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTreeGrowth();
     updateCycleIndicator();
     updateTimerTreeImage();
-    initializeDarkMode();
+    // initializeDarkMode is called by main.js which loads on all pages
     initializeNotifications();
     initializeAchievements();
 });
