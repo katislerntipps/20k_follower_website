@@ -297,3 +297,209 @@ if (typeof module !== 'undefined' && module.exports) {
         showEnhancedNotification
     };
 }
+
+// ===================================
+// SERVICE WORKER REGISTRATION
+// ===================================
+
+/**
+ * Registriert den Service Worker für Offline-Funktionalität
+ */
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then((registration) => {
+                    console.log('✅ Service Worker registered:', registration.scope);
+
+                    // Check for updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        console.log('🔄 Service Worker update found');
+
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New version available
+                                showUpdateNotification(newWorker);
+                            }
+                        });
+                    });
+                })
+                .catch((error) => {
+                    console.warn('⚠️ Service Worker registration failed:', error);
+                });
+        });
+    }
+}
+
+/**
+ * Zeigt Benachrichtigung bei verfügbarem Update
+ */
+function showUpdateNotification(newWorker) {
+    if (typeof showEnhancedNotification === 'function') {
+        showEnhancedNotification(
+            '🔄 Neue Version verfügbar!',
+            'info',
+            {
+                persistent: true,
+                actionText: 'Jetzt aktualisieren',
+                onAction: () => {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                }
+            }
+        );
+    }
+}
+
+// Auto-register Service Worker
+registerServiceWorker();
+
+// ===================================
+// ERROR BOUNDARIES & GLOBAL ERROR HANDLING
+// ===================================
+
+let errorCount = 0;
+const MAX_ERRORS_BEFORE_RELOAD = 5;
+const ERROR_RESET_TIME = 60000; // 1 minute
+
+/**
+ * Globaler Error Handler für unbehandelte Fehler
+ */
+window.addEventListener('error', (event) => {
+    console.error('🔴 Global Error:', event.error);
+
+    errorCount++;
+
+    // Log error details
+    const errorInfo = {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+        error: event.error?.stack || event.error
+    };
+
+    console.error('Error details:', errorInfo);
+
+    // Show user-friendly notification
+    if (typeof showEnhancedNotification === 'function') {
+        showEnhancedNotification(
+            'Ein Fehler ist aufgetreten. Die Seite wird automatisch aktualisiert.',
+            'error',
+            {
+                duration: 5000,
+                actionText: 'Jetzt neu laden',
+                onAction: () => window.location.reload()
+            }
+        );
+    }
+
+    // Auto-reload if too many errors
+    if (errorCount >= MAX_ERRORS_BEFORE_RELOAD) {
+        console.error('🔴 Too many errors, reloading page...');
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+    }
+
+    // Reset error count after timeout
+    setTimeout(() => {
+        errorCount = Math.max(0, errorCount - 1);
+    }, ERROR_RESET_TIME);
+
+    // Prevent default error handling
+    event.preventDefault();
+});
+
+/**
+ * Handler für unbehandelte Promise-Rejections
+ */
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('🔴 Unhandled Promise Rejection:', event.reason);
+
+    errorCount++;
+
+    // Log error details
+    console.error('Promise rejection details:', {
+        reason: event.reason,
+        promise: event.promise
+    });
+
+    // Show user-friendly notification
+    if (typeof showEnhancedNotification === 'function') {
+        showEnhancedNotification(
+            'Fehler beim Laden von Daten. Bitte versuche es erneut.',
+            'error',
+            {
+                duration: 5000,
+                actionText: 'Neu laden',
+                onAction: () => window.location.reload()
+            }
+        );
+    }
+
+    // Prevent default handling
+    event.preventDefault();
+});
+
+/**
+ * Safe Function Wrapper - führt Funktionen mit Error-Handling aus
+ * @param {Function} fn - Die auszuführende Funktion
+ * @param {string} context - Kontext für bessere Fehler-Meldungen
+ * @returns {Function} Wrapped function
+ */
+function safeExecute(fn, context = 'Function') {
+    return async function(...args) {
+        try {
+            return await fn.apply(this, args);
+        } catch (error) {
+            console.error(`Error in ${context}:`, error);
+
+            if (typeof showEnhancedNotification === 'function') {
+                showEnhancedNotification(
+                    `Fehler in ${context}. Bitte versuche es erneut.`,
+                    'error',
+                    {
+                        actionText: 'Wiederholen',
+                        onAction: () => fn.apply(this, args)
+                    }
+                );
+            }
+
+            throw error;
+        }
+    };
+}
+
+/**
+ * Retry-Logik für fehleranfällige Operationen
+ * @param {Function} fn - Funktion zum Ausführen
+ * @param {number} maxRetries - Maximale Anzahl Versuche
+ * @param {number} delay - Verzögerung zwischen Versuchen (ms)
+ */
+async function retryOperation(fn, maxRetries = 3, delay = 1000) {
+    let lastError;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            return await fn();
+        } catch (error) {
+            lastError = error;
+            console.warn(`Attempt ${attempt}/${maxRetries} failed:`, error);
+
+            if (attempt < maxRetries) {
+                await new Promise(resolve => setTimeout(resolve, delay * attempt));
+            }
+        }
+    }
+
+    throw lastError;
+}
+
+// Export Error-Handling Functions
+if (typeof window !== 'undefined') {
+    window.safeExecute = safeExecute;
+    window.retryOperation = retryOperation;
+}
+
