@@ -1,0 +1,73 @@
+{
+  "name": "studytok-companion",
+  "version": "1.1.0",
+  "description": "StudyTok Companion - Learning buddy website with Pomodoro timer and learning tips",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:js && npm run build:css",
+    "build:js": "npm run minify:js",
+    "build:css": "npm run minify:css",
+    "minify:js": "terser js/main.js --compress --mangle -o js/main.min.js && terser js/shop.js --compress --mangle -o js/shop.min.js && terser js/timer.js --compress --mangle -o js/timer.min.js && terser js/tipps.js --compress --mangle -o js/tipps.min.js && terser js/utils.js --compress --mangle -o js/utils.min.js",
+    "minify:css": "cleancss -o css/style.min.css css/style.css && cleancss -o css/timer.min.css css/timer.css && cleancss -o css/tipps.min.css css/tipps.css && cleancss -o css/lernplan.min.css css/lernplan.css && cleancss -o css/utils.min.css css/utils.css",
+    "watch": "npm-watch",
+    "serve": "python3 -m http.server 8000",
+    "dev": "npm-run-all --parallel serve watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint js/**/*.js",
+    "format": "prettier --write \"**/*.{js,css,html,md}\"",
+    "size": "npm run build && size-limit"
+  },
+  "watch": {
+    "build:js": {
+      "patterns": [
+        "js"
+      ],
+      "extensions": "js",
+      "ignore": "js/**/*.min.js"
+    },
+    "build:css": {
+      "patterns": [
+        "css"
+      ],
+      "extensions": "css",
+      "ignore": "css/**/*.min.css"
+    }
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "eslint": "^8.57.0",
+    "npm-run-all": "^4.1.5",
+    "npm-watch": "^0.11.0",
+    "prettier": "^3.2.5",
+    "size-limit": "^11.0.2",
+    "terser": "^5.27.0",
+    "typescript": "^5.3.3"
+  },
+  "size-limit": [
+    {
+      "name": "Main JS",
+      "path": "js/main.min.js",
+      "limit": "50 KB"
+    },
+    {
+      "name": "Utils JS",
+      "path": "js/utils.min.js",
+      "limit": "30 KB"
+    },
+    {
+      "name": "Main CSS",
+      "path": "css/style.min.css",
+      "limit": "100 KB"
+    }
+  ],
+  "keywords": [
+    "learning",
+    "pomodoro",
+    "study",
+    "tiktok",
+    "productivity"
+  ],
+  "author": "StudyTok Team",
+  "license": "MIT"
+}
