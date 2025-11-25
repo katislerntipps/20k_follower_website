@@ -973,6 +973,16 @@ function initializeMobileMenu() {
     };
 
     const setMenuState = (isOpen) => {
+        if (isOpen) {
+            // Calculate scrollbar width before hiding overflow
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+            // Set padding to compensate for scrollbar disappearing
+            document.body.style.paddingRight = `${scrollbarWidth}px`;
+        } else {
+            // Remove padding when menu closes
+            document.body.style.paddingRight = '';
+        }
+
         navMenu.classList.toggle('is-open', isOpen);
         navOverlay.classList.toggle('is-active', isOpen);
         navToggle.classList.toggle('is-active', isOpen);

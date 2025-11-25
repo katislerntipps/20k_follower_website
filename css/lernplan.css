@@ -390,6 +390,7 @@
 .radio-inline {
     display: flex;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .radio-label-inline {
@@ -397,6 +398,7 @@
     align-items: center;
     gap: 0.5rem;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .radio-label-inline input[type="radio"] {
@@ -404,6 +406,7 @@
     height: 18px;
     cursor: pointer;
     accent-color: var(--primary);
+    flex-shrink: 0;
 }
 
 /* Themen Liste (Step 3) */
@@ -466,14 +469,16 @@
 
 .option-group {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .option-label {
     min-width: 100px;
     font-weight: 600;
     color: var(--text-secondary);
+    flex-shrink: 0;
 }
 
 /* Weekday Grid (Step 4) */
@@ -521,19 +526,48 @@
 }
 
 .weekday-hours {
-    width: 60px;
-    padding: 0.375rem 0.5rem;
+    width: 70px;
+    padding: 0.5rem 0.25rem;
     border: 1px solid var(--text-light);
     border-radius: var(--radius-sm);
     text-align: center;
     font-size: 1rem;
     background: var(--bg-card);
     color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.weekday-hours:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(255, 183, 197, 0.2);
 }
 
 .weekday-hours:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    background: var(--bg-primary);
+}
+
+/* Desktop: Show input, hide select */
+.weekday-hours-desktop {
+    display: block;
+}
+
+.weekday-hours-mobile {
+    display: none;
+}
+
+/* Mobile: Hide input, show select */
+@media (max-width: 768px) {
+    .weekday-hours-desktop {
+        display: none;
+    }
+
+    .weekday-hours-mobile {
+        display: block;
+    }
 }
 
 .hours-label {
@@ -1231,5 +1265,23 @@
 
     .empfehlungen-grid {
         grid-template-columns: 1fr;
+    }
+
+    .option-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .option-label {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .radio-inline {
+        width: 100%;
+    }
+
+    .radio-label-inline {
+        font-size: 0.9rem;
     }
 }

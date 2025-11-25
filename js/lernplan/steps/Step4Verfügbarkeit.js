@@ -36,6 +36,17 @@ export class Step4Verfügbarkeit {
         const wochentage = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
         const labels = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
+        // Generate options for hours (0 to 10 in 0.5 steps) - Mobile only
+        const generateHoursOptions = (selectedValue) => {
+            let options = '';
+            for (let i = 0; i <= 10; i += 0.5) {
+                const value = i.toFixed(1);
+                const selected = parseFloat(value) === parseFloat(selectedValue) ? 'selected' : '';
+                options += `<option value="${value}" ${selected}>${value}</option>`;
+            }
+            return options;
+        };
+
         const html = `
             <div class="wizard-step" id="step-4">
                 <h2 class="step-title">📅 Wöchentliche Verfügbarkeit</h2>
@@ -57,9 +68,15 @@ export class Step4Verfügbarkeit {
                                                ${verfügbar ? 'checked' : ''}>
                                         <span class="weekday-name">${labels[index]}</span>
                                     </label>
-                                    <input type="number" class="weekday-hours" data-tag="${tag}"
-                                           min="0.5" max="8" step="0.5" value="${stunden}"
+                                    <!-- Desktop: Input field -->
+                                    <input type="number" class="weekday-hours weekday-hours-desktop" data-tag="${tag}"
+                                           value="${stunden}" min="0" max="10" step="0.5"
                                            ${!verfügbar ? 'disabled' : ''}>
+                                    <!-- Mobile: Select dropdown -->
+                                    <select class="weekday-hours weekday-hours-mobile" data-tag="${tag}"
+                                           ${!verfügbar ? 'disabled' : ''}>
+                                        ${generateHoursOptions(stunden)}
+                                    </select>
                                     <span class="hours-label">Std</span>
                                 </div>
                             `;
@@ -110,15 +127,45 @@ export class Step4Verfügbarkeit {
             cb.addEventListener('change', (e) => {
                 const tag = e.target.dataset.tag;
                 const item = e.target.closest('.weekday-item');
-                const hoursInput = item.querySelector('.weekday-hours');
+                const hoursInputDesktop = item.querySelector('.weekday-hours-desktop');
+                const hoursInputMobile = item.querySelector('.weekday-hours-mobile');
 
                 if (e.target.checked) {
                     item.classList.add('active');
-                    hoursInput.disabled = false;
-                    if (hoursInput.value == 0) hoursInput.value = 2;
+                    hoursInputDesktop.disabled = false;
+                    hoursInputMobile.disabled = false;
+                    if (hoursInputDesktop.value == 0) {
+                        hoursInputDesktop.value = 2;
+                        hoursInputMobile.value = 2;
+                    }
                 } else {
                     item.classList.remove('active');
-                    hoursInput.disabled = true;
+                    hoursInputDesktop.disabled = true;
+                    hoursInputMobile.disabled = true;
+                }
+            });
+        });
+
+        // Sync hours between desktop and mobile inputs
+        const hoursInputsDesktop = document.querySelectorAll('.weekday-hours-desktop');
+        const hoursInputsMobile = document.querySelectorAll('.weekday-hours-mobile');
+
+        hoursInputsDesktop.forEach(input => {
+            input.addEventListener('input', (e) => {
+                const tag = e.target.dataset.tag;
+                const mobileInput = document.querySelector(`.weekday-hours-mobile[data-tag="${tag}"]`);
+                if (mobileInput) {
+                    mobileInput.value = e.target.value;
+                }
+            });
+        });
+
+        hoursInputsMobile.forEach(input => {
+            input.addEventListener('change', (e) => {
+                const tag = e.target.dataset.tag;
+                const desktopInput = document.querySelector(`.weekday-hours-desktop[data-tag="${tag}"]`);
+                if (desktopInput) {
+                    desktopInput.value = e.target.value;
                 }
             });
         });
@@ -151,7 +198,10 @@ export class Step4Verfügbarkeit {
         const wochentage = ['montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag'];
         wochentage.forEach(tag => {
             const checkbox = document.querySelector(`.weekday-checkbox[data-tag="${tag}"]`);
-            const hoursInput = document.querySelector(`.weekday-hours[data-tag="${tag}"]`);
+            // Try desktop first (both are synced, so either works)
+            const hoursInputDesktop = document.querySelector(`.weekday-hours-desktop[data-tag="${tag}"]`);
+            const hoursInputMobile = document.querySelector(`.weekday-hours-mobile[data-tag="${tag}"]`);
+            const hoursInput = hoursInputDesktop || hoursInputMobile;
 
             this.formData.wochentage_verfügbarkeit[tag] = {
                 verfügbar: checkbox?.checked || false,
