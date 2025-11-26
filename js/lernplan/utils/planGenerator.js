@@ -169,27 +169,25 @@ function createSessionsForThemen(themen, intervals, eingaben, startdatum) {
 function createSession(id, thema, themaIndex, zyklusIndex, intervalTag, eingaben, startdatum) {
     const typ = zyklusIndex === 0 ? 'initial' : 'wiederholung';
 
-    // Basis-Dauer basierend auf Komplexität
-    const basisDauer = {
-        leicht: 30,
-        mittel: 45,
-        schwer: 60
+    // Zieldauer basierend auf Benutzerpräferenz (String zu Number konvertieren)
+    const zieldauer = parseInt(eingaben.bevorzugte_sessionlänge) || 50;
+
+    // Komplexitätsfaktor: Relative Anpassung zur Zieldauer
+    const komplexitätsFaktor = {
+        leicht: 0.8,   // 20% kürzer als Ziel
+        mittel: 1.0,   // Exakt wie Ziel
+        schwer: 1.2    // 20% länger als Ziel
     };
 
-    let dauer = basisDauer[thema.komplexität] || 45;
+    let dauer = Math.round(zieldauer * (komplexitätsFaktor[thema.komplexität] || 1.0));
 
     // Wiederholungen sind kürzer (60% der Initial-Session)
     if (typ === 'wiederholung') {
         dauer = Math.round(dauer * 0.6);
     }
 
-    // Anpassung an bevorzugte Session-Länge
-    const präferenz = eingaben.bevorzugte_sessionlänge || 50;
-    const anpassungsFaktor = präferenz / 50;
-    dauer = Math.round(dauer * anpassungsFaktor);
-
-    // Minimum 20 Minuten, Maximum 120 Minuten
-    dauer = Math.max(20, Math.min(120, dauer));
+    // Minimum 15 Minuten, Maximum 120 Minuten
+    dauer = Math.max(15, Math.min(120, dauer));
 
     return {
         id: `session-${id}`,
@@ -373,9 +371,18 @@ function enrichSessionsWithMethods(sessions, eingaben) {
 }
 
 function getInitialAktivitäten(dauer) {
-    const erarbeitungDauer = Math.round(dauer * 0.6);
-    const flashcardDauer = Math.round(dauer * 0.3);
-    const testenDauer = Math.round(dauer * 0.1);
+    let erarbeitungDauer = Math.round(dauer * 0.6);
+    let flashcardDauer = Math.round(dauer * 0.3);
+    let testenDauer = Math.round(dauer * 0.1);
+
+    // Sicherstellen, dass die Summe nicht die Gesamtdauer überschreitet
+    const summe = erarbeitungDauer + flashcardDauer + testenDauer;
+    if (summe > dauer) {
+        const faktor = dauer / summe;
+        erarbeitungDauer = Math.floor(erarbeitungDauer * faktor);
+        flashcardDauer = Math.floor(flashcardDauer * faktor);
+        testenDauer = dauer - erarbeitungDauer - flashcardDauer;
+    }
 
     return [
         {
@@ -417,9 +424,18 @@ function getInitialAktivitäten(dauer) {
 }
 
 function getWiederholungsAktivitäten(dauer) {
-    const retrievalDauer = Math.round(dauer * 0.7);
-    const fehleranalyseDauer = Math.round(dauer * 0.2);
-    const elaborationDauer = Math.round(dauer * 0.1);
+    let retrievalDauer = Math.round(dauer * 0.7);
+    let fehleranalyseDauer = Math.round(dauer * 0.2);
+    let elaborationDauer = Math.round(dauer * 0.1);
+
+    // Sicherstellen, dass die Summe nicht die Gesamtdauer überschreitet
+    const summe = retrievalDauer + fehleranalyseDauer + elaborationDauer;
+    if (summe > dauer) {
+        const faktor = dauer / summe;
+        retrievalDauer = Math.floor(retrievalDauer * faktor);
+        fehleranalyseDauer = Math.floor(fehleranalyseDauer * faktor);
+        elaborationDauer = dauer - retrievalDauer - fehleranalyseDauer;
+    }
 
     return [
         {
