@@ -193,8 +193,8 @@ async function cacheFirst(request) {
     try {
         const networkResponse = await fetch(request);
 
-        // Cache the new response
-        if (networkResponse.ok) {
+        // Cache the new response (but skip partial responses - 206)
+        if (networkResponse.ok && networkResponse.status !== 206) {
             const cache = await caches.open(RUNTIME_CACHE);
             cache.put(request, networkResponse.clone());
         }
