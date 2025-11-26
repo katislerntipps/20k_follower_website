@@ -181,9 +181,9 @@ function createSession(id, thema, themaIndex, zyklusIndex, intervalTag, eingaben
 
     let dauer = Math.round(zieldauer * (komplexitätsFaktor[thema.komplexität] || 1.0));
 
-    // Wiederholungen sind kürzer (60% der Initial-Session)
+    // Wiederholungen sind kürzer (80% der Initial-Session)
     if (typ === 'wiederholung') {
-        dauer = Math.round(dauer * 0.6);
+        dauer = Math.round(dauer * 0.8);
     }
 
     // Minimum 15 Minuten, Maximum 120 Minuten
