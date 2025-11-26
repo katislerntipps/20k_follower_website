@@ -598,17 +598,44 @@ function generateEmpfehlungen(eingaben, zeitrahmen, spacingInfo, metadata) {
     // Zeitrahmen-Warnungen
     empfehlungen.push(...getSpacingRecommendations(spacingInfo.quality));
 
-    // Workload Check
-    const stundenProWoche = metadata.gesamt_lernzeit_stunden / zeitrahmen.wochen;
-    if (stundenProWoche > 15) {
-        empfehlungen.push({
-            typ: 'warnung',
-            titel: 'Hoher Workload',
-            icon: '⚠️',
-            text: `Du hast ${Math.round(stundenProWoche)} Stunden/Woche eingeplant. Das ist ambitioniert! Achte auf ausreichend Pausen.`,
-            priorität: 'mittel',
-            aktion: 'Plane bewusst Erholungstage ein'
-        });
+    // Verfügbare Zeit vs. Genutzte Zeit Check
+    const verfügbareWochentage = Object.keys(eingaben.wochentage_verfügbarkeit || {})
+        .filter(tag => eingaben.wochentage_verfügbarkeit[tag]?.verfügbar);
+
+    if (verfügbareWochentage.length > 0) {
+        // Berechne verfügbare Stunden pro Woche
+        const verfügbareStundenProWoche = verfügbareWochentage.reduce((sum, tag) => {
+            return sum + (eingaben.wochentage_verfügbarkeit[tag]?.stunden || 0);
+        }, 0);
+
+        const verfügbareGesamtstunden = verfügbareStundenProWoche * zeitrahmen.wochen;
+        const genutzteStunden = metadata.gesamt_lernzeit_stunden;
+        const auslastung = (genutzteStunden / verfügbareGesamtstunden) * 100;
+
+        // Warnung bei niedriger Auslastung (< 30%)
+        if (auslastung < 30 && verfügbareGesamtstunden > 10) {
+            empfehlungen.push({
+                typ: 'info',
+                titel: 'Viel ungenutzte Zeit',
+                icon: '⏰',
+                text: `Du hast ${Math.round(verfügbareGesamtstunden)} Std verfügbar, nutzt aber nur ${genutzteStunden.toFixed(1)} Std (${Math.round(auslastung)}%). ${eingaben.themen.length === 1 ? 'Erwäge weitere Themen hinzuzufügen oder dein Thema in Unterthemen aufzuteilen.' : 'Du könntest mehr Sessions pro Thema einplanen.'}`,
+                priorität: 'mittel',
+                aktion: eingaben.themen.length === 1 ? 'Füge weitere Themen hinzu' : 'Erwäge mehr Vertiefungs-Sessions'
+            });
+        }
+
+        // Warnung bei hohem Workload
+        const stundenProWoche = metadata.gesamt_lernzeit_stunden / zeitrahmen.wochen;
+        if (stundenProWoche > 15) {
+            empfehlungen.push({
+                typ: 'warnung',
+                titel: 'Hoher Workload',
+                icon: '⚠️',
+                text: `Du hast ${Math.round(stundenProWoche)} Stunden/Woche eingeplant. Das ist ambitioniert! Achte auf ausreichend Pausen.`,
+                priorität: 'mittel',
+                aktion: 'Plane bewusst Erholungstage ein'
+            });
+        }
     }
 
     // Methoden-Tipps
