@@ -20,31 +20,31 @@ export function calculateSpacingIntervals(availableDays, scenario = 'prüfung') 
     // Prüfungsvorbereitung - Qualität basierend auf verfügbarer Zeit
     if (availableDays < 7) {
         return {
-            intervals: [0, 1, 2, 3, Math.min(5, availableDays - 1)].filter(day => day < availableDays),
+            intervals: [0, 1, 2, 3, 5].filter(day => day < availableDays),
             quality: 'KRITISCH',
             qualityLevel: 'critical',
             description: '⚠️ Sehr wenig Zeit! Fokus auf Kernthemen empfohlen.',
-            cycles: 3
+            cycles: 5
         };
     } else if (availableDays >= 7 && availableDays < 14) {
         return {
-            intervals: [0, 1, 3, 7].filter(day => day < availableDays),
+            intervals: [0, 1, 2, 4, 7, 10].filter(day => day < availableDays),
             quality: 'AUSREICHEND',
             qualityLevel: 'sufficient',
             description: '✓ Ausreichend - straffer Plan möglich',
-            cycles: 4
+            cycles: 6
         };
     } else if (availableDays >= 14 && availableDays <= 28) {
         return {
-            intervals: [0, 1, 3, 7, 14].filter(day => day < availableDays),
+            intervals: [0, 1, 2, 4, 7, 10, 14, 18, 21].filter(day => day < availableDays),
             quality: 'OPTIMAL',
             qualityLevel: 'optimal',
             description: '✅ OPTIMAL - Ideale Spacing-Zyklen möglich',
-            cycles: 5
+            cycles: 9
         };
     } else {
         // > 28 Tage
-        const intervals = [0, 1, 3, 7, 14, 21, 28];
+        const intervals = [0, 1, 2, 4, 7, 10, 14, 18, 21, 28];
 
         // Erweiterte Zyklen für längere Zeiträume
         if (availableDays > 42) {
