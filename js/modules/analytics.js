@@ -514,7 +514,7 @@ class Analytics {
 // Erstelle globale Analytics-Instanz
 const analytics = new Analytics({
     enabled: true,
-    debug: true, // In Produktion: false
+    debug: false, // Production: false (set true for debugging)
     serverUrl: null // Optional: '/api/analytics' für Server-Sync
 });
 

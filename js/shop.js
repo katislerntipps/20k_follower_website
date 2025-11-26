@@ -60,18 +60,6 @@ async function verifyAdminCode(inputCode) {
     }
 }
 
-/**
- * Hilfsfunktion zum Generieren eines neuen Admin-Code Hashes
- * Nutze das in der Browser-Console: await hashAdminCode('dein-code')
- * @param {string} code - Der neue Admin-Code
- */
-async function hashAdminCode(code) {
-    const hash = await hashString(code);
-    console.log('Neuer Admin-Code Hash:', hash);
-    console.log('Ersetze ADMIN_CODE_HASH in shop.js mit diesem Wert');
-    return hash;
-}
-
 // ===================================
 // SAFE STORAGE HELPERS
 // ===================================
@@ -572,19 +560,9 @@ function setupBackgroundMusic() {
         const shopState = getShopState();
         backgroundMusic.volume = shopState.musicVolume ?? 0.3;
 
-        // PERFORMANCE: Wähle bestes verfügbares Audio-Format
-        // WebM/Opus: Beste Kompression (~900KB), moderne Browser
-        // MP3: Universelle Kompatibilität (~1.5MB wenn optimiert)
-        if (backgroundMusic.canPlayType('audio/webm; codecs="opus"')) {
-            backgroundMusic.src = 'audio/backgroundmusic.webm';
-            console.log('🎵 Using WebM/Opus (optimal compression)');
-        } else if (backgroundMusic.canPlayType('audio/ogg; codecs="vorbis"')) {
-            backgroundMusic.src = 'audio/backgroundmusic.ogg';
-            console.log('🎵 Using OGG/Vorbis (good compression)');
-        } else {
-            backgroundMusic.src = 'audio/backgroundmusic.mp3';
-            console.log('🎵 Using MP3 (universal fallback)');
-        }
+        // Use MP3 format (universal compatibility)
+        backgroundMusic.src = 'audio/backgroundmusic.mp3';
+        console.log('🎵 Using MP3 audio');
 
         backgroundMusic.addEventListener('loadedmetadata', () => applySavedMusicState(savedMusicState));
         backgroundMusic.addEventListener('play', saveCurrentMusicState);
@@ -593,13 +571,7 @@ function setupBackgroundMusic() {
 
         // Error handling
         backgroundMusic.addEventListener('error', (e) => {
-            console.error('Audio-Fehler:', e);
-            console.log('Versuche Fallback zu MP3...');
-
-            // Fallback to MP3 if primary format fails
-            if (!backgroundMusic.src.endsWith('.mp3')) {
-                backgroundMusic.src = 'audio/backgroundmusic.mp3';
-            }
+            console.error('Audio loading failed:', e);
         });
     }
 
