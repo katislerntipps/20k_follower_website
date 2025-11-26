@@ -176,6 +176,9 @@ function addPoints(points) {
     return stats.points;
 }
 
+// Make addPoints globally available
+window.addPoints = addPoints;
+
 // ===================================
 // FLOATING TIMER (GLOBAL)
 // ===================================
@@ -739,6 +742,9 @@ function showNotification(message, type = 'success') {
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
+
+// Make showNotification globally available
+window.showNotification = showNotification;
 
 // Add CSS animations for notifications
 const style = document.createElement('style');
