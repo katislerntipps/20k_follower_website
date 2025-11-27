@@ -1503,6 +1503,24 @@ function toggleTheme() {
     document.documentElement.setAttribute('data-theme', newTheme);
     safeSetItem('studytok_theme', newTheme);
     updateThemeIcon(newTheme);
+
+    // Force repaint für Mobile Browser (besonders Safari/WebKit)
+    // Dies behebt das Problem, dass Farben erst nach Scrollen richtig angezeigt werden
+    forceRepaint();
+}
+
+function forceRepaint() {
+    // Methode 1: Force reflow durch Lesen von offsetHeight
+    void document.body.offsetHeight;
+
+    // Methode 2: RequestAnimationFrame für sauberes Repaint
+    requestAnimationFrame(() => {
+        // Trigger layout recalculation
+        document.body.style.transform = 'translateZ(0)';
+        requestAnimationFrame(() => {
+            document.body.style.transform = '';
+        });
+    });
 }
 
 function updateThemeIcon(theme) {
