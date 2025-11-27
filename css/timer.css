@@ -716,6 +716,38 @@
     margin-top: -4px;
 }
 
+/* Fullscreen Music Toggle */
+.fullscreen-music-toggle {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    padding: 0;
+}
+
+.fullscreen-music-toggle:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.fullscreen-music-toggle:active {
+    transform: scale(1.05);
+}
+
 /* Main Content Layout */
 .fullscreen-content {
     display: grid;
@@ -768,13 +800,13 @@
 .fullscreen-ring-bg {
     fill: none;
     stroke: rgba(255, 255, 255, 0.2);
-    stroke-width: 14;
+    stroke-width: 10;
 }
 
 .fullscreen-ring-progress {
     fill: none;
     stroke: white;
-    stroke-width: 14;
+    stroke-width: 10;
     stroke-linecap: round;
     stroke-dasharray: 534;
     stroke-dashoffset: 534;
@@ -803,24 +835,9 @@
     text-align: center;
 }
 
-/* Progress Bar */
+/* Progress Bar - Hidden as per user request */
 .fullscreen-progress-bar {
-    width: 100%;
-    max-width: 500px;
-    height: 12px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.fullscreen-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
-    border-radius: 10px;
-    transition: width 1s linear;
-    width: 0%;
-    box-shadow: 0 0 15px rgba(76, 175, 80, 0.6);
+    display: none;
 }
 
 /* Cycle Indicator */
