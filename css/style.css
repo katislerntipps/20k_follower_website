@@ -1626,6 +1626,10 @@ body.sakura-theme {
         padding: var(--spacing-sm) var(--spacing-sm);
     }
 
+    [data-theme="dark"] .nav-container {
+        background: transparent;
+    }
+
     .nav-actions {
         gap: 0.5rem;
     }
@@ -1649,6 +1653,12 @@ body.sakura-theme {
         font-size: 0.9rem;
     }
 
+    [data-theme="dark"] .user-points {
+        background: linear-gradient(135deg, rgba(255, 46, 230, 0.16) 0%, rgba(104, 210, 187, 0.12) 100%);
+        border: 1px solid rgba(199, 199, 210, 0.16);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 18px rgba(255, 46, 230, 0.22);
+    }
+
     .points-icon {
         width: 28px;
         height: 28px;
@@ -1657,6 +1667,12 @@ body.sakura-theme {
     .theme-toggle {
         width: 80px;
         height: 40px;
+    }
+
+    [data-theme="dark"] .theme-toggle {
+        background: linear-gradient(135deg, rgba(255, 46, 230, 0.18) 0%, rgba(167, 132, 255, 0.18) 100%);
+        border-color: rgba(167, 132, 255, 0.7);
+        box-shadow: var(--shadow-md);
     }
 
     .theme-toggle .toggle-thumb {
@@ -1668,10 +1684,31 @@ body.sakura-theme {
         width: 40px;
         height: 40px;
         margin-left: 0;
+        margin-right: 0;
+    }
+
+    .shop-icon {
+        font-size: 1.2rem;
+    }
+
+    [data-theme="dark"] .shop-trigger-btn {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        border-color: rgba(167, 132, 255, 0.4);
+        box-shadow: var(--shadow-md);
+    }
+
+    [data-theme="dark"] .shop-trigger-btn:hover {
+        box-shadow: var(--shadow-colored);
     }
 
     .nav-toggle {
         display: inline-flex;
+    }
+
+    [data-theme="dark"] .nav-toggle {
+        background: rgba(27, 25, 51, 0.95);
+        border-color: rgba(167, 132, 255, 0.3);
+        box-shadow: var(--shadow-md);
     }
 
     .nav-menu {
@@ -1841,14 +1878,17 @@ body.sakura-theme {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: var(--shadow-sm);
-    margin-left: 12px;
+    margin-left: 8px;
     position: relative;
+    flex-shrink: 0;
 }
 
-.shop-trigger-btn::before {
-    content: "🛒";
+.shop-icon {
     font-size: 1.4rem;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .shop-trigger-btn:hover {
@@ -2272,10 +2312,24 @@ body.sakura-theme {
     .shop-trigger-btn {
         width: 36px;
         height: 36px;
+        margin-left: 0;
+        padding: 0;
     }
 
-    .shop-trigger-btn::before {
-        font-size: 1.2rem;
+    .shop-icon {
+        font-size: 1.1rem;
+    }
+
+    [data-theme="dark"] .shop-trigger-btn {
+        border-color: rgba(167, 132, 255, 0.5);
+    }
+
+    [data-theme="dark"] .user-points {
+        font-size: 0.85rem;
+    }
+
+    [data-theme="dark"] .theme-toggle {
+        border-color: rgba(167, 132, 255, 0.6);
     }
 
     .hero-title {
