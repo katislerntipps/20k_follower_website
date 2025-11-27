@@ -136,13 +136,13 @@
    =================================== */
 
 .timer-controls {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: var(--spacing-sm);
     margin-bottom: var(--spacing-lg);
 }
 
 .control-btn {
-    flex: 1;
     padding: 1rem 1.5rem;
     border: none;
     border-radius: var(--radius-md);
@@ -151,6 +151,14 @@
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: var(--font-primary);
+}
+
+/* Make fullscreen and reset buttons smaller on desktop */
+@media (min-width: 769px) {
+    .btn-fullscreen,
+    .btn-reset {
+        grid-column: span 1;
+    }
 }
 
 .btn-start {
@@ -548,14 +556,17 @@
     }
 
     .timer-controls {
-        flex-direction: column;
+        grid-template-columns: 1fr 1fr;
         gap: 0.75rem;
     }
 
     .control-btn {
-        width: 100%;
-        padding: 1rem;
-        font-size: 1rem;
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .control-btn span {
+        display: block;
     }
 
     .timer-stats {
@@ -634,5 +645,680 @@
 
     .timer-hero {
         padding: 2rem 0;
+    }
+}
+
+/* ===================================
+   FULLSCREEN MODE STYLES
+   =================================== */
+
+.fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    z-index: 99999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.fullscreen-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+.fullscreen-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    overflow: hidden;
+}
+
+/* Exit Button */
+.fullscreen-exit {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    line-height: 1;
+    padding: 0;
+}
+
+.fullscreen-exit:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.fullscreen-exit span {
+    display: block;
+    line-height: 1;
+    margin-top: -4px;
+}
+
+/* Main Content Layout */
+.fullscreen-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 3rem;
+    max-width: 1400px;
+    width: 100%;
+    height: 100%;
+    max-height: 900px;
+}
+
+/* Timer Section */
+.fullscreen-timer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2rem;
+    padding: 3rem;
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.fullscreen-mode-label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
+}
+
+/* Timer Display */
+.fullscreen-timer-display {
+    position: relative;
+    width: 350px;
+    height: 350px;
+}
+
+.fullscreen-timer-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.fullscreen-ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 14;
+}
+
+.fullscreen-ring-progress {
+    fill: none;
+    stroke: white;
+    stroke-width: 14;
+    stroke-linecap: round;
+    stroke-dasharray: 534;
+    stroke-dashoffset: 534;
+    transition: stroke-dashoffset 1s linear;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+}
+
+.fullscreen-timer-time {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 6rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.1em;
+}
+
+.fullscreen-timer-time span {
+    min-width: 2.5ch;
+    text-align: center;
+}
+
+/* Progress Bar */
+.fullscreen-progress-bar {
+    width: 100%;
+    max-width: 500px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.fullscreen-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+    border-radius: 10px;
+    transition: width 1s linear;
+    width: 0%;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.6);
+}
+
+/* Cycle Indicator */
+.fullscreen-cycle-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.fullscreen-cycle-info .cycle-text {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.fullscreen-cycle-dots {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Side Panel */
+.fullscreen-side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: center;
+}
+
+/* Stats */
+.fullscreen-stats {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.fullscreen-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+}
+
+.fullscreen-stat-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+}
+
+.fullscreen-stat-item .stat-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
+}
+
+.fullscreen-stat-item .stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.fullscreen-stat-item .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.fullscreen-stat-item .stat-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+/* Tree Visualization */
+.fullscreen-tree {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.fullscreen-tree-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.fullscreen-tree-level {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+}
+
+.fullscreen-tree-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 1rem;
+    min-height: 200px;
+}
+
+.fullscreen-tree-image img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.2));
+    transition: opacity 0.3s ease;
+}
+
+/* Motivation Quote */
+.fullscreen-motivation {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+.fullscreen-motivation .motivation-icon {
+    font-size: 2.5rem;
+    animation: floatMotivation 3s ease-in-out infinite;
+}
+
+@keyframes floatMotivation {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.fullscreen-motivation .motivation-text {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    line-height: 1.6;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Ambient Background Effects */
+.fullscreen-ambient {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0.4;
+}
+
+.ambient-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    animation: floatParticle 20s infinite;
+    opacity: 0.6;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.ambient-particle:nth-child(1) {
+    left: 10%;
+    animation-delay: 0s;
+    animation-duration: 15s;
+}
+
+.ambient-particle:nth-child(2) {
+    left: 30%;
+    animation-delay: 3s;
+    animation-duration: 18s;
+}
+
+.ambient-particle:nth-child(3) {
+    left: 50%;
+    animation-delay: 6s;
+    animation-duration: 20s;
+}
+
+.ambient-particle:nth-child(4) {
+    left: 70%;
+    animation-delay: 9s;
+    animation-duration: 22s;
+}
+
+.ambient-particle:nth-child(5) {
+    left: 90%;
+    animation-delay: 12s;
+    animation-duration: 17s;
+}
+
+@keyframes floatParticle {
+    0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.6;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-100vh) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Dark Mode Adjustments for Fullscreen */
+[data-theme="dark"] .fullscreen-overlay {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+[data-theme="dark"] .fullscreen-timer-section,
+[data-theme="dark"] .fullscreen-stats,
+[data-theme="dark"] .fullscreen-tree,
+[data-theme="dark"] .fullscreen-motivation {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 46, 230, 0.3);
+}
+
+[data-theme="dark"] .fullscreen-ring-bg {
+    stroke: rgba(255, 255, 255, 0.1);
+}
+
+/* Button Styling for Fullscreen Button */
+.btn-fullscreen {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-fullscreen:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* ===================================
+   RESPONSIVE FULLSCREEN MODE
+   =================================== */
+
+/* Tablet and below */
+@media (max-width: 1024px) {
+    .fullscreen-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        max-height: none;
+    }
+
+    .fullscreen-timer-display {
+        width: 300px;
+        height: 300px;
+    }
+
+    .fullscreen-timer-time {
+        font-size: 5rem;
+    }
+
+    .fullscreen-side-panel {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .fullscreen-stats {
+        flex: 1;
+        min-width: 280px;
+    }
+
+    .fullscreen-tree {
+        flex: 1;
+        min-width: 280px;
+    }
+
+    .fullscreen-motivation {
+        flex-basis: 100%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .fullscreen-container {
+        padding: 1.5rem;
+    }
+
+    .fullscreen-exit {
+        top: 1rem;
+        right: 1rem;
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+
+    .fullscreen-content {
+        gap: 1.5rem;
+    }
+
+    .fullscreen-timer-section {
+        padding: 2rem 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .fullscreen-mode-label {
+        font-size: 1.5rem;
+    }
+
+    .fullscreen-timer-display {
+        width: 250px;
+        height: 250px;
+    }
+
+    .fullscreen-timer-time {
+        font-size: 4rem;
+    }
+
+    .fullscreen-progress-bar {
+        max-width: 350px;
+    }
+
+    .fullscreen-cycle-info .cycle-text {
+        font-size: 1.1rem;
+    }
+
+    .fullscreen-side-panel {
+        flex-direction: column;
+    }
+
+    .fullscreen-stats {
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+
+    .fullscreen-stat-item {
+        padding: 0.75rem;
+    }
+
+    .fullscreen-stat-item .stat-icon {
+        font-size: 2rem;
+    }
+
+    .fullscreen-stat-item .stat-number {
+        font-size: 1.5rem;
+    }
+
+    .fullscreen-tree {
+        padding: 1.5rem;
+    }
+
+    .fullscreen-tree-title {
+        font-size: 1.2rem;
+    }
+
+    .fullscreen-tree-image {
+        min-height: 150px;
+    }
+
+    .fullscreen-tree-image img {
+        max-height: 150px;
+    }
+
+    .fullscreen-motivation {
+        padding: 1.5rem;
+    }
+
+    .fullscreen-motivation .motivation-text {
+        font-size: 1.1rem;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .fullscreen-container {
+        padding: 1rem;
+    }
+
+    .fullscreen-timer-section {
+        padding: 1.5rem 1rem;
+    }
+
+    .fullscreen-mode-label {
+        font-size: 1.3rem;
+    }
+
+    .fullscreen-timer-display {
+        width: 200px;
+        height: 200px;
+    }
+
+    .fullscreen-timer-time {
+        font-size: 3rem;
+    }
+
+    .fullscreen-progress-bar {
+        height: 10px;
+    }
+
+    .fullscreen-cycle-info .cycle-text {
+        font-size: 1rem;
+    }
+
+    .fullscreen-cycle-dots {
+        gap: 0.5rem;
+    }
+
+    .fullscreen-stats {
+        padding: 1.25rem;
+    }
+
+    .fullscreen-stat-item .stat-icon {
+        font-size: 1.75rem;
+    }
+
+    .fullscreen-stat-item .stat-number {
+        font-size: 1.3rem;
+    }
+
+    .fullscreen-stat-item .stat-label {
+        font-size: 0.8rem;
+    }
+
+    .fullscreen-tree {
+        padding: 1.25rem;
+    }
+
+    .fullscreen-tree-title {
+        font-size: 1.1rem;
+    }
+
+    .fullscreen-tree-image {
+        min-height: 120px;
+    }
+
+    .fullscreen-tree-image img {
+        max-height: 120px;
+    }
+
+    .fullscreen-motivation {
+        padding: 1.25rem;
+    }
+
+    .fullscreen-motivation .motivation-icon {
+        font-size: 2rem;
+    }
+
+    .fullscreen-motivation .motivation-text {
+        font-size: 1rem;
+    }
+}
+
+/* Landscape mode for mobile devices */
+@media (max-width: 768px) and (orientation: landscape) {
+    .fullscreen-content {
+        grid-template-columns: 1fr 1fr;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .fullscreen-timer-display {
+        width: 220px;
+        height: 220px;
+    }
+
+    .fullscreen-timer-time {
+        font-size: 3.5rem;
+    }
+
+    .fullscreen-side-panel {
+        gap: 1rem;
+    }
+
+    .fullscreen-stats,
+    .fullscreen-tree,
+    .fullscreen-motivation {
+        padding: 1rem;
     }
 }
