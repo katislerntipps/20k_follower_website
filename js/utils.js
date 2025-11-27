@@ -363,13 +363,49 @@ registerServiceWorker();
 // ===================================
 
 let errorCount = 0;
-const MAX_ERRORS_BEFORE_RELOAD = 5;
+const MAX_ERRORS_BEFORE_RELOAD = 10; // Erhöht von 5 auf 10
 const ERROR_RESET_TIME = 60000; // 1 minute
+let lastErrorNotificationTime = 0;
+const ERROR_NOTIFICATION_COOLDOWN = 5000; // 5 seconds between notifications
+
+/**
+ * Prüft ob ein Fehler ignoriert werden sollte (z.B. Service Worker Updates)
+ */
+function shouldIgnoreError(event) {
+    const message = event.message || '';
+    const filename = event.filename || '';
+
+    // Ignoriere Script-Loading-Fehler während Service Worker Updates
+    if (message.includes('Loading chunk') ||
+        message.includes('Loading CSS chunk') ||
+        message.includes('Failed to fetch')) {
+        return true;
+    }
+
+    // Ignoriere Fehler von Browser-Extensions
+    if (filename.includes('chrome-extension://') ||
+        filename.includes('moz-extension://')) {
+        return true;
+    }
+
+    // Ignoriere ResizeObserver loop errors (harmlos)
+    if (message.includes('ResizeObserver loop')) {
+        return true;
+    }
+
+    return false;
+}
 
 /**
  * Globaler Error Handler für unbehandelte Fehler
  */
 window.addEventListener('error', (event) => {
+    // Ignoriere bestimmte unkritische Fehler
+    if (shouldIgnoreError(event)) {
+        console.warn('⚠️ Ignoring non-critical error:', event.message);
+        return;
+    }
+
     console.error('🔴 Global Error:', event.error);
 
     errorCount++;
@@ -401,20 +437,28 @@ window.addEventListener('error', (event) => {
         console.warn('Failed to track error in analytics:', analyticsError);
     }
 
-    // Show user-friendly notification
-    if (typeof showEnhancedNotification === 'function') {
+    // Zeige Benachrichtigung nur wenn:
+    // 1. Genug Zeit seit letzter Benachrichtigung vergangen ist
+    // 2. Fehleranzahl kritisch wird (> 3)
+    const now = Date.now();
+    const shouldShowNotification =
+        (now - lastErrorNotificationTime > ERROR_NOTIFICATION_COOLDOWN) &&
+        errorCount > 3;
+
+    if (shouldShowNotification && typeof showEnhancedNotification === 'function') {
+        lastErrorNotificationTime = now;
         showEnhancedNotification(
-            'Ein Fehler ist aufgetreten. Die Seite wird automatisch aktualisiert.',
-            'error',
+            'Es sind mehrere Fehler aufgetreten.',
+            'warning',
             {
-                duration: 5000,
-                actionText: 'Jetzt neu laden',
+                duration: 4000,
+                actionText: 'Neu laden',
                 onAction: () => window.location.reload()
             }
         );
     }
 
-    // Auto-reload if too many errors
+    // Auto-reload nur bei sehr vielen Fehlern
     if (errorCount >= MAX_ERRORS_BEFORE_RELOAD) {
         console.error('🔴 Too many errors, reloading page...');
         setTimeout(() => {
@@ -435,6 +479,16 @@ window.addEventListener('error', (event) => {
  * Handler für unbehandelte Promise-Rejections
  */
 window.addEventListener('unhandledrejection', (event) => {
+    const reason = String(event.reason || '');
+
+    // Ignoriere unkritische Promise-Rejections (z.B. abgebrochene Fetch-Requests)
+    if (reason.includes('Failed to fetch') ||
+        reason.includes('NetworkError') ||
+        reason.includes('AbortError')) {
+        console.warn('⚠️ Ignoring non-critical promise rejection:', event.reason);
+        return;
+    }
+
     console.error('🔴 Unhandled Promise Rejection:', event.reason);
 
     errorCount++;
@@ -458,13 +512,19 @@ window.addEventListener('unhandledrejection', (event) => {
         console.warn('Failed to track promise rejection in analytics:', analyticsError);
     }
 
-    // Show user-friendly notification
-    if (typeof showEnhancedNotification === 'function') {
+    // Zeige Benachrichtigung nur bei kritischen Fehlern
+    const now = Date.now();
+    const shouldShowNotification =
+        (now - lastErrorNotificationTime > ERROR_NOTIFICATION_COOLDOWN) &&
+        errorCount > 3;
+
+    if (shouldShowNotification && typeof showEnhancedNotification === 'function') {
+        lastErrorNotificationTime = now;
         showEnhancedNotification(
-            'Fehler beim Laden von Daten. Bitte versuche es erneut.',
-            'error',
+            'Fehler beim Laden von Daten.',
+            'warning',
             {
-                duration: 5000,
+                duration: 4000,
                 actionText: 'Neu laden',
                 onAction: () => window.location.reload()
             }
