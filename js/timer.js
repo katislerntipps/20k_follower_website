@@ -1883,6 +1883,8 @@ function initializeFullscreenMode() {
         fullscreenStartBtn.addEventListener('click', () => {
             startTimer();
             updateFullscreenButtons();
+            // Update tree immediately to fix pause.png staying visible
+            setTimeout(() => updateFullscreenTree(), 50);
         });
     }
 
@@ -1890,6 +1892,8 @@ function initializeFullscreenMode() {
         fullscreenPauseBtn.addEventListener('click', () => {
             pauseTimer();
             updateFullscreenButtons();
+            // Update tree to show pause.png
+            setTimeout(() => updateFullscreenTree(), 50);
         });
     }
 
@@ -1934,6 +1938,32 @@ function initializeFullscreenMusicToggle() {
         }
     });
 
+    // Initialize volume slider
+    const volumeSlider = document.getElementById('fullscreen-volume-slider');
+    const volumeLabel = document.getElementById('fullscreen-volume-label');
+
+    if (volumeSlider && volumeLabel) {
+        // Get initial volume from shop state
+        const shopState = typeof getShopState === 'function' ? getShopState() : null;
+        const initialVolume = shopState?.musicVolume ?? 0.3;
+
+        volumeSlider.value = Math.round(initialVolume * 100);
+        volumeLabel.textContent = `Lautstärke: ${Math.round(initialVolume * 100)}%`;
+
+        // Add input event listener
+        volumeSlider.addEventListener('input', (event) => {
+            const volume = parseInt(event.target.value, 10) / 100;
+
+            // Update music volume using shop.js function
+            if (typeof updateMusicVolume === 'function') {
+                updateMusicVolume(volume);
+            }
+
+            // Update label
+            volumeLabel.textContent = `Lautstärke: ${Math.round(volume * 100)}%`;
+        });
+    }
+
     // Initial sync
     updateFullscreenMusicVisibility();
     updateFullscreenMusicIcon();
@@ -1941,14 +1971,21 @@ function initializeFullscreenMusicToggle() {
 
 function updateFullscreenMusicVisibility() {
     const fullscreenMusicToggle = document.getElementById('fullscreen-music-toggle');
+    const fullscreenMusicVolume = document.getElementById('fullscreen-music-volume');
     if (!fullscreenMusicToggle) return;
 
     // Check if music is unlocked
     const shopState = typeof getShopState === 'function' ? getShopState() : null;
-    if (shopState && shopState.unlockedItems && shopState.unlockedItems.includes('music')) {
+    if (shopState && shopState.purchases && shopState.purchases.music) {
         fullscreenMusicToggle.style.display = 'flex';
+        if (fullscreenMusicVolume) {
+            fullscreenMusicVolume.style.display = 'flex';
+        }
     } else {
         fullscreenMusicToggle.style.display = 'none';
+        if (fullscreenMusicVolume) {
+            fullscreenMusicVolume.style.display = 'none';
+        }
     }
 }
 
@@ -2166,7 +2203,7 @@ function updateFullscreenProgressRing() {
     const currentSeconds = (timerState.minutes * 60) + timerState.seconds;
     const progress = 1 - (currentSeconds / timerState.totalSeconds);
 
-    const ringLength = getRingLength(progressRing, 534);
+    const ringLength = getRingLength(progressRing, 477);
     progressRing.style.strokeDashoffset = ringLength - (ringLength * progress);
 }
 

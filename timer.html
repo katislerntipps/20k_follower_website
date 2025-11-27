@@ -421,6 +421,12 @@
                 <span id="fullscreen-music-icon">🔇</span>
             </button>
 
+            <!-- Music Volume Control (shown below music button) -->
+            <div class="fullscreen-music-volume" id="fullscreen-music-volume" style="display: none;">
+                <label class="fullscreen-volume-label" for="fullscreen-volume-slider" id="fullscreen-volume-label">Lautstärke: 30%</label>
+                <input type="range" min="0" max="100" value="30" class="fullscreen-volume-slider" id="fullscreen-volume-slider" aria-label="Lautstärke der Hintergrundmusik einstellen">
+            </div>
+
             <!-- Main Content -->
             <div class="fullscreen-content">
                 <!-- Timer Display -->
@@ -429,8 +435,8 @@
 
                     <div class="fullscreen-timer-display">
                         <svg class="fullscreen-timer-ring" viewBox="0 0 200 200">
-                            <circle cx="100" cy="100" r="85" class="fullscreen-ring-bg"/>
-                            <circle cx="100" cy="100" r="85" class="fullscreen-ring-progress" id="fullscreen-progress"/>
+                            <circle cx="100" cy="100" r="76" class="fullscreen-ring-bg"/>
+                            <circle cx="100" cy="100" r="76" class="fullscreen-ring-progress" id="fullscreen-progress"/>
                         </svg>
                         <div class="fullscreen-timer-time">
                             <span id="fullscreen-minutes">25</span>:<span id="fullscreen-seconds">00</span>
