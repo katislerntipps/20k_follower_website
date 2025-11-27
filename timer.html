@@ -442,36 +442,23 @@
                         <span class="cycle-text">Session 1 von 4</span>
                         <div class="fullscreen-cycle-dots" id="fullscreen-cycle-dots"></div>
                     </div>
+
+                    <!-- Control Buttons -->
+                    <div class="fullscreen-controls">
+                        <button class="fullscreen-control-btn fullscreen-btn-start" id="fullscreen-start-btn">
+                            <span>▶ Starten</span>
+                        </button>
+                        <button class="fullscreen-control-btn fullscreen-btn-pause" id="fullscreen-pause-btn" style="display: none;">
+                            <span>⏸ Pause</span>
+                        </button>
+                        <button class="fullscreen-control-btn fullscreen-btn-reset" id="fullscreen-reset-btn">
+                            <span>🔄 Reset</span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Stats & Tree Side Panel -->
-                <div class="fullscreen-side-panel">
-                    <!-- Stats -->
-                    <div class="fullscreen-stats">
-                        <div class="fullscreen-stat-item">
-                            <span class="stat-icon">🍅</span>
-                            <div class="stat-content">
-                                <div class="stat-number" id="fullscreen-sessions">0</div>
-                                <div class="stat-label">Heute</div>
-                            </div>
-                        </div>
-                        <div class="fullscreen-stat-item">
-                            <span class="stat-icon">⏱</span>
-                            <div class="stat-content">
-                                <div class="stat-number" id="fullscreen-minutes-today">0</div>
-                                <div class="stat-label">Minuten</div>
-                            </div>
-                        </div>
-                        <div class="fullscreen-stat-item">
-                            <span class="stat-icon">🔥</span>
-                            <div class="stat-content">
-                                <div class="stat-number" id="fullscreen-streak">1</div>
-                                <div class="stat-label">Streak</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tree Visualization -->
+                <!-- Tree Visualization -->
+                <div class="fullscreen-tree-panel">
                     <div class="fullscreen-tree">
                         <div class="fullscreen-tree-title">Konzentrationsbaum 🌸</div>
                         <div class="fullscreen-tree-level">
@@ -495,6 +482,11 @@
 
             <!-- Ambient Background Effects -->
             <div class="fullscreen-ambient" id="fullscreen-ambient" aria-hidden="true">
+                <div class="ambient-particle"></div>
+                <div class="ambient-particle"></div>
+                <div class="ambient-particle"></div>
+                <div class="ambient-particle"></div>
+                <div class="ambient-particle"></div>
                 <div class="ambient-particle"></div>
                 <div class="ambient-particle"></div>
                 <div class="ambient-particle"></div>
