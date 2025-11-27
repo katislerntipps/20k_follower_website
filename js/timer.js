@@ -1912,6 +1912,52 @@ function initializeFullscreenMode() {
 
     // Initialize fullscreen ring
     initializeFullscreenProgressRing();
+
+    // Initialize fullscreen music toggle
+    initializeFullscreenMusicToggle();
+}
+
+function initializeFullscreenMusicToggle() {
+    const fullscreenMusicToggle = document.getElementById('fullscreen-music-toggle');
+    if (!fullscreenMusicToggle) return;
+
+    // Add click event listener
+    fullscreenMusicToggle.addEventListener('click', () => {
+        // Call the global toggleMusic function from shop.js
+        if (typeof toggleMusic === 'function') {
+            toggleMusic();
+            // Update the fullscreen icon
+            updateFullscreenMusicIcon();
+        }
+    });
+
+    // Initial sync
+    updateFullscreenMusicVisibility();
+    updateFullscreenMusicIcon();
+}
+
+function updateFullscreenMusicVisibility() {
+    const fullscreenMusicToggle = document.getElementById('fullscreen-music-toggle');
+    if (!fullscreenMusicToggle) return;
+
+    // Check if music is unlocked
+    const shopState = typeof getShopState === 'function' ? getShopState() : null;
+    if (shopState && shopState.unlockedItems && shopState.unlockedItems.includes('music')) {
+        fullscreenMusicToggle.style.display = 'flex';
+    } else {
+        fullscreenMusicToggle.style.display = 'none';
+    }
+}
+
+function updateFullscreenMusicIcon() {
+    const fullscreenMusicIcon = document.getElementById('fullscreen-music-icon');
+    if (!fullscreenMusicIcon) return;
+
+    // Get music state
+    const shopState = typeof getShopState === 'function' ? getShopState() : null;
+    if (shopState) {
+        fullscreenMusicIcon.textContent = shopState.musicEnabled ? '🔊' : '🔇';
+    }
 }
 
 function handleFullscreenKeyboard(e) {
@@ -1945,6 +1991,10 @@ function enterFullscreen() {
 
     // Sync data to fullscreen
     syncToFullscreen();
+
+    // Sync music button state
+    updateFullscreenMusicVisibility();
+    updateFullscreenMusicIcon();
 
     // Start motivation rotation if in focus mode
     if (timerState.mode === 'focus' && timerState.isRunning) {

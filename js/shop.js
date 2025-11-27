@@ -637,6 +637,11 @@ function showMusicToggle() {
     toggleBtn.addEventListener('click', toggleMusic);
 
     createMusicVolumeControl(shopState.musicVolume ?? 0.3, shopState.musicEnabled);
+
+    // Update fullscreen music button visibility if it exists
+    if (typeof updateFullscreenMusicVisibility === 'function') {
+        updateFullscreenMusicVisibility();
+    }
 }
 
 function toggleMusic() {
@@ -658,6 +663,11 @@ function toggleMusic() {
             backgroundMusic.pause();
         }
         setMusicVolumeControlDisabled(true);
+    }
+
+    // Update fullscreen music icon if it exists
+    if (typeof updateFullscreenMusicIcon === 'function') {
+        updateFullscreenMusicIcon();
     }
 }
 
