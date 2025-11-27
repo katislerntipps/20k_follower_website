@@ -255,6 +255,11 @@ function startTimer() {
         analytics.trackTimerStart(timerState.mode, timerState.minutes);
 
         saveTimerState();
+
+        // Trigger fullscreen hooks
+        if (typeof onTimerStart === 'function') {
+            onTimerStart();
+        }
     }
 }
 
@@ -288,6 +293,11 @@ function pauseTimer(options = {}) {
 
     updateTimerTreeImage();
     saveTimerState();
+
+    // Trigger fullscreen hooks
+    if (typeof onTimerPause === 'function') {
+        onTimerPause();
+    }
 }
 
 function resetTimer() {
@@ -365,6 +375,11 @@ function tick() {
     updateTreeGrowth();
     updateTimerTreeImage();
     throttledSaveTimerState();
+
+    // Sync fullscreen if active
+    if (typeof syncFullscreenOnTick === 'function') {
+        syncFullscreenOnTick();
+    }
 
     if (remainingSeconds <= 0) {
         timerComplete();
@@ -540,6 +555,11 @@ function updateCycleIndicator() {
     }
 
     cycleDotsContainer.appendChild(cycleText);
+
+    // Trigger fullscreen hooks
+    if (typeof onCycleIndicatorUpdate === 'function') {
+        onCycleIndicatorUpdate();
+    }
 }
 
 function getDayCycleSessions() {
@@ -779,6 +799,11 @@ function updateStats() {
     pointsElements.forEach(el => {
         el.textContent = stats.points;
     });
+
+    // Trigger fullscreen hooks
+    if (typeof onStatsUpdate === 'function') {
+        onStatsUpdate();
+    }
 }
 
 // ===================================
@@ -841,6 +866,11 @@ function renderTree() {
     const blossomsCountElement = document.getElementById('blossoms-count');
     if (blossomsCountElement) {
         blossomsCountElement.textContent = treeState.blossoms;
+    }
+
+    // Trigger fullscreen hooks
+    if (typeof onTreeRender === 'function') {
+        onTreeRender();
     }
 }
 
@@ -1800,3 +1830,367 @@ function playCelebrationSound() {
         oscillator.stop(startTime + 0.4);
     });
 }
+
+// ===================================
+// FULLSCREEN MODE FUNCTIONALITY
+// ===================================
+
+let fullscreenState = {
+    isActive: false,
+    motivationInterval: null,
+    currentMotivationIndex: 0
+};
+
+// Motivation quotes for focus mode
+const MOTIVATION_QUOTES = [
+    "Du schaffst das! Bleib fokussiert. 💪",
+    "Jede Minute zählt. Keep going! 🌟",
+    "Konzentration ist der Schlüssel zum Erfolg. 🔑",
+    "Du bist auf einem guten Weg! ✨",
+    "Fokus macht den Meister. 🎯",
+    "Dein Ziel ist in Reichweite! 🏆",
+    "Bleib dran, du machst das großartig! 🌸",
+    "Kleine Schritte führen zu großen Erfolgen. 🚀",
+    "Du investierst in deine Zukunft! 📚",
+    "Konzentriert bleiben, Träume verwirklichen! 🌈",
+    "Diese Zeit gehört dir und deinen Zielen. ⏰",
+    "Focus on progress, not perfection. 💎"
+];
+
+function initializeFullscreenMode() {
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const fullscreenExit = document.getElementById('fullscreen-exit');
+    const fullscreenOverlay = document.getElementById('fullscreen-overlay');
+
+    if (!fullscreenBtn || !fullscreenExit || !fullscreenOverlay) {
+        console.warn('Fullscreen elements not found');
+        return;
+    }
+
+    // Toggle fullscreen on button click
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    fullscreenExit.addEventListener('click', exitFullscreen);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', handleFullscreenKeyboard);
+
+    // Load auto-fullscreen setting
+    const autoFullscreen = safeGetItem('studytok_auto_fullscreen', 'false') === 'true';
+    const autoFullscreenCheckbox = document.getElementById('auto-fullscreen');
+    if (autoFullscreenCheckbox) {
+        autoFullscreenCheckbox.checked = autoFullscreen;
+        autoFullscreenCheckbox.addEventListener('change', function() {
+            safeSetItem('studytok_auto_fullscreen', this.checked.toString());
+        });
+    }
+
+    // Initialize fullscreen ring
+    initializeFullscreenProgressRing();
+}
+
+function handleFullscreenKeyboard(e) {
+    // F11 - Toggle fullscreen
+    if (e.key === 'F11') {
+        e.preventDefault();
+        toggleFullscreen();
+    }
+
+    // ESC - Exit fullscreen
+    if (e.key === 'Escape' && fullscreenState.isActive) {
+        e.preventDefault();
+        exitFullscreen();
+    }
+}
+
+function toggleFullscreen() {
+    if (fullscreenState.isActive) {
+        exitFullscreen();
+    } else {
+        enterFullscreen();
+    }
+}
+
+function enterFullscreen() {
+    const overlay = document.getElementById('fullscreen-overlay');
+    if (!overlay) return;
+
+    overlay.classList.add('active');
+    fullscreenState.isActive = true;
+
+    // Sync data to fullscreen
+    syncToFullscreen();
+
+    // Start motivation rotation if in focus mode
+    if (timerState.mode === 'focus' && timerState.isRunning) {
+        startMotivationRotation();
+    }
+
+    // Try to enter browser fullscreen
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.log('Fullscreen request failed:', err);
+        });
+    }
+}
+
+function exitFullscreen() {
+    const overlay = document.getElementById('fullscreen-overlay');
+    if (!overlay) return;
+
+    overlay.classList.remove('active');
+    fullscreenState.isActive = false;
+
+    // Stop motivation rotation
+    stopMotivationRotation();
+
+    // Exit browser fullscreen
+    if (document.fullscreenElement) {
+        document.exitFullscreen().catch(err => {
+            console.log('Exit fullscreen failed:', err);
+        });
+    }
+}
+
+function syncToFullscreen() {
+    // Sync timer display
+    updateFullscreenTimer();
+
+    // Sync stats
+    updateFullscreenStats();
+
+    // Sync tree
+    updateFullscreenTree();
+
+    // Sync cycle indicator
+    updateFullscreenCycleIndicator();
+
+    // Sync mode label
+    updateFullscreenModeLabel();
+
+    // Update progress ring
+    updateFullscreenProgressRing();
+
+    // Update progress bar
+    updateFullscreenProgressBar();
+}
+
+function updateFullscreenTimer() {
+    const minutesEl = document.getElementById('fullscreen-minutes');
+    const secondsEl = document.getElementById('fullscreen-seconds');
+
+    if (minutesEl && secondsEl) {
+        minutesEl.textContent = String(timerState.minutes).padStart(2, '0');
+        secondsEl.textContent = String(timerState.seconds).padStart(2, '0');
+    }
+}
+
+function updateFullscreenStats() {
+    const stats = getStats();
+
+    const sessionsEl = document.getElementById('fullscreen-sessions');
+    const minutesEl = document.getElementById('fullscreen-minutes-today');
+    const streakEl = document.getElementById('fullscreen-streak');
+
+    if (sessionsEl) sessionsEl.textContent = stats.sessions;
+    if (minutesEl) minutesEl.textContent = stats.focusTime;
+    if (streakEl) streakEl.textContent = stats.streak;
+}
+
+function updateFullscreenTree() {
+    const levelEl = document.getElementById('fullscreen-tree-level');
+    const blossomsEl = document.getElementById('fullscreen-blossoms');
+    const treeImgEl = document.getElementById('fullscreen-tree-img');
+
+    if (levelEl) {
+        const levelEmoji = getLevelEmoji(treeState.level);
+        levelEl.textContent = `${treeState.level} ${levelEmoji}`;
+    }
+
+    if (blossomsEl) {
+        blossomsEl.textContent = treeState.blossoms;
+    }
+
+    // Sync tree image with main timer
+    if (treeImgEl) {
+        const mainTreeImg = document.getElementById('timer-tree-image');
+        if (mainTreeImg && mainTreeImg.src) {
+            treeImgEl.src = mainTreeImg.src;
+        }
+    }
+}
+
+function updateFullscreenCycleIndicator() {
+    const cycleTextEl = document.querySelector('.fullscreen-cycle-info .cycle-text');
+    const cycleDotsContainer = document.getElementById('fullscreen-cycle-dots');
+
+    if (cycleTextEl) {
+        if (timerState.cycleCount >= 4) {
+            cycleTextEl.textContent = 'Nächste: Lange Pause';
+        } else {
+            cycleTextEl.textContent = `Session ${timerState.cycleCount + 1} von 4`;
+        }
+    }
+
+    if (cycleDotsContainer) {
+        cycleDotsContainer.innerHTML = '';
+
+        // Create 4 dots
+        for (let i = 0; i < 4; i++) {
+            const dot = document.createElement('div');
+            const isCompleted = i < timerState.cycleCount;
+            const isCurrent = i === timerState.cycleCount && timerState.mode === 'focus';
+
+            dot.style.cssText = `
+                width: ${isCurrent ? '16px' : '12px'};
+                height: ${isCurrent ? '16px' : '12px'};
+                border-radius: 50%;
+                background: ${isCompleted ? 'white' : 'rgba(255, 255, 255, 0.3)'};
+                border: ${isCurrent ? '2px solid white' : 'none'};
+                transition: all 0.3s ease;
+                box-shadow: ${isCompleted ? '0 2px 8px rgba(255, 255, 255, 0.4)' : 'none'};
+            `;
+
+            cycleDotsContainer.appendChild(dot);
+        }
+    }
+}
+
+function updateFullscreenModeLabel() {
+    const labelEl = document.getElementById('fullscreen-mode-label');
+
+    if (labelEl) {
+        const modeLabels = {
+            focus: '🎯 Fokus-Modus',
+            short: '☕ Kurze Pause',
+            long: '🌙 Lange Pause'
+        };
+        labelEl.textContent = modeLabels[timerState.mode] || 'Timer';
+    }
+}
+
+function initializeFullscreenProgressRing() {
+    const ring = document.getElementById('fullscreen-progress');
+    if (!ring || typeof ring.getTotalLength !== 'function') return;
+
+    const length = ring.getTotalLength();
+    ring.style.strokeDasharray = length;
+    ring.dataset.circumference = length;
+}
+
+function updateFullscreenProgressRing() {
+    const progressRing = document.getElementById('fullscreen-progress');
+    if (!progressRing) return;
+
+    const currentSeconds = (timerState.minutes * 60) + timerState.seconds;
+    const progress = 1 - (currentSeconds / timerState.totalSeconds);
+
+    const ringLength = getRingLength(progressRing, 534);
+    progressRing.style.strokeDashoffset = ringLength - (ringLength * progress);
+}
+
+function updateFullscreenProgressBar() {
+    const progressFill = document.getElementById('fullscreen-progress-fill');
+    if (!progressFill) return;
+
+    const currentSeconds = (timerState.minutes * 60) + timerState.seconds;
+    const progress = 1 - (currentSeconds / timerState.totalSeconds);
+
+    progressFill.style.width = `${progress * 100}%`;
+}
+
+function startMotivationRotation() {
+    // Clear any existing interval
+    stopMotivationRotation();
+
+    // Update motivation immediately
+    updateMotivation();
+
+    // Rotate every 30 seconds
+    fullscreenState.motivationInterval = setInterval(() => {
+        fullscreenState.currentMotivationIndex =
+            (fullscreenState.currentMotivationIndex + 1) % MOTIVATION_QUOTES.length;
+        updateMotivation();
+    }, 30000);
+}
+
+function stopMotivationRotation() {
+    if (fullscreenState.motivationInterval) {
+        clearInterval(fullscreenState.motivationInterval);
+        fullscreenState.motivationInterval = null;
+    }
+}
+
+function updateMotivation() {
+    const motivationText = document.getElementById('motivation-text');
+    if (!motivationText) return;
+
+    // Use fade effect for transition
+    motivationText.style.opacity = '0';
+
+    setTimeout(() => {
+        motivationText.textContent = MOTIVATION_QUOTES[fullscreenState.currentMotivationIndex];
+        motivationText.style.transition = 'opacity 0.5s ease';
+        motivationText.style.opacity = '1';
+    }, 250);
+}
+
+// Hook into existing functions to sync fullscreen
+// We'll modify the tick function directly
+function syncFullscreenOnTick() {
+    if (fullscreenState.isActive) {
+        updateFullscreenTimer();
+        updateFullscreenProgressRing();
+        updateFullscreenProgressBar();
+    }
+}
+
+// Hook into timer start
+function onTimerStart() {
+    // Check if auto-fullscreen is enabled
+    const autoFullscreen = safeGetItem('studytok_auto_fullscreen', 'false') === 'true';
+    if (autoFullscreen && !fullscreenState.isActive) {
+        setTimeout(() => enterFullscreen(), 100);
+    }
+
+    // Start motivation rotation if in fullscreen and focus mode
+    if (fullscreenState.isActive && timerState.mode === 'focus') {
+        startMotivationRotation();
+    }
+}
+
+// Hook into timer pause
+function onTimerPause() {
+    stopMotivationRotation();
+    if (fullscreenState.isActive) {
+        syncToFullscreen();
+    }
+}
+
+// Hook into stats update
+function onStatsUpdate() {
+    if (fullscreenState.isActive) {
+        updateFullscreenStats();
+    }
+}
+
+// Hook into tree render
+function onTreeRender() {
+    if (fullscreenState.isActive) {
+        updateFullscreenTree();
+    }
+}
+
+// Hook into cycle indicator update
+function onCycleIndicatorUpdate() {
+    if (fullscreenState.isActive) {
+        updateFullscreenCycleIndicator();
+    }
+}
+
+// Initialize fullscreen mode on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for other initializations
+    setTimeout(() => {
+        initializeFullscreenMode();
+    }, 100);
+});

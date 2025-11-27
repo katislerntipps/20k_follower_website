@@ -151,6 +151,9 @@
                             <button class="control-btn btn-reset" id="reset-btn">
                                 <span>🔄 Reset</span>
                             </button>
+                            <button class="control-btn btn-fullscreen" id="fullscreen-btn" title="Vollbildmodus (F11)">
+                                <span>🖥️ Vollbild</span>
+                            </button>
                         </div>
 
                         <div class="timer-stats">
@@ -191,6 +194,12 @@
                             <label>
                                 <input type="checkbox" id="notifications" checked>
                                 <span>Benachrichtigungen</span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="auto-fullscreen">
+                                <span>Auto-Vollbild beim Start</span>
                             </label>
                         </div>
                         <div class="setting-item" style="padding-top: 0.5rem; border-top: 1px solid rgba(0,0,0,0.1);">
@@ -395,6 +404,102 @@
                 <p>Hier ist dein Rabattcode. Viel Spaß beim Einlösen!</p>
                 <div class="discount-code-display" id="discount-code-text">T-E-S-T-1-2-3</div>
                 <p class="discount-code-hint">Der Code bleibt im Shop sichtbar, falls du ihn später noch einmal brauchst.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Mode Overlay -->
+    <div class="fullscreen-overlay" id="fullscreen-overlay" aria-hidden="true">
+        <div class="fullscreen-container">
+            <!-- Exit Button -->
+            <button class="fullscreen-exit" id="fullscreen-exit" aria-label="Vollbild beenden" title="Beenden (ESC)">
+                <span>×</span>
+            </button>
+
+            <!-- Main Content -->
+            <div class="fullscreen-content">
+                <!-- Timer Display -->
+                <div class="fullscreen-timer-section">
+                    <div class="fullscreen-mode-label" id="fullscreen-mode-label">Fokus-Modus</div>
+
+                    <div class="fullscreen-timer-display">
+                        <svg class="fullscreen-timer-ring" viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="85" class="fullscreen-ring-bg"/>
+                            <circle cx="100" cy="100" r="85" class="fullscreen-ring-progress" id="fullscreen-progress"/>
+                        </svg>
+                        <div class="fullscreen-timer-time">
+                            <span id="fullscreen-minutes">25</span>:<span id="fullscreen-seconds">00</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="fullscreen-progress-bar">
+                        <div class="fullscreen-progress-fill" id="fullscreen-progress-fill"></div>
+                    </div>
+
+                    <!-- Cycle Indicator -->
+                    <div class="fullscreen-cycle-info" id="fullscreen-cycle-info">
+                        <span class="cycle-text">Session 1 von 4</span>
+                        <div class="fullscreen-cycle-dots" id="fullscreen-cycle-dots"></div>
+                    </div>
+                </div>
+
+                <!-- Stats & Tree Side Panel -->
+                <div class="fullscreen-side-panel">
+                    <!-- Stats -->
+                    <div class="fullscreen-stats">
+                        <div class="fullscreen-stat-item">
+                            <span class="stat-icon">🍅</span>
+                            <div class="stat-content">
+                                <div class="stat-number" id="fullscreen-sessions">0</div>
+                                <div class="stat-label">Heute</div>
+                            </div>
+                        </div>
+                        <div class="fullscreen-stat-item">
+                            <span class="stat-icon">⏱</span>
+                            <div class="stat-content">
+                                <div class="stat-number" id="fullscreen-minutes-today">0</div>
+                                <div class="stat-label">Minuten</div>
+                            </div>
+                        </div>
+                        <div class="fullscreen-stat-item">
+                            <span class="stat-icon">🔥</span>
+                            <div class="stat-content">
+                                <div class="stat-number" id="fullscreen-streak">1</div>
+                                <div class="stat-label">Streak</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tree Visualization -->
+                    <div class="fullscreen-tree">
+                        <div class="fullscreen-tree-title">Konzentrationsbaum 🌸</div>
+                        <div class="fullscreen-tree-level">
+                            <span>Level <span id="fullscreen-tree-level">1</span></span>
+                            <span><span id="fullscreen-blossoms">0</span> / 5 Blüten</span>
+                        </div>
+                        <div class="fullscreen-tree-image">
+                            <img id="fullscreen-tree-img" src="image/1.png" alt="Konzentrationsbaum">
+                        </div>
+                    </div>
+
+                    <!-- Motivation Quote -->
+                    <div class="fullscreen-motivation" id="fullscreen-motivation">
+                        <div class="motivation-icon">✨</div>
+                        <div class="motivation-text" id="motivation-text">
+                            Du schaffst das! Bleib fokussiert.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ambient Background Effects -->
+            <div class="fullscreen-ambient" id="fullscreen-ambient" aria-hidden="true">
+                <div class="ambient-particle"></div>
+                <div class="ambient-particle"></div>
+                <div class="ambient-particle"></div>
+                <div class="ambient-particle"></div>
+                <div class="ambient-particle"></div>
             </div>
         </div>
     </div>
