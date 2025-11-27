@@ -1871,6 +1871,32 @@ function initializeFullscreenMode() {
     fullscreenBtn.addEventListener('click', toggleFullscreen);
     fullscreenExit.addEventListener('click', exitFullscreen);
 
+    // Fullscreen control buttons
+    const fullscreenStartBtn = document.getElementById('fullscreen-start-btn');
+    const fullscreenPauseBtn = document.getElementById('fullscreen-pause-btn');
+    const fullscreenResetBtn = document.getElementById('fullscreen-reset-btn');
+
+    if (fullscreenStartBtn) {
+        fullscreenStartBtn.addEventListener('click', () => {
+            startTimer();
+            updateFullscreenButtons();
+        });
+    }
+
+    if (fullscreenPauseBtn) {
+        fullscreenPauseBtn.addEventListener('click', () => {
+            pauseTimer();
+            updateFullscreenButtons();
+        });
+    }
+
+    if (fullscreenResetBtn) {
+        fullscreenResetBtn.addEventListener('click', () => {
+            resetTimer();
+            updateFullscreenButtons();
+        });
+    }
+
     // Keyboard shortcuts
     document.addEventListener('keydown', handleFullscreenKeyboard);
 
@@ -1955,9 +1981,6 @@ function syncToFullscreen() {
     // Sync timer display
     updateFullscreenTimer();
 
-    // Sync stats
-    updateFullscreenStats();
-
     // Sync tree
     updateFullscreenTree();
 
@@ -1972,6 +1995,9 @@ function syncToFullscreen() {
 
     // Update progress bar
     updateFullscreenProgressBar();
+
+    // Update button visibility
+    updateFullscreenButtons();
 }
 
 function updateFullscreenTimer() {
@@ -1984,16 +2010,19 @@ function updateFullscreenTimer() {
     }
 }
 
-function updateFullscreenStats() {
-    const stats = getStats();
+function updateFullscreenButtons() {
+    const startBtn = document.getElementById('fullscreen-start-btn');
+    const pauseBtn = document.getElementById('fullscreen-pause-btn');
 
-    const sessionsEl = document.getElementById('fullscreen-sessions');
-    const minutesEl = document.getElementById('fullscreen-minutes-today');
-    const streakEl = document.getElementById('fullscreen-streak');
+    if (!startBtn || !pauseBtn) return;
 
-    if (sessionsEl) sessionsEl.textContent = stats.sessions;
-    if (minutesEl) minutesEl.textContent = stats.focusTime;
-    if (streakEl) streakEl.textContent = stats.streak;
+    if (timerState.isRunning) {
+        startBtn.style.display = 'none';
+        pauseBtn.style.display = 'block';
+    } else {
+        startBtn.style.display = 'block';
+        pauseBtn.style.display = 'none';
+    }
 }
 
 function updateFullscreenTree() {
@@ -2163,13 +2192,6 @@ function onTimerPause() {
     stopMotivationRotation();
     if (fullscreenState.isActive) {
         syncToFullscreen();
-    }
-}
-
-// Hook into stats update
-function onStatsUpdate() {
-    if (fullscreenState.isActive) {
-        updateFullscreenStats();
     }
 }
 
