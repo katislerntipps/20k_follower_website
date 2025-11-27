@@ -254,6 +254,9 @@ function startTimer() {
         // Track timer start
         analytics.trackTimerStart(timerState.mode, timerState.minutes);
 
+        // Update tree image (fixes pause.png staying in fullscreen)
+        updateTimerTreeImage();
+
         saveTimerState();
 
         // Trigger fullscreen hooks
