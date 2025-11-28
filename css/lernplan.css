@@ -668,44 +668,20 @@
 
 .plan-header {
     text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem 1rem;
-    background: linear-gradient(135deg, rgba(255, 183, 197, 0.15) 0%, rgba(212, 181, 241, 0.15) 100%);
-    border-radius: var(--radius-lg);
-    position: relative;
-    overflow: hidden;
-}
-
-.plan-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+    margin-bottom: 2rem;
 }
 
 .plan-title {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    gap: 0.5rem;
 }
 
 .plan-emoji {
-    font-size: 3.5rem;
-    animation: celebration 0.6s ease-out;
-}
-
-@keyframes celebration {
-    0% { transform: scale(0) rotate(0deg); }
-    50% { transform: scale(1.2) rotate(10deg); }
-    100% { transform: scale(1) rotate(0deg); }
+    font-size: 2.5rem;
 }
 
 .plan-text {
@@ -713,15 +689,11 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: 0 0 40px rgba(255, 183, 197, 0.3);
 }
 
 .plan-subtitle {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: var(--text-secondary);
-    font-weight: 500;
-    max-width: 600px;
-    margin: 0 auto;
 }
 
 /* Metadata Cards */
@@ -826,20 +798,8 @@
     border-color: var(--empfehlung-info-border);
 }
 
-.empfehlung-ungenutzte_zeit {
-    background: linear-gradient(135deg, rgba(255, 152, 0, 0.15) 0%, rgba(255, 193, 7, 0.1) 100%);
-    border-color: var(--empfehlung-warn-border);
-    border-width: 3px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
-}
-
 .empfehlung-icon {
     font-size: 1.5rem;
-}
-
-.empfehlung-ungenutzte_zeit .empfehlung-icon {
-    font-size: 2rem;
 }
 
 .empfehlung-titel {
@@ -848,20 +808,10 @@
     color: var(--text-primary);
 }
 
-.empfehlung-ungenutzte_zeit .empfehlung-titel {
-    font-size: 1.1rem;
-    font-weight: 700;
-}
-
 .empfehlung-text {
     font-size: 0.9rem;
     color: var(--text-secondary);
     line-height: 1.5;
-}
-
-.empfehlung-ungenutzte_zeit .empfehlung-text {
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
 }
 
 .empfehlung-aktion {
@@ -869,25 +819,6 @@
     font-size: 0.875rem;
     font-style: italic;
     color: var(--primary);
-}
-
-.empfehlung-aktion-btn {
-    margin-top: 1rem;
-    padding: 0.75rem 1.5rem;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.95rem;
-}
-
-.empfehlung-aktion-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 183, 197, 0.4);
 }
 
 /* Toolbar */
@@ -1282,6 +1213,15 @@
    RESPONSIVE
    =================================== */
 
+/* Bug 5 Fix: Show/hide max sessions input based on viewport */
+.max-sessions-mobile {
+    display: none;
+}
+
+.max-sessions-desktop {
+    display: block;
+}
+
 @media (max-width: 768px) {
     .progress-steps {
         display: none;
@@ -1365,6 +1305,107 @@
 
     .wizard-navigation .btn {
         width: 100%;
+    }
+
+    /* Bug 7 Fix: Enhanced plan header/title for mobile */
+    .plan-header {
+        margin-bottom: 3rem;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, rgba(255, 183, 197, 0.15) 0%, rgba(212, 181, 241, 0.15) 100%);
+        border-radius: var(--radius-lg);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .plan-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+    }
+
+    .plan-title {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        gap: 1rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+
+    .plan-emoji {
+        font-size: 3.5rem;
+        animation: celebration 0.6s ease-out;
+    }
+
+    @keyframes celebration {
+        0% { transform: scale(0) rotate(0deg); }
+        50% { transform: scale(1.2) rotate(10deg); }
+        100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .plan-text {
+        text-shadow: 0 0 40px rgba(255, 183, 197, 0.3);
+    }
+
+    .plan-subtitle {
+        font-size: 1.3rem;
+        font-weight: 500;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Bug 6 Fix: Enhanced ungenutzte Zeit styling for mobile */
+    .empfehlung-ungenutzte_zeit {
+        background: linear-gradient(135deg, rgba(255, 152, 0, 0.15) 0%, rgba(255, 193, 7, 0.1) 100%);
+        border-color: var(--empfehlung-warn-border);
+        border-width: 3px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+    }
+
+    .empfehlung-ungenutzte_zeit .empfehlung-icon {
+        font-size: 2rem;
+    }
+
+    .empfehlung-ungenutzte_zeit .empfehlung-titel {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .empfehlung-ungenutzte_zeit .empfehlung-text {
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    .empfehlung-aktion-btn {
+        margin-top: 1rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+    }
+
+    .empfehlung-aktion-btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 183, 197, 0.4);
+    }
+
+    /* Bug 5 Fix: Show dropdown on mobile, hide number input */
+    .max-sessions-desktop {
+        display: none;
+    }
+
+    .max-sessions-mobile {
+        display: block;
     }
 }
 

@@ -345,15 +345,10 @@
     transform: translateX(-50%);
     background: rgba(255, 255, 255, 0.9);
     color: var(--text-primary);
-    padding: 0.5rem 1rem;
+    padding: 0.45rem 0.9rem;
     border-radius: var(--radius-full);
     font-weight: 700;
     font-size: 0.9rem;
-    line-height: 1.4;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(8px);
     z-index: 3;
@@ -548,6 +543,16 @@
 
     .achievements-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    /* Bug 1 Fix: Timer text centering for mobile */
+    .tree-progress-label {
+        padding: 0.5rem 1rem;
+        line-height: 1.4;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 
