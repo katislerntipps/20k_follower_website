@@ -1917,9 +1917,6 @@ function initializeFullscreenMode() {
         });
     }
 
-    // Initialize fullscreen ring
-    initializeFullscreenProgressRing();
-
     // Initialize fullscreen music toggle
     initializeFullscreenMusicToggle();
 }
@@ -2026,6 +2023,9 @@ function enterFullscreen() {
 
     overlay.classList.add('active');
     fullscreenState.isActive = true;
+
+    // Initialize fullscreen ring (only on first activation when element is visible)
+    initializeFullscreenProgressRing();
 
     // Sync data to fullscreen
     syncToFullscreen();
@@ -2189,9 +2189,17 @@ function initializeFullscreenProgressRing() {
     const ring = document.getElementById('fullscreen-progress');
     if (!ring || typeof ring.getTotalLength !== 'function') return;
 
-    const length = ring.getTotalLength();
-    ring.style.strokeDasharray = length;
-    ring.dataset.circumference = length;
+    // Skip if already initialized
+    if (ring.dataset.circumference) return;
+
+    try {
+        const length = ring.getTotalLength();
+        ring.style.strokeDasharray = length;
+        ring.dataset.circumference = length;
+    } catch (error) {
+        // Element might not be rendered yet, will be initialized on first use
+        console.log('Fullscreen ring will be initialized when visible');
+    }
 }
 
 function updateFullscreenProgressRing() {
