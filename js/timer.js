@@ -182,20 +182,35 @@ function preloadTreeImages() {
 // TIMER FUNCTIONALITY
 // ===================================
 
+// Helper functions to update all buttons (mobile and desktop)
+function updateAllButtons(className, displayValue) {
+    const buttons = document.querySelectorAll(`.${className}`);
+    buttons.forEach(btn => {
+        btn.style.display = displayValue;
+    });
+}
+
 function initializeTimer() {
-    const startBtn = document.getElementById('start-btn');
-    const pauseBtn = document.getElementById('pause-btn');
-    const resetBtn = document.getElementById('reset-btn');
+    // Get all start, pause, and reset buttons (both mobile and desktop)
+    const startBtns = document.querySelectorAll('.btn-start');
+    const pauseBtns = document.querySelectorAll('.btn-pause');
+    const resetBtns = document.querySelectorAll('.btn-reset');
     const modeBtns = document.querySelectorAll('.mode-btn');
 
-    // Start button
-    startBtn.addEventListener('click', startTimer);
+    // Add event listeners to all start buttons
+    startBtns.forEach(btn => {
+        btn.addEventListener('click', startTimer);
+    });
 
-    // Pause button
-    pauseBtn.addEventListener('click', pauseTimer);
+    // Add event listeners to all pause buttons
+    pauseBtns.forEach(btn => {
+        btn.addEventListener('click', pauseTimer);
+    });
 
-    // Reset button
-    resetBtn.addEventListener('click', resetTimer);
+    // Add event listeners to all reset buttons
+    resetBtns.forEach(btn => {
+        btn.addEventListener('click', resetTimer);
+    });
 
     // Mode buttons are now disabled - they only show the current mode
     modeBtns.forEach(btn => {
@@ -246,8 +261,9 @@ function startTimer() {
         timerState.endTime = now + (currentSeconds * 1000);
         timerState.lastTick = now;
 
-        document.getElementById('start-btn').style.display = 'none';
-        document.getElementById('pause-btn').style.display = 'block';
+        // Update all start/pause buttons (mobile and desktop)
+        updateAllButtons('btn-start', 'none');
+        updateAllButtons('btn-pause', 'block');
 
         timerState.interval = setInterval(tick, 1000);
 
@@ -277,8 +293,9 @@ function pauseTimer(options = {}) {
     timerState.endTime = null;
     timerState.lastTick = null;
 
-    document.getElementById('start-btn').style.display = 'block';
-    document.getElementById('pause-btn').style.display = 'none';
+    // Update all start/pause buttons (mobile and desktop)
+    updateAllButtons('btn-start', 'block');
+    updateAllButtons('btn-pause', 'none');
 
     // Reset tree growth on pause
     timerState.elapsedWithoutPause = 0;
@@ -517,30 +534,37 @@ function updateDisplay() {
 }
 
 function updateCycleIndicator() {
-    const cycleDotsContainer = document.getElementById('cycle-dots');
-    if (!cycleDotsContainer) return;
+    // Update both mobile and desktop cycle indicators
+    const containers = [
+        document.getElementById('cycle-dots'),
+        document.getElementById('cycle-dots-desktop')
+    ];
 
-    // Clear existing dots
-    cycleDotsContainer.innerHTML = '';
+    containers.forEach(cycleDotsContainer => {
+        if (!cycleDotsContainer) return;
 
-    // Create 4 dots representing the 4 focus sessions
-    for (let i = 0; i < 4; i++) {
-        const dot = document.createElement('div');
-        const isCompleted = i < timerState.cycleCount;
-        const isCurrent = i === timerState.cycleCount && timerState.mode === 'focus';
+        // Clear existing dots
+        cycleDotsContainer.innerHTML = '';
 
-        dot.style.cssText = `
-            width: ${isCurrent ? '14px' : '10px'};
-            height: ${isCurrent ? '14px' : '10px'};
-            border-radius: 50%;
-            background: ${isCompleted ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(102, 126, 234, 0.2)'};
-            border: ${isCurrent ? '2px solid #667eea' : 'none'};
-            transition: all 0.3s ease;
-            box-shadow: ${isCompleted ? '0 2px 8px rgba(102, 126, 234, 0.4)' : 'none'};
-        `;
+        // Create 4 dots representing the 4 focus sessions
+        for (let i = 0; i < 4; i++) {
+            const dot = document.createElement('div');
+            const isCompleted = i < timerState.cycleCount;
+            const isCurrent = i === timerState.cycleCount && timerState.mode === 'focus';
 
-        cycleDotsContainer.appendChild(dot);
-    }
+            dot.style.cssText = `
+                width: ${isCurrent ? '14px' : '10px'};
+                height: ${isCurrent ? '14px' : '10px'};
+                border-radius: 50%;
+                background: ${isCompleted ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(102, 126, 234, 0.2)'};
+                border: ${isCurrent ? '2px solid #667eea' : 'none'};
+                transition: all 0.3s ease;
+                box-shadow: ${isCompleted ? '0 2px 8px rgba(102, 126, 234, 0.4)' : 'none'};
+            `;
+
+            cycleDotsContainer.appendChild(dot);
+        }
+    });
 
     // Trigger fullscreen hooks
     if (typeof onCycleIndicatorUpdate === 'function') {
@@ -776,9 +800,22 @@ function updateTreeGrowth() {
 function updateStats() {
     const stats = getStats();
 
-    document.getElementById('sessions-today').textContent = stats.sessions;
-    document.getElementById('minutes-today').textContent = stats.focusTime;
-    document.getElementById('streak').textContent = stats.streak;
+    // Update stats in all containers (mobile and desktop)
+    const sessionsElements = document.querySelectorAll('#sessions-today, #sessions-today-desktop');
+    const minutesElements = document.querySelectorAll('#minutes-today, #minutes-today-desktop');
+    const streakElements = document.querySelectorAll('#streak, #streak-desktop');
+
+    sessionsElements.forEach(el => {
+        if (el) el.textContent = stats.sessions;
+    });
+
+    minutesElements.forEach(el => {
+        if (el) el.textContent = stats.focusTime;
+    });
+
+    streakElements.forEach(el => {
+        if (el) el.textContent = stats.streak;
+    });
 
     // Update total points
     const pointsElements = document.querySelectorAll('.points-value, #total-points');
@@ -1080,12 +1117,8 @@ function loadTimerState() {
 
                 // Update UI to show pause button
                 setTimeout(() => {
-                    const startBtn = document.getElementById('start-btn');
-                    const pauseBtn = document.getElementById('pause-btn');
-                    if (startBtn && pauseBtn) {
-                        startBtn.style.display = 'none';
-                        pauseBtn.style.display = 'block';
-                    }
+                    updateAllButtons('btn-start', 'none');
+                    updateAllButtons('btn-pause', 'block');
                 }, 0);
             } else if (timeSinceEnd > ONE_HOUR_MS) {
                 // Timer ended more than 1 hour ago - reset without triggering completion

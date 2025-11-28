@@ -513,6 +513,15 @@
    RESPONSIVE DESIGN
    =================================== */
 
+/* Desktop: Verstecke mobile Container, zeige desktop Container */
+.mobile-controls-container {
+    display: none;
+}
+
+.desktop-controls-container {
+    display: block;
+}
+
 @media (max-width: 1024px) {
     .timer-grid {
         grid-template-columns: 1fr;
@@ -524,21 +533,117 @@
 }
 
 @media (max-width: 768px) {
+    /* Mobile: Zeige mobile Container, verstecke desktop Container */
+    .mobile-controls-container {
+        display: block;
+        margin-top: var(--spacing-lg);
+        padding-top: var(--spacing-lg);
+        border-top: 2px solid rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] .mobile-controls-container {
+        border-top-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .desktop-controls-container {
+        display: none;
+    }
+
+    /* Grid wird relativ positioniert für absoluten Timer */
+    .timer-grid {
+        position: relative;
+    }
+
+    /* Tree-Panel wird zum Hauptcontainer */
+    .tree-panel {
+        position: relative;
+    }
+
+    .tree-card {
+        position: relative;
+        padding: 1.5rem;
+        min-height: 550px;
+    }
+
+    .tree-canvas {
+        position: relative;
+        min-height: 450px;
+        margin-bottom: 0;
+    }
+
+    /* Timer schwebt über dem Baum */
+    .timer-panel {
+        position: absolute;
+        top: 6rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        width: calc(100% - 3rem);
+        max-width: 260px;
+        pointer-events: none;
+    }
+
+    .timer-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1.25rem;
+        box-shadow: 0 8px 32px rgba(255, 183, 197, 0.3),
+                    0 0 20px rgba(255, 183, 197, 0.2);
+        border: 2px solid rgba(255, 183, 197, 0.3);
+        pointer-events: auto;
+    }
+
+    [data-theme="dark"] .timer-card {
+        background: rgba(17, 24, 39, 0.95);
+        border-color: rgba(255, 46, 230, 0.4);
+        box-shadow: 0 8px 32px rgba(255, 46, 230, 0.3),
+                    0 0 20px rgba(255, 46, 230, 0.2);
+    }
+
     .timer-display {
-        width: 240px;
-        height: 240px;
+        width: 180px;
+        height: 180px;
+        margin-bottom: 0.5rem;
     }
 
     .timer-time {
-        font-size: 3rem;
+        font-size: 2.5rem;
     }
 
-    .timer-mode {
+    /* Settings-Card bleibt im normalen Flow */
+    .settings-card {
+        position: static;
+        margin-top: var(--spacing-lg);
+    }
+
+    /* Mobile Kontrollelemente Styling */
+    .mobile-controls-container .timer-mode {
         flex-direction: column;
+        margin-bottom: var(--spacing-md);
     }
 
-    .mode-btn {
+    .mobile-controls-container .mode-btn {
         min-width: 100%;
+    }
+
+    .mobile-controls-container .pomodoro-cycle-indicator {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .mobile-controls-container .timer-controls {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .mobile-controls-container .control-btn {
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .mobile-controls-container .timer-stats {
+        flex-direction: column;
+        gap: var(--spacing-sm);
     }
 
     .achievements-grid {
@@ -557,56 +662,70 @@
 }
 
 @media (max-width: 480px) {
+    /* Timer Position und Größe */
+    .timer-panel {
+        top: 5rem;
+        max-width: 240px;
+    }
+
+    .timer-card {
+        padding: 1rem;
+    }
+
     .timer-display {
-        width: 200px;
-        height: 200px;
+        width: 160px;
+        height: 160px;
     }
 
     .timer-time {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
 
-    .timer-controls {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
-    }
-
-    .control-btn {
-        padding: 0.875rem 1rem;
-        font-size: 0.95rem;
-    }
-
-    .control-btn span {
-        display: block;
-    }
-
-    .timer-stats {
-        flex-direction: column;
-        gap: var(--spacing-sm);
+    /* Tree Card */
+    .tree-card {
+        padding: 1.25rem;
+        min-height: 500px;
     }
 
     .tree-canvas {
-        min-height: 250px;
+        min-height: 400px;
     }
 
     .timer-tree-wrapper {
         max-width: 100%;
+        height: 380px;
     }
 
-    .mode-btn {
+    /* Mobile Controls */
+    .mobile-controls-container .mode-btn {
         padding: 0.75rem 1rem;
         font-size: 0.9rem;
     }
 
-    .pomodoro-cycle-indicator {
+    .mobile-controls-container .pomodoro-cycle-indicator {
         padding: 0.5rem !important;
         margin-top: 0.75rem !important;
     }
 
-    #cycle-dots {
+    .mobile-controls-container #cycle-dots {
         gap: 0.35rem !important;
     }
 
+    .mobile-controls-container .control-btn {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.9rem;
+    }
+
+    .mobile-controls-container .control-btn span {
+        display: block;
+    }
+
+    /* Settings */
+    .settings-card {
+        padding: 1.25rem;
+    }
+
+    /* Achievements */
     .achievements-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
@@ -615,35 +734,31 @@
     .achievement-card {
         padding: 1.25rem;
     }
-
-    /* Better spacing for mobile */
-    .timer-card {
-        padding: 1.5rem;
-    }
-
-    .settings-card {
-        padding: 1.5rem;
-    }
-
-    .tree-card {
-        padding: 1.5rem;
-    }
 }
 
 /* Extra small screens (iPhone SE, etc.) */
 @media (max-width: 375px) {
+    .timer-panel {
+        top: 4.5rem;
+        max-width: 220px;
+    }
+
     .timer-display {
-        width: 180px;
-        height: 180px;
+        width: 140px;
+        height: 140px;
     }
 
     .timer-time {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
 
-    .timer-ring {
-        width: 180px;
-        height: 180px;
+    .tree-card {
+        padding: 1rem;
+        min-height: 480px;
+    }
+
+    .tree-canvas {
+        min-height: 380px;
     }
 
     .page-title {
@@ -1319,7 +1434,7 @@
 /* Mobile */
 @media (max-width: 768px) {
     .fullscreen-container {
-        padding: 1.5rem;
+        padding: 1.5rem 1rem;
     }
 
     .fullscreen-exit {
@@ -1330,12 +1445,92 @@
         font-size: 1.5rem;
     }
 
+    /* Mobile: Kombiniere Timer und Baum ähnlich wie normale Ansicht */
     .fullscreen-content {
+        display: flex;
+        flex-direction: column;
         gap: 1.5rem;
+        position: relative;
+    }
+
+    /* Tree Panel wird zum Hauptcontainer im Fullscreen */
+    .fullscreen-tree-panel {
+        order: -1;
+        position: relative;
+        min-height: 500px;
+    }
+
+    .fullscreen-tree {
+        padding: 1.5rem;
+        min-height: 450px;
+        position: relative;
+    }
+
+    .fullscreen-tree-title {
+        font-size: 1.4rem;
+    }
+
+    .fullscreen-tree-level {
+        font-size: 1rem;
+    }
+
+    .fullscreen-tree-image {
+        min-height: 300px;
+        padding: 1rem;
+    }
+
+    .fullscreen-tree-image img {
+        max-height: 300px;
+    }
+
+    /* Timer schwebt über dem Baum im Fullscreen */
+    .fullscreen-timer-section {
+        position: absolute;
+        top: 6rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        width: calc(100% - 2rem);
+        max-width: 280px;
+        padding: 1.5rem 1.25rem;
+        gap: 1rem;
+        pointer-events: auto;
+    }
+
+    .fullscreen-mode-label {
+        font-size: 1.2rem;
+        display: none; /* Optional: Ausblenden für mehr Platz */
+    }
+
+    .fullscreen-timer-display {
+        width: 200px;
+        height: 200px;
+    }
+
+    .fullscreen-timer-time {
+        font-size: 3rem;
+    }
+
+    /* Verstecke Cycle Info und Controls im schwebenden Timer */
+    .fullscreen-cycle-info,
+    .fullscreen-controls {
+        display: none;
+    }
+
+    /* Motivation und Music Controls unter dem Baum */
+    .fullscreen-motivation {
+        position: static;
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .fullscreen-motivation .motivation-text {
+        font-size: 1.1rem;
     }
 
     .fullscreen-music-controls {
         padding: 1rem 1.25rem;
+        margin-top: 1rem;
     }
 
     .music-control-title {
@@ -1350,85 +1545,69 @@
     .music-status-text {
         font-size: 0.85rem;
     }
+}
 
-    .fullscreen-timer-section {
-        padding: 2rem 1.5rem;
-        gap: 1.5rem;
+/* Small Mobile */
+@media (max-width: 480px) {
+    .fullscreen-container {
+        padding: 1rem 0.75rem;
     }
 
-    .fullscreen-mode-label {
-        font-size: 1.5rem;
+    /* Timer Position */
+    .fullscreen-timer-section {
+        top: 5rem;
+        max-width: 240px;
+        padding: 1.25rem 1rem;
     }
 
     .fullscreen-timer-display {
-        width: 250px;
-        height: 250px;
+        width: 170px;
+        height: 170px;
     }
 
     .fullscreen-timer-time {
-        font-size: 4rem;
+        font-size: 2.5rem;
     }
 
-    .fullscreen-progress-bar {
-        max-width: 350px;
-    }
-
-    .fullscreen-cycle-info .cycle-text {
-        font-size: 1.1rem;
-    }
-
-    .fullscreen-controls {
-        max-width: 100%;
-        flex-direction: column;
-    }
-
-    .fullscreen-control-btn {
-        padding: 0.875rem 1.5rem;
-        font-size: 1rem;
+    /* Tree */
+    .fullscreen-tree-panel {
+        min-height: 480px;
     }
 
     .fullscreen-tree {
-        padding: 1.5rem;
+        padding: 1.25rem;
+        min-height: 430px;
     }
 
     .fullscreen-tree-title {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
 
     .fullscreen-tree-level {
-        font-size: 1rem;
+        font-size: 0.9rem;
+        padding: 0.75rem;
     }
 
     .fullscreen-tree-image {
-        min-height: 200px;
-        padding: 1.5rem;
+        min-height: 250px;
+        padding: 0.75rem;
     }
 
     .fullscreen-tree-image img {
         max-height: 250px;
     }
 
+    /* Motivation und Music */
     .fullscreen-motivation {
-        padding: 1.5rem;
+        padding: 1.25rem;
+    }
+
+    .fullscreen-motivation .motivation-icon {
+        font-size: 2rem;
     }
 
     .fullscreen-motivation .motivation-text {
-        font-size: 1.1rem;
-    }
-}
-
-/* Small Mobile */
-@media (max-width: 480px) {
-    .fullscreen-container {
-        padding: 1rem;
-    }
-
-    .fullscreen-timer-section {
-        padding: 1.5rem 1rem;
-    }
-
-    .fullscreen-mode-label {
-        font-size: 1.3rem;
+        font-size: 1rem;
     }
 
     .fullscreen-music-controls {
@@ -1456,66 +1635,6 @@
     .fullscreen-volume-label {
         font-size: 0.8rem;
         min-width: 2rem;
-    }
-
-    .fullscreen-timer-display {
-        width: 200px;
-        height: 200px;
-    }
-
-    .fullscreen-timer-time {
-        font-size: 3rem;
-    }
-
-    .fullscreen-progress-bar {
-        height: 10px;
-    }
-
-    .fullscreen-cycle-info .cycle-text {
-        font-size: 1rem;
-    }
-
-    .fullscreen-cycle-dots {
-        gap: 0.5rem;
-    }
-
-    .fullscreen-control-btn {
-        padding: 0.75rem 1.25rem;
-        font-size: 0.95rem;
-    }
-
-    .fullscreen-tree {
-        padding: 1.25rem;
-    }
-
-    .fullscreen-tree-title {
-        font-size: 1.2rem;
-    }
-
-    .fullscreen-tree-level {
-        font-size: 0.9rem;
-        padding: 0.75rem;
-    }
-
-    .fullscreen-tree-image {
-        min-height: 180px;
-        padding: 1rem;
-    }
-
-    .fullscreen-tree-image img {
-        max-height: 200px;
-    }
-
-    .fullscreen-motivation {
-        padding: 1.25rem;
-    }
-
-    .fullscreen-motivation .motivation-icon {
-        font-size: 2rem;
-    }
-
-    .fullscreen-motivation .motivation-text {
-        font-size: 1rem;
     }
 }
 
