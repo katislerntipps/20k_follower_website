@@ -107,7 +107,11 @@ export class Step4Verfügbarkeit {
 
                 <div class="form-group">
                     <label class="form-label" for="max-sessions">📚 Max. Sessions pro Tag</label>
-                    <select id="max-sessions" class="form-input">
+                    <!-- Desktop: Number input -->
+                    <input type="number" id="max-sessions-input" class="form-input max-sessions-desktop" min="1" max="8"
+                           value="${this.formData.max_sessions_pro_tag || 2}">
+                    <!-- Mobile: Dropdown -->
+                    <select id="max-sessions-select" class="form-input max-sessions-mobile">
                         ${[1, 2, 3, 4, 5, 6, 7, 8].map(num => `
                             <option value="${num}" ${(this.formData.max_sessions_pro_tag || 2) === num ? 'selected' : ''}>
                                 ${num} Session${num > 1 ? 's' : ''}
@@ -175,6 +179,20 @@ export class Step4Verfügbarkeit {
             });
         });
 
+        // Sync max sessions between desktop input and mobile select
+        const maxSessionsInput = document.getElementById('max-sessions-input');
+        const maxSessionsSelect = document.getElementById('max-sessions-select');
+
+        if (maxSessionsInput && maxSessionsSelect) {
+            maxSessionsInput.addEventListener('input', (e) => {
+                maxSessionsSelect.value = e.target.value;
+            });
+
+            maxSessionsSelect.addEventListener('change', (e) => {
+                maxSessionsInput.value = e.target.value;
+            });
+        }
+
         // Session-Länge Radio Cards
         const radioCards = document.querySelectorAll('.radio-card');
         radioCards.forEach(card => {
@@ -217,8 +235,10 @@ export class Step4Verfügbarkeit {
         // Session-Länge
         this.formData.bevorzugte_sessionlänge = document.querySelector('input[name="sessionlänge"]:checked')?.value || '50';
 
-        // Max Sessions
-        this.formData.max_sessions_pro_tag = parseInt(document.getElementById('max-sessions')?.value) || 2;
+        // Max Sessions (use desktop input, both are synced)
+        const maxSessionsInput = document.getElementById('max-sessions-input');
+        const maxSessionsSelect = document.getElementById('max-sessions-select');
+        this.formData.max_sessions_pro_tag = parseInt((maxSessionsInput?.value || maxSessionsSelect?.value)) || 2;
     }
 
     showError(message) {
