@@ -107,7 +107,88 @@
     <section class="timer-section">
         <div class="container">
             <div class="timer-grid">
-                <!-- Timer Controls -->
+                <!-- Tree Visualization (Mobile: zuerst angezeigt) -->
+                <div class="tree-panel">
+                    <div class="tree-card">
+                        <h3 class="tree-title">Dein Konzentrationsbaum 🌸</h3>
+                        <div class="tree-level-info">
+                            <span class="level-badge">Level <span id="tree-level">1</span></span>
+                            <span class="level-progress"><span id="blossoms-count">0</span> / 5 Blüten</span>
+                        </div>
+
+                        <div class="tree-canvas">
+                            <div class="timer-tree-wrapper">
+                                <img id="timer-tree-image" src="image/1.png" alt="Konzentrations-Status" style="width: 100%; height: 100%; object-fit: contain;">
+                                <div class="tree-progress-label" id="tree-progress-text">Fokus läuft</div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile: Kontrollelemente unter dem Baum -->
+                        <div class="mobile-controls-container">
+                            <div class="timer-mode">
+                                <button class="mode-btn active" data-mode="focus">
+                                    🎯 Fokus (25 Min)
+                                </button>
+                                <button class="mode-btn" data-mode="short">
+                                    ☕ Kurze Pause (5 Min)
+                                </button>
+                                <button class="mode-btn" data-mode="long">
+                                    🌙 Lange Pause (15 Min)
+                                </button>
+                            </div>
+
+                            <div class="pomodoro-cycle-indicator" id="cycle-indicator" style="text-align: center; margin-top: 1rem; padding: 0.75rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px;">
+                                <div style="font-size: 0.85rem; color: var(--text-secondary, #5a6c7d); margin-bottom: 0.5rem; font-weight: 500;">
+                                    Pomodoro-Zyklus
+                                </div>
+                                <div id="cycle-dots" style="display: flex; justify-content: center; gap: 0.5rem;">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <div class="timer-controls">
+                                <button class="control-btn btn-start" id="start-btn">
+                                    <span>▶ Starten</span>
+                                </button>
+                                <button class="control-btn btn-pause" id="pause-btn" style="display: none;">
+                                    <span>⏸ Pause</span>
+                                </button>
+                                <button class="control-btn btn-reset" id="reset-btn">
+                                    <span>🔄 Reset</span>
+                                </button>
+                                <button class="control-btn btn-fullscreen" id="fullscreen-btn" title="Vollbildmodus (F11)">
+                                    <span>🖥️ Vollbild</span>
+                                </button>
+                            </div>
+
+                            <div class="timer-stats">
+                                <div class="stat-item">
+                                    <span class="stat-icon">🍅</span>
+                                    <div>
+                                        <div class="stat-number" id="sessions-today">0</div>
+                                        <div class="stat-text">Heute</div>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-icon">⏱</span>
+                                    <div>
+                                        <div class="stat-number" id="minutes-today">0</div>
+                                        <div class="stat-text">Minuten</div>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-icon">🔥</span>
+                                    <div>
+                                        <div class="stat-number" id="streak">1</div>
+                                        <div class="stat-text">Streak</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timer Controls (Desktop: links, Mobile: schwebt über Baum) -->
                 <div class="timer-panel">
                     <div class="timer-card">
                         <div class="timer-display">
@@ -120,62 +201,64 @@
                             </div>
                         </div>
 
-                        <div class="timer-mode">
-                            <button class="mode-btn active" data-mode="focus">
-                                🎯 Fokus (25 Min)
-                            </button>
-                            <button class="mode-btn" data-mode="short">
-                                ☕ Kurze Pause (5 Min)
-                            </button>
-                            <button class="mode-btn" data-mode="long">
-                                🌙 Lange Pause (15 Min)
-                            </button>
-                        </div>
-
-                        <div class="pomodoro-cycle-indicator" id="cycle-indicator" style="text-align: center; margin-top: 1rem; padding: 0.75rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px;">
-                            <div style="font-size: 0.85rem; color: var(--text-secondary, #5a6c7d); margin-bottom: 0.5rem; font-weight: 500;">
-                                Pomodoro-Zyklus
+                        <div class="desktop-controls-container">
+                            <div class="timer-mode">
+                                <button class="mode-btn active" data-mode="focus">
+                                    🎯 Fokus (25 Min)
+                                </button>
+                                <button class="mode-btn" data-mode="short">
+                                    ☕ Kurze Pause (5 Min)
+                                </button>
+                                <button class="mode-btn" data-mode="long">
+                                    🌙 Lange Pause (15 Min)
+                                </button>
                             </div>
-                            <div id="cycle-dots" style="display: flex; justify-content: center; gap: 0.5rem;">
-                                <!-- Will be populated by JavaScript -->
-                            </div>
-                        </div>
 
-                        <div class="timer-controls">
-                            <button class="control-btn btn-start" id="start-btn">
-                                <span>▶ Starten</span>
-                            </button>
-                            <button class="control-btn btn-pause" id="pause-btn" style="display: none;">
-                                <span>⏸ Pause</span>
-                            </button>
-                            <button class="control-btn btn-reset" id="reset-btn">
-                                <span>🔄 Reset</span>
-                            </button>
-                            <button class="control-btn btn-fullscreen" id="fullscreen-btn" title="Vollbildmodus (F11)">
-                                <span>🖥️ Vollbild</span>
-                            </button>
-                        </div>
-
-                        <div class="timer-stats">
-                            <div class="stat-item">
-                                <span class="stat-icon">🍅</span>
-                                <div>
-                                    <div class="stat-number" id="sessions-today">0</div>
-                                    <div class="stat-text">Heute</div>
+                            <div class="pomodoro-cycle-indicator" style="text-align: center; margin-top: 1rem; padding: 0.75rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px;">
+                                <div style="font-size: 0.85rem; color: var(--text-secondary, #5a6c7d); margin-bottom: 0.5rem; font-weight: 500;">
+                                    Pomodoro-Zyklus
+                                </div>
+                                <div id="cycle-dots-desktop" style="display: flex; justify-content: center; gap: 0.5rem;">
+                                    <!-- Will be populated by JavaScript -->
                                 </div>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-icon">⏱</span>
-                                <div>
-                                    <div class="stat-number" id="minutes-today">0</div>
-                                    <div class="stat-text">Minuten</div>
-                                </div>
+
+                            <div class="timer-controls">
+                                <button class="control-btn btn-start">
+                                    <span>▶ Starten</span>
+                                </button>
+                                <button class="control-btn btn-pause" style="display: none;">
+                                    <span>⏸ Pause</span>
+                                </button>
+                                <button class="control-btn btn-reset">
+                                    <span>🔄 Reset</span>
+                                </button>
+                                <button class="control-btn btn-fullscreen" title="Vollbildmodus (F11)">
+                                    <span>🖥️ Vollbild</span>
+                                </button>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-icon">🔥</span>
-                                <div>
-                                    <div class="stat-number" id="streak">1</div>
-                                    <div class="stat-text">Streak</div>
+
+                            <div class="timer-stats">
+                                <div class="stat-item">
+                                    <span class="stat-icon">🍅</span>
+                                    <div>
+                                        <div class="stat-number" id="sessions-today-desktop">0</div>
+                                        <div class="stat-text">Heute</div>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-icon">⏱</span>
+                                    <div>
+                                        <div class="stat-number" id="minutes-today-desktop">0</div>
+                                        <div class="stat-text">Minuten</div>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-icon">🔥</span>
+                                    <div>
+                                        <div class="stat-number" id="streak-desktop">1</div>
+                                        <div class="stat-text">Streak</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -206,24 +289,6 @@
                             <p style="font-size: 0.85rem; color: var(--text-secondary, #5a6c7d); margin: 0; line-height: 1.5;">
                                 ℹ️ Der Timer folgt automatisch der Pomodoro-Technik: 4× Fokus (25 Min) mit kurzen Pausen (5 Min), dann eine lange Pause (15 Min).
                             </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tree Visualization -->
-                <div class="tree-panel">
-                    <div class="tree-card">
-                        <h3 class="tree-title">Dein Konzentrationsbaum 🌸</h3>
-                        <div class="tree-level-info">
-                            <span class="level-badge">Level <span id="tree-level">1</span></span>
-                            <span class="level-progress"><span id="blossoms-count">0</span> / 5 Blüten</span>
-                        </div>
-
-                        <div class="tree-canvas">
-                            <div class="timer-tree-wrapper">
-                                <img id="timer-tree-image" src="image/1.png" alt="Konzentrations-Status" style="width: 100%; height: 100%; object-fit: contain;">
-                                <div class="tree-progress-label" id="tree-progress-text">Fokus läuft</div>
-                            </div>
                         </div>
                     </div>
                 </div>
