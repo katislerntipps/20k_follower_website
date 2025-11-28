@@ -371,9 +371,10 @@ function enrichSessionsWithMethods(sessions, eingaben) {
 }
 
 function getInitialAktivitäten(dauer) {
-    let erarbeitungDauer = Math.round(dauer * 0.6);
+    // Realistischere Zeitverteilung: Mehr Zeit für Selbsttest
+    let erarbeitungDauer = Math.round(dauer * 0.5);
     let flashcardDauer = Math.round(dauer * 0.3);
-    let testenDauer = Math.round(dauer * 0.1);
+    let testenDauer = Math.round(dauer * 0.2);
 
     // Sicherstellen, dass die Summe nicht die Gesamtdauer überschreitet
     const summe = erarbeitungDauer + flashcardDauer + testenDauer;
@@ -424,9 +425,10 @@ function getInitialAktivitäten(dauer) {
 }
 
 function getWiederholungsAktivitäten(dauer) {
-    let retrievalDauer = Math.round(dauer * 0.7);
-    let fehleranalyseDauer = Math.round(dauer * 0.2);
-    let elaborationDauer = Math.round(dauer * 0.1);
+    // Realistischere Zeitverteilung: Mehr Zeit für Fehleranalyse und Elaboration
+    let retrievalDauer = Math.round(dauer * 0.6);
+    let fehleranalyseDauer = Math.round(dauer * 0.25);
+    let elaborationDauer = Math.round(dauer * 0.15);
 
     // Sicherstellen, dass die Summe nicht die Gesamtdauer überschreitet
     const summe = retrievalDauer + fehleranalyseDauer + elaborationDauer;
@@ -615,12 +617,13 @@ function generateEmpfehlungen(eingaben, zeitrahmen, spacingInfo, metadata) {
         // Warnung bei niedriger Auslastung (< 30%)
         if (auslastung < 30 && verfügbareGesamtstunden > 10) {
             empfehlungen.push({
-                typ: 'info',
-                titel: 'Viel ungenutzte Zeit',
+                typ: 'ungenutzte_zeit',
+                titel: 'Viel ungenutzte Lernzeit',
                 icon: '⏰',
-                text: `Du hast ${Math.round(verfügbareGesamtstunden)} Std verfügbar, nutzt aber nur ${genutzteStunden.toFixed(1)} Std (${Math.round(auslastung)}%). ${eingaben.themen.length === 1 ? 'Erwäge weitere Themen hinzuzufügen oder dein Thema in Unterthemen aufzuteilen.' : 'Du könntest mehr Sessions pro Thema einplanen.'}`,
-                priorität: 'mittel',
-                aktion: eingaben.themen.length === 1 ? 'Füge weitere Themen hinzu' : 'Erwäge mehr Vertiefungs-Sessions'
+                text: `Du hast ${Math.round(verfügbareGesamtstunden)} Std verfügbar, nutzt aber nur ${genutzteStunden.toFixed(1)} Std (${Math.round(auslastung)}% Auslastung). ${eingaben.themen.length === 1 ? 'Erwäge weitere Themen hinzuzufügen oder dein Thema in Unterthemen aufzuteilen.' : 'Du könntest mehr Sessions pro Thema einplanen.'}`,
+                priorität: 'hoch',
+                aktion: eingaben.themen.length === 1 ? 'Weitere Themen hinzufügen' : 'Plan optimieren',
+                actionType: 'back_to_themen'
             });
         }
 

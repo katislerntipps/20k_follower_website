@@ -1344,6 +1344,8 @@ function initializeNotifications() {
                 // Permission denied - uncheck the box
                 this.checked = false;
             }
+            // Update checkbox state after permission request
+            updateNotificationCheckboxState();
         }
     });
 
@@ -1391,10 +1393,15 @@ function updateNotificationCheckboxState() {
     // Update checkbox based on permission state
     if (Notification.permission === 'granted') {
         notificationsCheckbox.checked = true;
+        notificationsCheckbox.parentElement.title = '';
     } else if (Notification.permission === 'denied') {
         notificationsCheckbox.checked = false;
         // Add visual indicator that permission was denied
         notificationsCheckbox.parentElement.title = 'Benachrichtigungen wurden blockiert. Klicke hier und erlaube sie in deinen Browser-Einstellungen.';
+    } else {
+        // Permission is 'default' - not yet requested
+        notificationsCheckbox.checked = false;
+        notificationsCheckbox.parentElement.title = 'Klicke, um Browser-Benachrichtigungen zu aktivieren';
     }
 }
 

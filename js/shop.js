@@ -430,8 +430,26 @@ function handleItemPurchase(itemName) {
             break;
 
         case 'music':
-            // Show music toggle button
+            // Enable music and start playing immediately
+            shopState.musicEnabled = true;
+            saveShopState(shopState);
+
+            // Setup music persistence
+            setupMusicPersistence();
+
+            // Show music toggle button and volume control
             showMusicToggle();
+
+            // Setup and start playing background music
+            setupBackgroundMusic();
+
+            // Ensure music starts playing immediately
+            if (backgroundMusic) {
+                backgroundMusic.play().catch(err => {
+                    console.log('Auto-play prevented by browser:', err);
+                    showNotification('Musik freigeschaltet! Klicke auf das 🔊 Icon um sie zu starten.', 'info');
+                });
+            }
             break;
 
         case 'blossoms':

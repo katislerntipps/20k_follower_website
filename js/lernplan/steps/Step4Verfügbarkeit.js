@@ -107,8 +107,13 @@ export class Step4Verfügbarkeit {
 
                 <div class="form-group">
                     <label class="form-label" for="max-sessions">📚 Max. Sessions pro Tag</label>
-                    <input type="number" id="max-sessions" class="form-input" min="1" max="4"
-                           value="${this.formData.max_sessions_pro_tag || 2}">
+                    <select id="max-sessions" class="form-input">
+                        ${[1, 2, 3, 4, 5, 6, 7, 8].map(num => `
+                            <option value="${num}" ${(this.formData.max_sessions_pro_tag || 2) === num ? 'selected' : ''}>
+                                ${num} Session${num > 1 ? 's' : ''}
+                            </option>
+                        `).join('')}
+                    </select>
                     <small class="form-hint">Wie viele Lernsessions pro Tag sind realistisch?</small>
                 </div>
 

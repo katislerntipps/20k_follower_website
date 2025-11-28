@@ -7,10 +7,11 @@ import { formatDuration } from '../utils/dateHelpers.js';
 import { escapeHTML, sanitizeChoice } from '../utils/sanitize.js';
 
 export class PlanOutput {
-    constructor(container, plan, onRestart) {
+    constructor(container, plan, onRestart, onBackToThemen = null) {
         this.container = container;
         this.plan = plan;
         this.onRestart = onRestart;
+        this.onBackToThemen = onBackToThemen;
         this.viewMode = 'liste'; // 'liste' oder 'kalender'
         this.selectedSession = null;
 
@@ -157,13 +158,16 @@ export class PlanOutput {
             <div class="empfehlungen-section">
                 <h3 class="section-subtitle">💡 Wichtige Hinweise</h3>
                 <div class="empfehlungen-grid">
-                    ${wichtigeEmpfehlungen.map(emp => `
-                        <div class="empfehlung-card empfehlung-${sanitizeChoice(emp.typ, ['fokus', 'zeit', 'effizienz', 'balance', 'motivation'], 'fokus')}">
+                    ${wichtigeEmpfehlungen.map((emp, index) => `
+                        <div class="empfehlung-card empfehlung-${sanitizeChoice(emp.typ, ['warnung', 'erfolg', 'tipp', 'info', 'ungenutzte_zeit'], 'info')}">
                             <div class="empfehlung-icon">${escapeHTML(emp.icon || '💡')}</div>
                             <div class="empfehlung-content">
                                 <div class="empfehlung-titel">${escapeHTML(emp.titel)}</div>
                                 <div class="empfehlung-text">${escapeHTML(emp.text)}</div>
-                                ${emp.aktion ? `<div class="empfehlung-aktion">→ ${escapeHTML(emp.aktion)}</div>` : ''}
+                                ${emp.actionType === 'back_to_themen' && emp.aktion ?
+                                    `<button class="empfehlung-aktion-btn" data-action="back-to-themen">${escapeHTML(emp.aktion)}</button>` :
+                                    (emp.aktion ? `<div class="empfehlung-aktion">→ ${escapeHTML(emp.aktion)}</div>` : '')
+                                }
                             </div>
                         </div>
                     `).join('')}
@@ -318,6 +322,16 @@ export class PlanOutput {
             if (confirm('Möchtest du wirklich einen neuen Plan erstellen? Der aktuelle Plan geht verloren.')) {
                 this.onRestart();
             }
+        });
+
+        // Back to Themen Buttons
+        const backToThemenButtons = this.container.querySelectorAll('[data-action="back-to-themen"]');
+        backToThemenButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (this.onBackToThemen) {
+                    this.onBackToThemen();
+                }
+            });
         });
 
         // Modal Close
