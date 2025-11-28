@@ -1948,7 +1948,7 @@ function initializeFullscreenMusicToggle() {
         const initialVolume = shopState?.musicVolume ?? 0.3;
 
         volumeSlider.value = Math.round(initialVolume * 100);
-        volumeLabel.textContent = `Lautstärke: ${Math.round(initialVolume * 100)}%`;
+        volumeLabel.textContent = `${Math.round(initialVolume * 100)}%`;
 
         // Add input event listener
         volumeSlider.addEventListener('input', (event) => {
@@ -1960,7 +1960,7 @@ function initializeFullscreenMusicToggle() {
             }
 
             // Update label
-            volumeLabel.textContent = `Lautstärke: ${Math.round(volume * 100)}%`;
+            volumeLabel.textContent = `${Math.round(volume * 100)}%`;
         });
     }
 
@@ -1970,33 +1970,31 @@ function initializeFullscreenMusicToggle() {
 }
 
 function updateFullscreenMusicVisibility() {
-    const fullscreenMusicToggle = document.getElementById('fullscreen-music-toggle');
-    const fullscreenMusicVolume = document.getElementById('fullscreen-music-volume');
-    if (!fullscreenMusicToggle) return;
+    const fullscreenMusicControls = document.getElementById('fullscreen-music-controls');
+    if (!fullscreenMusicControls) return;
 
     // Check if music is unlocked
     const shopState = typeof getShopState === 'function' ? getShopState() : null;
     if (shopState && shopState.purchases && shopState.purchases.music) {
-        fullscreenMusicToggle.style.display = 'flex';
-        if (fullscreenMusicVolume) {
-            fullscreenMusicVolume.style.display = 'flex';
-        }
+        fullscreenMusicControls.style.display = 'flex';
     } else {
-        fullscreenMusicToggle.style.display = 'none';
-        if (fullscreenMusicVolume) {
-            fullscreenMusicVolume.style.display = 'none';
-        }
+        fullscreenMusicControls.style.display = 'none';
     }
 }
 
 function updateFullscreenMusicIcon() {
     const fullscreenMusicIcon = document.getElementById('fullscreen-music-icon');
+    const musicStatusText = document.getElementById('music-status-text');
     if (!fullscreenMusicIcon) return;
 
     // Get music state
     const shopState = typeof getShopState === 'function' ? getShopState() : null;
     if (shopState) {
-        fullscreenMusicIcon.textContent = shopState.musicEnabled ? '🔊' : '🔇';
+        const isPlaying = shopState.musicEnabled;
+        fullscreenMusicIcon.textContent = isPlaying ? '🔊' : '🔇';
+        if (musicStatusText) {
+            musicStatusText.textContent = isPlaying ? 'An' : 'Aus';
+        }
     }
 }
 
