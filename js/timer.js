@@ -36,9 +36,9 @@ const TIMER_IMAGE_SOURCES = {
     pause: 'image/pause.png'
 };
 
-let treeTimeline;
-let treeScrubTween;
-let treeLoopTimelines = [];
+// NOTE: Image files are currently very large (1.7MB - 3.4MB)
+// Consider optimizing with: pngquant, optipng, or online tools
+// Recommended target: < 500KB per image
 
 // Utility Helpers
 function throttle(func, wait, options = {}) {
@@ -146,11 +146,9 @@ document.addEventListener('DOMContentLoaded', function() {
     loadTreeState();
     initializeTimer();
     initializeTree();
-    setupTreeTimeline();
     initializeProgressRings();
     updateDisplay();
     updateStats();
-    updateTreeGrowth();
     updateCycleIndicator();
     updateTimerTreeImage();
     // initializeDarkMode is called by main.js which loads on all pages
@@ -159,23 +157,34 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function preloadTreeImages() {
-    const loaded = new Set();
-    const sources = [
-        'image/1.png',
-        'image/2.png',
-        'image/3.png',
-        'image/4.png',
-        'image/5.png',
-        TIMER_IMAGE_SOURCES.pause
+    // Only preload the first image and pause image for faster initial load
+    // Other images will be loaded on-demand when needed
+    const prioritySources = [
+        TIMER_IMAGE_SOURCES.default, // image/1.png
+        TIMER_IMAGE_SOURCES.pause     // image/pause.png
     ];
 
-    sources.forEach(src => {
-        if (loaded.has(src)) return;
-
+    prioritySources.forEach(src => {
         const img = new Image();
         img.src = src;
-        loaded.add(src);
     });
+
+    // Lazy preload other images after page load
+    setTimeout(() => {
+        const lazySources = [
+            'image/2.png',
+            'image/3.png',
+            'image/4.png',
+            'image/5.png'
+        ];
+
+        lazySources.forEach((src, index) => {
+            setTimeout(() => {
+                const img = new Image();
+                img.src = src;
+            }, index * 500); // Stagger loading by 500ms
+        });
+    }, 2000); // Wait 2 seconds after page load
 }
 
 // ===================================
@@ -393,7 +402,12 @@ function tick() {
 
     updateDisplay();
     updateTreeGrowth();
-    updateTimerTreeImage();
+
+    // Only update tree image every 5 seconds for better performance
+    if (remainingSeconds % 5 === 0 || remainingSeconds <= 5) {
+        updateTimerTreeImage();
+    }
+
     throttledSaveTimerState();
 
     // Sync fullscreen if active
@@ -428,9 +442,6 @@ function timerComplete() {
 
         // Grow tree
         addBlossom();
-        if (treeTimeline) {
-            treeTimeline.play('finale');
-        }
 
         // Increment cycle count
         timerState.cycleCount++;
@@ -605,8 +616,15 @@ function incrementDayCycleSessions() {
     saveTimerState();
 }
 
+// Cache for timer image to avoid repeated DOM queries
+let cachedTimerImage = null;
+
 function updateTimerTreeImage() {
-    const timerImage = document.getElementById('timer-tree-image');
+    if (!cachedTimerImage) {
+        cachedTimerImage = document.getElementById('timer-tree-image');
+    }
+
+    const timerImage = cachedTimerImage;
     if (!timerImage) return;
 
     const resolveImageSrc = (overrideSrc = null) => {
@@ -627,53 +645,43 @@ function updateTimerTreeImage() {
         return TIMER_IMAGE_SOURCES.default;
     };
 
+    let imageSrc;
     if (timerState.mode === 'short' || timerState.mode === 'long') {
-        const pauseImageSrc = resolveImageSrc(TIMER_IMAGE_SOURCES.pause);
+        imageSrc = resolveImageSrc(TIMER_IMAGE_SOURCES.pause);
+    } else {
+        imageSrc = resolveImageSrc();
+    }
 
-        if (timerImage.dataset.currentSrc === pauseImageSrc && timerImage.src.endsWith(pauseImageSrc)) return;
+    // Only update if src actually changed
+    if (timerImage.dataset.currentSrc === imageSrc) return;
 
-        timerImage.dataset.currentSrc = pauseImageSrc;
+    timerImage.dataset.currentSrc = imageSrc;
+
+    // Use requestAnimationFrame for smoother transitions
+    requestAnimationFrame(() => {
         timerImage.style.opacity = '0';
 
         const handleLoad = () => {
-            timerImage.style.opacity = '1';
+            requestAnimationFrame(() => {
+                timerImage.style.opacity = '1';
+            });
             timerImage.removeEventListener('load', handleLoad);
         };
 
-        timerImage.addEventListener('load', handleLoad);
-        timerImage.src = pauseImageSrc;
-        timerImage.alt = 'Timer pausiert';
-
-        updateTimerPetalsVisibility();
-
-        if (timerImage.complete && timerImage.naturalWidth !== 0) {
-            handleLoad();
+        // Only add listener if image isn't already loaded
+        if (!timerImage.complete || timerImage.naturalWidth === 0) {
+            timerImage.addEventListener('load', handleLoad, { once: true });
+        } else {
+            requestAnimationFrame(() => {
+                timerImage.style.opacity = '1';
+            });
         }
 
-        return;
-    }
-
-    const imageSrc = resolveImageSrc();
-
-    if (timerImage.dataset.currentSrc === imageSrc && timerImage.src.endsWith(imageSrc)) return;
-
-    timerImage.dataset.currentSrc = imageSrc;
-    timerImage.style.opacity = '0';
-
-    const handleLoad = () => {
-        timerImage.style.opacity = '1';
-        timerImage.removeEventListener('load', handleLoad);
-    };
-
-    timerImage.addEventListener('load', handleLoad);
-    timerImage.src = imageSrc;
-    timerImage.alt = timerState.isPaused ? 'Timer pausiert' : 'Timer-Baum Fortschritt';
+        timerImage.src = imageSrc;
+        timerImage.alt = timerState.isPaused || timerState.mode !== 'focus' ? 'Timer pausiert' : 'Timer-Baum Fortschritt';
+    });
 
     updateTimerPetalsVisibility();
-
-    if (timerImage.complete && timerImage.naturalWidth !== 0) {
-        handleLoad();
-    }
 }
 
 function updateTimerPetalsVisibility() {
@@ -700,101 +708,16 @@ function updateTimerPetalsVisibility() {
 }
 
 // ===================================
-// TREE GROWTH ANIMATION
+// TREE GROWTH ANIMATION (Simplified)
 // ===================================
 
-function setupTreeTimeline() {
-    if (typeof gsap === 'undefined') return;
-
-    const stage = document.getElementById('timer-tree-stage');
-    if (!stage) return;
-
-    if (treeTimeline) {
-        treeTimeline.kill();
-    }
-
-    const petals = stage.parentElement?.querySelectorAll('#timer-petal-layer .timer-floating-petal');
-
-    gsap.set(stage, { opacity: 0, y: 16, transformPerspective: 800, transformStyle: 'preserve-3d' });
-    gsap.set('.tree-layer-trunk', { z: -10 });
-    gsap.set('.tree-layer-branches', { z: 0 });
-    gsap.set('.tree-layer-blooms', { z: 6 });
-    gsap.set('.tree-layer-glow', { z: -4 });
-
-    const swayLoop = gsap.to('#timer-tree-stage .tree-layer', {
-        rotate: 1.4,
-        yoyo: true,
-        repeat: -1,
-        duration: 5,
-        ease: 'sine.inOut',
-        paused: true
-    });
-
-    const glowNoise = gsap.to('.tree-layer-glow', {
-        keyframes: [
-            { opacity: 0.28, filter: 'blur(10px)', duration: 1.6 },
-            { opacity: 0.36, filter: 'blur(6px)', duration: 1.2 },
-            { opacity: 0.3, filter: 'blur(8px)', duration: 1.4 }
-        ],
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        paused: true
-    });
-
-    treeLoopTimelines = [swayLoop, glowNoise];
-
-    treeTimeline = gsap.timeline({
-        paused: true,
-        defaults: { ease: 'power2.out' }
-    });
-
-    treeTimeline
-        .addLabel('intro')
-        .fromTo(stage, { opacity: 0, y: 18, scale: 0.94, z: -20 }, { opacity: 1, y: 0, scale: 1, z: 0, duration: 0.9, ease: 'power1.out' })
-        .fromTo('.tree-layer-trunk', { opacity: 0, y: 60, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 1.1 }, '-=0.5')
-        .addLabel('trunk')
-        .fromTo('.tree-layer-branches', { opacity: 0, y: 40, scale: 0.95, filter: 'blur(6px)' }, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1.3 }, '-=0.4')
-        .addLabel('branches')
-        .fromTo('.tree-layer-blooms', { opacity: 0, scale: 0.8, filter: 'blur(10px)', z: 10 }, { opacity: 1, scale: 1, filter: 'blur(0px)', z: 0, duration: 1.2 }, '-=0.3')
-        .addLabel('blooms')
-        .to('.tree-layer-glow', { opacity: 0.35, duration: 0.6 }, '-=0.6')
-        .addLabel('glowPulse')
-        .to(petals, { opacity: 1, duration: 1, stagger: 0.08, ease: 'sine.out' }, '-=0.2')
-        .addLabel('petalWave')
-        .to('.tree-layer-blooms', { scale: 1.02, duration: 0.8, ease: 'sine.inOut' }, 'petalWave')
-        .to('.tree-layer-glow', { opacity: 0.42, duration: 0.9, ease: 'sine.inOut' }, 'petalWave+=0.1')
-        .addLabel('finale')
-        .add(() => {
-            playBloomFinale();
-        });
-
-    treeTimeline.eventCallback('onPlay', () => treeLoopTimelines.forEach(loop => loop.play()));
-    treeTimeline.eventCallback('onPause', () => treeLoopTimelines.forEach(loop => loop.pause()));
-}
+// Removed complex GSAP timeline animations for better performance
+// Tree growth is now visualized through PNG image changes only
 
 function updateTreeGrowth() {
-    if (!treeTimeline) return;
-
-    const maxGrowthTime = timerState.totalSeconds;
-    const growthProgress = Math.min(timerState.elapsedWithoutPause / maxGrowthTime, 1);
-
-    const segments = [
-        { range: [0, 0.2], from: 'intro', to: 'trunk' },
-        { range: [0.2, 0.45], from: 'trunk', to: 'branches' },
-        { range: [0.45, 0.8], from: 'branches', to: 'glowPulse' },
-        { range: [0.8, 1], from: 'petalWave', to: 'glowPulse' }
-    ];
-
-    const segment = segments.find(seg => growthProgress >= seg.range[0] && growthProgress <= seg.range[1]) || segments[segments.length - 1];
-    const normalized = gsap.utils.normalize(segment.range[0], segment.range[1], growthProgress);
-    const totalDuration = treeTimeline.totalDuration();
-    const startTime = treeTimeline.labels[segment.from] ?? 0;
-    const endTime = treeTimeline.labels[segment.to] ?? totalDuration;
-    const targetTime = gsap.utils.interpolate(startTime, endTime, normalized);
-
-    if (treeScrubTween) treeScrubTween.kill();
-    treeScrubTween = treeTimeline.tweenTo(targetTime, { duration: 0.25, ease: 'sine.out' });
+    // Tree growth is now handled by updateTimerTreeImage()
+    // which changes the PNG based on elapsed time
+    // No complex animations needed
 }
 
 function updateStats() {
@@ -919,65 +842,41 @@ function renderTimerCherryTree() {
     const wrapper = document.querySelector('.timer-tree-wrapper');
     if (!wrapper) return;
 
-    let stage = wrapper.querySelector('#timer-tree-stage');
-    if (!stage) {
-        stage = document.createElement('div');
-        stage.id = 'timer-tree-stage';
-        stage.className = 'tree-visual-stage';
-        stage.innerHTML = `
-            <div class="tree-layer tree-layer-trunk"></div>
-            <div class="tree-layer tree-layer-branches"></div>
-            <div class="tree-layer tree-layer-blooms"></div>
-            <div class="tree-layer tree-layer-glow"></div>
-        `;
-        wrapper.appendChild(stage);
-    }
-
+    // Ensure petal layer exists for animations
     let fallingLayer = wrapper.querySelector('#timer-petal-layer');
     if (!fallingLayer) {
         fallingLayer = document.createElement('div');
         fallingLayer.id = 'timer-petal-layer';
         fallingLayer.className = 'timer-petal-layer';
+        fallingLayer.style.cssText = 'position: absolute; inset: 0; pointer-events: none; display: none;';
         wrapper.appendChild(fallingLayer);
     }
 
-    setupTreeTimeline();
-    updateTreeGrowth();
     updateTimerPetalsVisibility();
 }
 
 function playBloomFinale() {
     const wrapper = document.querySelector('.timer-tree-wrapper');
-    if (!wrapper || typeof gsap === 'undefined') return;
+    if (!wrapper) return;
 
+    // Simple CSS-based animation instead of GSAP for better performance
     const finaleLayer = document.createElement('div');
     finaleLayer.className = 'tree-finale-layer';
+    finaleLayer.style.cssText = 'position: absolute; inset: 0; pointer-events: none; animation: fadeOut 2s ease-out forwards;';
     wrapper.appendChild(finaleLayer);
 
-    const burstCount = 16;
+    const burstCount = 12; // Reduced from 16 for better performance
     for (let i = 0; i < burstCount; i++) {
         const petal = document.createElement('span');
         petal.className = 'finale-petal';
         petal.style.setProperty('--hue', `${320 + Math.random() * 40}`);
+        petal.style.animation = `petalBurst 1.4s ease-out forwards`;
+        petal.style.animationDelay = `${Math.random() * 0.2}s`;
         finaleLayer.appendChild(petal);
-
-        const angle = (i / burstCount) * Math.PI * 2;
-        const distance = 140 + Math.random() * 40;
-
-        gsap.fromTo(petal,
-            { x: 0, y: 0, scale: 0.4, opacity: 1, rotate: 0 },
-            {
-                x: Math.cos(angle) * distance,
-                y: Math.sin(angle) * distance,
-                scale: 1.2,
-                rotate: Math.random() * 220,
-                duration: 1.4,
-                ease: 'power2.out'
-            }
-        );
     }
 
-    gsap.to(finaleLayer, { opacity: 0, duration: 1.2, delay: 1, onComplete: () => finaleLayer.remove() });
+    // Clean up after animation
+    setTimeout(() => finaleLayer.remove(), 2500);
 }
 
 // ===================================
