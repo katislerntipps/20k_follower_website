@@ -542,54 +542,6 @@ function updateCycleIndicator() {
         cycleDotsContainer.appendChild(dot);
     }
 
-    // Add text showing completed focus units and remaining until next session
-    const cycleText = document.createElement('div');
-    cycleText.style.cssText = `
-        margin-top: 0.75rem;
-        font-size: 0.85rem;
-        color: var(--text-primary, #2c3e50);
-        font-weight: 600;
-        line-height: 1.5;
-        text-align: center;
-    `;
-
-    const completedUnits = timerState.cycleCount;
-    const remainingUnits = 4 - timerState.cycleCount;
-
-    if (completedUnits === 0) {
-        // No units completed yet
-        cycleText.innerHTML = `
-            <div style="font-size: 0.95rem; margin-bottom: 0.25rem;">
-                🎯 Nächste Session in <strong>${remainingUnits} Pomodoros</strong>
-            </div>
-        `;
-    } else if (completedUnits >= 4) {
-        // All 4 units completed - long break due
-        cycleText.innerHTML = `
-            <div style="font-size: 0.95rem; margin-bottom: 0.25rem; color: var(--primary, #667eea);">
-                ✨ <strong>${completedUnits} Fokuseinheiten</strong> abgeschlossen
-            </div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary, #5a6c7d);">
-                Lange Pause fällig 🌙
-            </div>
-        `;
-    } else {
-        // Some units completed, more to go
-        const unitWord = completedUnits === 1 ? 'Fokuseinheit' : 'Fokuseinheiten';
-        const pomodoroWord = remainingUnits === 1 ? 'Pomodoro' : 'Pomodoros';
-
-        cycleText.innerHTML = `
-            <div style="font-size: 0.95rem; margin-bottom: 0.25rem;">
-                ✅ <strong>${completedUnits} ${unitWord}</strong> abgeschlossen
-            </div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary, #5a6c7d);">
-                Nächste Session in ${remainingUnits} ${pomodoroWord}
-            </div>
-        `;
-    }
-
-    cycleDotsContainer.appendChild(cycleText);
-
     // Trigger fullscreen hooks
     if (typeof onCycleIndicatorUpdate === 'function') {
         onCycleIndicatorUpdate();
@@ -2175,26 +2127,7 @@ function updateFullscreenTree() {
 }
 
 function updateFullscreenCycleIndicator() {
-    const cycleTextEl = document.querySelector('.fullscreen-cycle-info .cycle-text');
     const cycleDotsContainer = document.getElementById('fullscreen-cycle-dots');
-
-    const completedUnits = timerState.cycleCount;
-    const remainingUnits = 4 - timerState.cycleCount;
-
-    if (cycleTextEl) {
-        if (completedUnits === 0) {
-            // No units completed yet
-            cycleTextEl.innerHTML = `🎯 Nächste Session in <strong>${remainingUnits} Pomodoros</strong>`;
-        } else if (completedUnits >= 4) {
-            // All 4 units completed - long break due
-            cycleTextEl.innerHTML = `✨ <strong>${completedUnits} Fokuseinheiten</strong> abgeschlossen • Lange Pause fällig 🌙`;
-        } else {
-            // Some units completed, more to go
-            const unitWord = completedUnits === 1 ? 'Fokuseinheit' : 'Fokuseinheiten';
-            const pomodoroWord = remainingUnits === 1 ? 'Pomodoro' : 'Pomodoros';
-            cycleTextEl.innerHTML = `✅ <strong>${completedUnits} ${unitWord}</strong> abgeschlossen • Nächste Session in ${remainingUnits} ${pomodoroWord}`;
-        }
-    }
 
     if (cycleDotsContainer) {
         cycleDotsContainer.innerHTML = '';
