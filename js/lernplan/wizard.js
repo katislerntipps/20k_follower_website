@@ -313,7 +313,8 @@ export class LernplanWizard {
             this.planOutput = new PlanOutput(
                 planOutputContainer,
                 this.generatedPlan,
-                this.onRestart.bind(this)
+                this.onRestart.bind(this),
+                this.onBackToThemen.bind(this)
             );
 
             // Scroll to top
@@ -365,6 +366,20 @@ export class LernplanWizard {
         if (typeof showNotification === 'function') {
             showNotification(`🎯 Lernplan erstellt! +${points} Punkte`);
         }
+    }
+
+    onBackToThemen() {
+        // Gehe zurück zu Step 3 (Themen), behalte aber die bisherigen Daten
+        // Hide plan
+        this.container.querySelector('#plan-output').style.display = 'none';
+        this.container.querySelector('.wizard-progress').style.display = 'block';
+        this.container.querySelector('.wizard-content').style.display = 'block';
+
+        // Reinitialize steps with existing data
+        this.initializeSteps();
+        this.showStep(3); // Step 3 = Themen
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     onRestart() {
