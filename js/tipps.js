@@ -2,8 +2,9 @@
 // TIPPS.JS - Lerntipps Page Functionality
 // ===================================
 
-// Import analytics
+// Import modules
 import analytics from './modules/analytics.js';
+import { safeGetItem, safeSetItem, safeParseJSON } from './modules/storage.js';
 
 // Lerntipps Data - 100 verschiedene Tipps von konventionell bis unkonventionell
 const lerntipps = [
@@ -114,37 +115,6 @@ const lerntipps = [
     { title: 'Zahlen-Formen', description: 'Verbinde Zahlen mit Formen. 0=Ei, 1=Kerze, 2=Schwan... Erstelle visuelle Geschichten!', category: 'verruckt', subject: 'allgemein', difficulty: 'anfaenger', icon: '🔢' }
 ];
 
-// ===================================
-// SAFE STORAGE HELPERS
-// ===================================
-
-function safeGetItem(key, fallback = null) {
-    try {
-        const value = localStorage.getItem(key);
-        return value !== null ? value : fallback;
-    } catch (error) {
-        console.warn(`[Storage] Konnte ${key} nicht auslesen, nutze Fallback.`, error);
-        return fallback;
-    }
-}
-
-function safeSetItem(key, value) {
-    try {
-        localStorage.setItem(key, value);
-    } catch (error) {
-        console.warn(`[Storage] Konnte ${key} nicht speichern.`, error);
-    }
-}
-
-function safeParseJSON(value, fallback, label = 'Wert') {
-    try {
-        return JSON.parse(value);
-    } catch (error) {
-        console.warn(`[Storage] Konnte ${label} nicht parsen, nutze Fallback.`, error);
-        return fallback;
-    }
-}
-
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     console.log('=== TIPPS.JS DOMContentLoaded ===');
@@ -154,7 +124,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeViewToggle();
     console.log('Updating points...');
     updatePoints();
-    // initializeDarkMode is called by main.js which loads on all pages
     console.log('=== TIPPS.JS Initialization complete ===');
 });
 
@@ -552,58 +521,3 @@ tippsAnimationStyle.textContent = `
     }
 `;
 document.head.appendChild(tippsAnimationStyle);
-
-// ===================================
-// DARK MODE FUNCTIONALITY
-// ===================================
-
-function initializeDarkMode() {
-    const themeToggle = document.getElementById('theme-toggle');
-    const savedTheme = safeGetItem('studytok_theme', 'light');
-
-    // Apply saved theme
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
-
-    // Toggle event
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-    }
-}
-
-function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-    document.documentElement.setAttribute('data-theme', newTheme);
-    safeSetItem('studytok_theme', newTheme);
-    updateThemeIcon(newTheme);
-
-    // Force repaint für Mobile Browser (besonders Safari/WebKit)
-    // Dies behebt das Problem, dass Farben erst nach Scrollen richtig angezeigt werden
-    forceRepaint();
-}
-
-function forceRepaint() {
-    // Methode 1: Force reflow durch Lesen von offsetHeight
-    void document.body.offsetHeight;
-
-    // Methode 2: RequestAnimationFrame für sauberes Repaint
-    requestAnimationFrame(() => {
-        // Trigger layout recalculation
-        document.body.style.transform = 'translateZ(0)';
-        requestAnimationFrame(() => {
-            document.body.style.transform = '';
-        });
-    });
-}
-
-function updateThemeIcon(theme) {
-    const themeToggle = document.getElementById('theme-toggle');
-    if (themeToggle) {
-        const isDark = theme === 'dark';
-        themeToggle.classList.toggle('is-dark', isDark);
-        themeToggle.setAttribute('aria-pressed', isDark);
-        themeToggle.setAttribute('aria-label', isDark ? 'Light Mode aktivieren' : 'Dark Mode aktivieren');
-    }
-}

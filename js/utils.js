@@ -2,8 +2,87 @@
 // UTILS.JS - Zentrale Utility-Funktionen
 // ===================================
 
-// Import analytics for error tracking
+// Import modules
 import analytics from './modules/analytics.js';
+import { safeGetItem, safeSetItem } from './modules/storage.js';
+
+// ===================================
+// DARK MODE MANAGEMENT (Centralized)
+// ===================================
+
+/**
+ * Initialisiert den Dark Mode basierend auf gespeicherten Einstellungen
+ */
+export function initializeDarkMode() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const savedTheme = safeGetItem('studytok_theme', 'light');
+
+    // Apply saved theme
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+
+    // Toggle event
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+}
+
+/**
+ * Wechselt zwischen Light und Dark Mode
+ */
+export function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-theme', newTheme);
+    safeSetItem('studytok_theme', newTheme);
+    updateThemeIcon(newTheme);
+
+    // Force repaint für Mobile Browser (besonders Safari/WebKit)
+    forceRepaint();
+}
+
+/**
+ * Erzwingt ein Repaint für Mobile Browser
+ */
+function forceRepaint() {
+    // Methode 1: Force reflow durch Lesen von offsetHeight
+    void document.body.offsetHeight;
+
+    // Methode 2: RequestAnimationFrame für sauberes Repaint
+    requestAnimationFrame(() => {
+        // Trigger layout recalculation
+        document.body.style.transform = 'translateZ(0)';
+        requestAnimationFrame(() => {
+            document.body.style.transform = '';
+        });
+    });
+}
+
+/**
+ * Aktualisiert das Theme-Toggle-Icon
+ * @param {string} theme - Das aktuelle Theme ('light' oder 'dark')
+ */
+function updateThemeIcon(theme) {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        const isDark = theme === 'dark';
+        themeToggle.classList.toggle('is-dark', isDark);
+        themeToggle.setAttribute('aria-pressed', isDark);
+        themeToggle.setAttribute('aria-label', isDark ? 'Light Mode aktivieren' : 'Dark Mode aktivieren');
+    }
+}
+
+// Auto-initialize Dark Mode when script loads
+if (typeof window !== 'undefined') {
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeDarkMode);
+    } else {
+        // DOM already loaded
+        initializeDarkMode();
+    }
+}
 
 // ===================================
 // SECURITY: Safe HTML Rendering
