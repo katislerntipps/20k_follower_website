@@ -2,8 +2,9 @@
 // Shop System
 // ===================================
 
-// Import analytics
+// Import modules
 import analytics from './modules/analytics.js';
+import { safeGetItem, safeSetItem, safeParseJSON } from './modules/storage.js';
 
 // Initialize shop on page load
 document.addEventListener('DOMContentLoaded', () => {
@@ -57,37 +58,6 @@ async function verifyAdminCode(inputCode) {
     } catch (error) {
         console.error('Fehler bei Admin-Code Verifikation:', error);
         return false;
-    }
-}
-
-// ===================================
-// SAFE STORAGE HELPERS
-// ===================================
-
-function safeGetItem(key, fallback = null) {
-    try {
-        const value = localStorage.getItem(key);
-        return value !== null ? value : fallback;
-    } catch (error) {
-        console.warn(`[Storage] Konnte ${key} nicht auslesen, nutze Fallback.`, error);
-        return fallback;
-    }
-}
-
-function safeSetItem(key, value) {
-    try {
-        localStorage.setItem(key, value);
-    } catch (error) {
-        console.warn(`[Storage] Konnte ${key} nicht speichern.`, error);
-    }
-}
-
-function safeParseJSON(value, fallback, label = 'Wert') {
-    try {
-        return JSON.parse(value);
-    } catch (error) {
-        console.warn(`[Storage] Konnte ${label} nicht parsen, nutze Fallback.`, error);
-        return fallback;
     }
 }
 
