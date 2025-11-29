@@ -36,9 +36,10 @@ const TIMER_IMAGE_SOURCES = {
     pause: 'image/pause.png'
 };
 
-// NOTE: Image files are currently very large (1.7MB - 3.4MB)
+// TODO: Image files are currently very large (1.7MB - 3.4MB)
 // Consider optimizing with: pngquant, optipng, or online tools
 // Recommended target: < 500KB per image
+// This will improve page load performance significantly
 
 // Utility Helpers
 function throttle(func, wait, options = {}) {
@@ -110,7 +111,8 @@ function safeParseJSON(value, fallback, label = 'Wert') {
     }
 }
 
-const TIMER_SAVE_THROTTLE_MS = 5000;
+// Reduced from 5000ms to 2000ms to prevent data loss when page is closed quickly
+const TIMER_SAVE_THROTTLE_MS = 2000;
 const throttledSaveTimerState = throttle(() => saveTimerState(), TIMER_SAVE_THROTTLE_MS);
 
 // Progress ring helpers
@@ -499,7 +501,8 @@ function timerComplete() {
         );
     }
 
-    resetTimer();
+    // NOTE: resetTimer() wurde entfernt, da es zu Problemen führte
+    // Die Popups rufen changeMode() auf, welches den Timer korrekt setzt
 }
 
 // ===================================
@@ -1410,7 +1413,7 @@ function showBrowserNotification(message) {
     } else if (notificationsEnabled && Notification.permission !== 'granted') {
         // User has checkbox enabled but hasn't granted permission
         // Show in-app notification to remind them
-        console.log('Benachrichtigungen sind aktiviert, aber die Berechtigung wurde nicht erteilt');
+        console.debug('Benachrichtigungen sind aktiviert, aber die Berechtigung wurde nicht erteilt');
     }
 }
 
@@ -2111,7 +2114,7 @@ function initializeFullscreenProgressRing() {
         ring.dataset.circumference = length;
     } catch (error) {
         // Element might not be rendered yet, will be initialized on first use
-        console.log('Fullscreen ring will be initialized when visible');
+        console.debug('Fullscreen ring will be initialized when visible');
     }
 }
 
