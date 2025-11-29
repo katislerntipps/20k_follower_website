@@ -156,6 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // initializeDarkMode is called by main.js which loads on all pages
     initializeNotifications();
     initializeAchievements();
+    syncSettingsCheckboxes();
 });
 
 function preloadTreeImages() {
@@ -2228,3 +2229,78 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeFullscreenMode();
     }, 100);
 });
+
+// ===================================
+// SETTINGS SYNCHRONIZATION (Mobile <-> Desktop)
+// ===================================
+
+function syncSettingsCheckboxes() {
+    // Sync Sound checkbox
+    const soundDesktop = document.getElementById('sound-enabled');
+    const soundMobile = document.getElementById('sound-enabled-mobile');
+
+    if (soundDesktop && soundMobile) {
+        // Sync initial state
+        soundMobile.checked = soundDesktop.checked;
+
+        // Sync Desktop -> Mobile
+        soundDesktop.addEventListener('change', function() {
+            soundMobile.checked = this.checked;
+        });
+
+        // Sync Mobile -> Desktop
+        soundMobile.addEventListener('change', function() {
+            soundDesktop.checked = this.checked;
+        });
+    }
+
+    // Sync Notifications checkbox
+    const notificationsDesktop = document.getElementById('notifications');
+    const notificationsMobile = document.getElementById('notifications-mobile');
+
+    if (notificationsDesktop && notificationsMobile) {
+        // Sync initial state
+        notificationsMobile.checked = notificationsDesktop.checked;
+
+        // Sync Desktop -> Mobile
+        notificationsDesktop.addEventListener('change', function() {
+            notificationsMobile.checked = this.checked;
+        });
+
+        // Sync Mobile -> Desktop (also trigger permission request)
+        notificationsMobile.addEventListener('change', async function() {
+            notificationsDesktop.checked = this.checked;
+
+            // Trigger the same permission logic as desktop
+            if (this.checked) {
+                const permission = await requestNotificationPermission();
+                if (!permission) {
+                    this.checked = false;
+                    notificationsDesktop.checked = false;
+                }
+                updateNotificationCheckboxState();
+            }
+        });
+    }
+
+    // Sync Auto-Fullscreen checkbox
+    const autoFullscreenDesktop = document.getElementById('auto-fullscreen');
+    const autoFullscreenMobile = document.getElementById('auto-fullscreen-mobile');
+
+    if (autoFullscreenDesktop && autoFullscreenMobile) {
+        // Sync initial state
+        autoFullscreenMobile.checked = autoFullscreenDesktop.checked;
+
+        // Sync Desktop -> Mobile
+        autoFullscreenDesktop.addEventListener('change', function() {
+            autoFullscreenMobile.checked = this.checked;
+            safeSetItem('studytok_auto_fullscreen', this.checked.toString());
+        });
+
+        // Sync Mobile -> Desktop
+        autoFullscreenMobile.addEventListener('change', function() {
+            autoFullscreenDesktop.checked = this.checked;
+            safeSetItem('studytok_auto_fullscreen', this.checked.toString());
+        });
+    }
+}

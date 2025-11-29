@@ -575,6 +575,11 @@
     display: block;
 }
 
+/* Desktop: Verstecke mobile Settings-Card */
+.settings-card-mobile {
+    display: none;
+}
+
 @media (max-width: 1024px) {
     .timer-grid {
         grid-template-columns: 1fr;
@@ -738,8 +743,28 @@
     }
 
     /* Settings nach unten */
-    .settings-card {
+    /* Desktop Settings-Card verstecken in mobiler Ansicht */
+    .timer-panel .settings-card:not(.settings-card-mobile) {
+        display: none;
+    }
+
+    /* Mobile Settings-Card anzeigen */
+    .settings-card-mobile {
+        display: block;
         margin-top: var(--spacing-lg);
+        background: var(--bg-card);
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    [data-theme="dark"] .settings-card-mobile {
+        box-shadow: var(--shadow-md);
+        border-color: rgba(255, 46, 230, 0.2);
+        background: radial-gradient(circle at 20% 20%, rgba(255, 46, 230, 0.06), transparent 32%),
+            radial-gradient(circle at 80% 0%, rgba(104, 210, 187, 0.05), transparent 30%),
+            var(--bg-card);
     }
 
     /* Tree progress label anpassen */
