@@ -1,10 +1,10 @@
 // ===================================
 // SERVICE WORKER - Offline Support
-// Version: 1.2.5
+// Version: 1.2.6
 // ===================================
 
-const CACHE_NAME = 'studytok-v1.2.5';
-const RUNTIME_CACHE = 'studytok-runtime-v1.2.5';
+const CACHE_NAME = 'studytok-v1.2.6';
+const RUNTIME_CACHE = 'studytok-runtime-v1.2.6';
 
 // Assets to cache immediately on install
 const PRECACHE_ASSETS = [
@@ -39,7 +39,11 @@ const PRECACHE_ASSETS = [
 // Network-first resources (always try network first)
 const NETWORK_FIRST_PATTERNS = [
     /\/api\//,
-    /\.json$/
+    /\.json$/,
+    /\.html$/,
+    /\.css$/,
+    /\.js$/,
+    /\/$/  // Root and directory requests
 ];
 
 // Cache-first resources (prefer cache)
@@ -50,9 +54,8 @@ const CACHE_FIRST_PATTERNS = [
     /\.svg$/,
     /\.woff$/,
     /\.woff2$/,
-    /\.ttf$/,
-    /\.css$/,
-    /\.js$/
+    /\.ttf$/
+    // CSS and JS are now handled by network-first for immediate updates
 ];
 
 // ===================================
