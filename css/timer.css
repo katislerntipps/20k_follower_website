@@ -958,6 +958,14 @@
     opacity: 1;
 }
 
+/* Hide global floating music controls when fullscreen is active */
+.fullscreen-overlay.active ~ #music-toggle-btn,
+.fullscreen-overlay.active ~ .music-volume-control,
+body:has(.fullscreen-overlay.active) #music-toggle-btn,
+body:has(.fullscreen-overlay.active) .music-volume-control {
+    display: none !important;
+}
+
 .fullscreen-container {
     width: 100%;
     height: 100%;
