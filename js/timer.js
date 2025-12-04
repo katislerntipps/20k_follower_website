@@ -1769,22 +1769,61 @@ function initializeFullscreenMode() {
     initializeFullscreenMusicToggle();
 }
 
+// Music state for fullscreen
+let fullscreenMusicState = {
+    audio: null,
+    isPlaying: false,
+    volume: 0.3
+};
+
 function initializeFullscreenMusicToggle() {
     const fullscreenMusicToggle = document.getElementById('fullscreen-music-toggle');
     if (!fullscreenMusicToggle) return;
 
-    // Add click event listener
-    fullscreenMusicToggle.addEventListener('click', () => {
-        // Call the global toggleMusic function from shop.js
-        if (typeof toggleMusic === 'function') {
-            toggleMusic();
-            // Force update the fullscreen icon after a short delay
-            setTimeout(() => {
-                updateFullscreenMusicIcon();
-            }, 50);
-        } else {
-            console.warn('toggleMusic function not found in shop.js');
+    // Initialize audio element
+    if (!fullscreenMusicState.audio) {
+        fullscreenMusicState.audio = new Audio('audio/backgroundmusic.mp3');
+        fullscreenMusicState.audio.loop = true;
+        fullscreenMusicState.audio.volume = fullscreenMusicState.volume;
+
+        // Load saved state from localStorage
+        const savedVolume = localStorage.getItem('studytok_music_volume');
+        const savedPlaying = localStorage.getItem('studytok_music_playing');
+
+        if (savedVolume) {
+            fullscreenMusicState.volume = parseFloat(savedVolume);
+            fullscreenMusicState.audio.volume = fullscreenMusicState.volume;
         }
+
+        if (savedPlaying === 'true') {
+            fullscreenMusicState.isPlaying = true;
+            fullscreenMusicState.audio.play().catch(err => {
+                console.log('Autoplay prevented:', err);
+                fullscreenMusicState.isPlaying = false;
+            });
+        }
+    }
+
+    // Add click event listener for toggle
+    fullscreenMusicToggle.addEventListener('click', () => {
+        if (fullscreenMusicState.isPlaying) {
+            fullscreenMusicState.audio.pause();
+            fullscreenMusicState.isPlaying = false;
+            fullscreenMusicToggle.classList.remove('playing');
+        } else {
+            fullscreenMusicState.audio.play().catch(err => {
+                console.log('Play error:', err);
+                fullscreenMusicState.isPlaying = false;
+            });
+            fullscreenMusicState.isPlaying = true;
+            fullscreenMusicToggle.classList.add('playing');
+        }
+
+        // Save state
+        localStorage.setItem('studytok_music_playing', fullscreenMusicState.isPlaying);
+
+        // Update UI
+        updateFullscreenMusicIcon();
     });
 
     // Initialize volume slider
@@ -1792,21 +1831,21 @@ function initializeFullscreenMusicToggle() {
     const volumeLabel = document.getElementById('fullscreen-volume-label');
 
     if (volumeSlider && volumeLabel) {
-        // Get initial volume from shop state
-        const shopState = typeof getShopState === 'function' ? getShopState() : null;
-        const initialVolume = shopState?.musicVolume ?? 0.3;
-
-        volumeSlider.value = Math.round(initialVolume * 100);
-        volumeLabel.textContent = `${Math.round(initialVolume * 100)}%`;
+        // Set initial values
+        volumeSlider.value = Math.round(fullscreenMusicState.volume * 100);
+        volumeLabel.textContent = `${Math.round(fullscreenMusicState.volume * 100)}%`;
 
         // Add input event listener
         volumeSlider.addEventListener('input', (event) => {
             const volume = parseInt(event.target.value, 10) / 100;
+            fullscreenMusicState.volume = volume;
 
-            // Update music volume using shop.js function
-            if (typeof updateMusicVolume === 'function') {
-                updateMusicVolume(volume);
+            if (fullscreenMusicState.audio) {
+                fullscreenMusicState.audio.volume = volume;
             }
+
+            // Save to localStorage
+            localStorage.setItem('studytok_music_volume', volume);
 
             // Update label
             volumeLabel.textContent = `${Math.round(volume * 100)}%`;
@@ -1834,15 +1873,22 @@ function updateFullscreenMusicVisibility() {
 function updateFullscreenMusicIcon() {
     const fullscreenMusicIcon = document.getElementById('fullscreen-music-icon');
     const musicStatusText = document.getElementById('music-status-text');
+    const musicToggleBtn = document.getElementById('fullscreen-music-toggle');
+
     if (!fullscreenMusicIcon) return;
 
-    // Get music state
-    const shopState = typeof getShopState === 'function' ? getShopState() : null;
-    if (shopState) {
-        const isPlaying = shopState.musicEnabled;
-        fullscreenMusicIcon.textContent = isPlaying ? '🔊' : '🔇';
-        if (musicStatusText) {
-            musicStatusText.textContent = isPlaying ? 'An' : 'Aus';
+    const isPlaying = fullscreenMusicState.isPlaying;
+
+    fullscreenMusicIcon.textContent = isPlaying ? '🔊' : '🔇';
+    if (musicStatusText) {
+        musicStatusText.textContent = isPlaying ? 'Musik An' : 'Musik Aus';
+    }
+
+    if (musicToggleBtn) {
+        if (isPlaying) {
+            musicToggleBtn.classList.add('playing');
+        } else {
+            musicToggleBtn.classList.remove('playing');
         }
     }
 }
