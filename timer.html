@@ -552,6 +552,24 @@
                             <span>🔄 Reset</span>
                         </button>
                     </div>
+
+                    <!-- Music Controls -->
+                    <div class="fullscreen-music-controls" id="fullscreen-music-controls" style="display: none;">
+                        <div class="music-control-header">
+                            <span class="music-control-title">🎵 Hintergrundmusik</span>
+                        </div>
+                        <div class="music-control-body">
+                            <button class="music-play-pause-btn" id="fullscreen-music-toggle" aria-label="Hintergrundmusik an/aus">
+                                <span id="fullscreen-music-icon">🔇</span>
+                                <span class="music-status-text" id="music-status-text">Aus</span>
+                            </button>
+                            <div class="music-volume-control">
+                                <span class="volume-icon">🔉</span>
+                                <input type="range" min="0" max="100" value="30" class="fullscreen-volume-slider" id="fullscreen-volume-slider" aria-label="Lautstärke der Hintergrundmusik einstellen">
+                                <span class="fullscreen-volume-label" id="fullscreen-volume-label">30%</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Tree Visualization -->
@@ -572,24 +590,6 @@
                         <div class="motivation-icon">✨</div>
                         <div class="motivation-text" id="motivation-text">
                             Du schaffst das! Bleib fokussiert.
-                        </div>
-                    </div>
-
-                    <!-- Music Controls (Video Player Style) -->
-                    <div class="fullscreen-music-controls" id="fullscreen-music-controls" style="display: none;">
-                        <div class="music-control-header">
-                            <span class="music-control-title">🎵 Hintergrundmusik</span>
-                        </div>
-                        <div class="music-control-body">
-                            <button class="music-play-pause-btn" id="fullscreen-music-toggle" aria-label="Hintergrundmusik an/aus">
-                                <span id="fullscreen-music-icon">🔇</span>
-                                <span class="music-status-text" id="music-status-text">Aus</span>
-                            </button>
-                            <div class="music-volume-control">
-                                <span class="volume-icon">🔉</span>
-                                <input type="range" min="0" max="100" value="30" class="fullscreen-volume-slider" id="fullscreen-volume-slider" aria-label="Lautstärke der Hintergrundmusik einstellen">
-                                <span class="fullscreen-volume-label" id="fullscreen-volume-label">30%</span>
-                            </div>
                         </div>
                     </div>
                 </div>
