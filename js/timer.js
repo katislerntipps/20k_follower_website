@@ -1922,6 +1922,12 @@ function enterFullscreen() {
     overlay.classList.add('active');
     fullscreenState.isActive = true;
 
+    // Hide global floating music controls to prevent overlap
+    const globalMusicBtn = document.getElementById('music-toggle-btn');
+    const globalVolumeControl = document.querySelector('body > .music-volume-control');
+    if (globalMusicBtn) globalMusicBtn.style.display = 'none';
+    if (globalVolumeControl) globalVolumeControl.style.display = 'none';
+
     // Initialize fullscreen ring (only on first activation when element is visible)
     initializeFullscreenProgressRing();
 
@@ -1951,6 +1957,12 @@ function exitFullscreen() {
 
     overlay.classList.remove('active');
     fullscreenState.isActive = false;
+
+    // Show global floating music controls again
+    const globalMusicBtn = document.getElementById('music-toggle-btn');
+    const globalVolumeControl = document.querySelector('body > .music-volume-control');
+    if (globalMusicBtn) globalMusicBtn.style.display = '';
+    if (globalVolumeControl) globalVolumeControl.style.display = '';
 
     // Stop motivation rotation
     stopMotivationRotation();
