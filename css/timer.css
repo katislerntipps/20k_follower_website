@@ -1626,16 +1626,51 @@
         padding: 2rem 1.5rem;
     }
 
-    /* Verstecke Desktop-Elemente */
+    /* Container transparent machen statt verstecken */
     .fullscreen-timer-section {
-        display: none !important;
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        gap: 0 !important;
+        order: 2;
     }
 
     .fullscreen-tree-panel {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        order: 1;
+        gap: 0;
+    }
+
+    .fullscreen-tree {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /* Verstecke Elemente, die nicht im mobilen Design sein sollen */
+    .fullscreen-tree-title,
+    .fullscreen-tree-level {
         display: none !important;
     }
 
     .fullscreen-motivation {
+        display: none !important;
+    }
+
+    .fullscreen-progress-bar {
         display: none !important;
     }
 
@@ -1649,7 +1684,7 @@
         margin: 0 0 1.5rem 0;
         min-height: auto;
         max-height: 280px;
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
     }
@@ -1663,12 +1698,12 @@
 
     /* 2. Zyklus-Tracker: "Runde X von 4" */
     .fullscreen-cycle-info {
-        order: 2;
         display: flex !important;
         flex-direction: column;
         align-items: center;
         gap: 0.75rem;
         margin: 0 0 2rem 0;
+        width: auto;
     }
 
     .fullscreen-cycle-info .cycle-text {
@@ -1695,12 +1730,13 @@
 
     /* 3. Timer-Anzeige: Sehr groß und prominent */
     .fullscreen-timer-display {
-        order: 3;
         width: auto;
         height: auto;
         position: relative;
         margin: 0 0 3rem 0;
-        display: block !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
     }
 
     /* Verstecke Ring im mobilen Design */
@@ -1730,13 +1766,13 @@
 
     /* 4. START/PAUSE Button: Hauptaktion mit Glow */
     .fullscreen-controls {
-        order: 4;
         display: flex !important;
         flex-direction: column;
         gap: 1rem;
         width: 100%;
         max-width: 320px;
         margin: 0;
+        align-items: center;
     }
 
     .fullscreen-btn-start,
@@ -1754,12 +1790,13 @@
         color: white;
         box-shadow: 0 0 30px rgba(255, 183, 197, 0.5),
                     0 4px 15px rgba(255, 183, 197, 0.3);
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
         gap: 0.75rem;
         position: relative;
         overflow: hidden;
+        width: 100%;
     }
 
     .fullscreen-btn-start::before,
@@ -1789,6 +1826,10 @@
         background: rgba(255, 255, 255, 0.5);
         color: rgba(92, 107, 192, 0.7);
         box-shadow: none;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
     }
 
     .fullscreen-btn-reset:active {
