@@ -1614,39 +1614,44 @@
         border: 1px solid rgba(255, 183, 197, 0.3);
     }
 
-    /* Zen-inspirierte vertikale Zentrierung */
+    /* Zen-inspirierte vertikale Zentrierung mit Grid Layout */
     .fullscreen-content {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto auto;
         align-items: center;
-        justify-content: center;
+        justify-items: center;
         gap: 0;
         position: relative;
         min-height: 100vh;
         padding: 2rem 1.5rem;
     }
 
-    /* Container transparent machen statt verstecken */
+    /* Container für Baum + Ring - nutze Grid Overlap */
+    .fullscreen-tree-panel {
+        grid-row: 1;
+        grid-column: 1;
+        display: grid !important;
+        place-items: center;
+        width: 100%;
+        gap: 0;
+        z-index: 2;
+    }
+
     .fullscreen-timer-section {
-        display: flex !important;
-        flex-direction: column;
+        grid-row: 1 / 5;
+        grid-column: 1;
+        display: grid !important;
+        grid-template-rows: auto 1fr auto auto auto;
         align-items: center;
+        justify-items: center;
         width: 100%;
         background: transparent !important;
         border: none !important;
         padding: 0 !important;
         box-shadow: none !important;
         gap: 0 !important;
-        order: 2;
-    }
-
-    .fullscreen-tree-panel {
-        display: flex !important;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        order: 1;
-        gap: 0;
+        z-index: 1;
     }
 
     .fullscreen-tree {
@@ -1675,21 +1680,19 @@
     }
 
     /* Erstelle neues mobiles Layout */
-    /* 1. Zentrales Visual: Baum mit Ladekreis */
+    /* 1. Zentrales Visual: Baum */
     .fullscreen-tree-image {
-        order: 1;
         background: transparent;
         border: none;
         padding: 0;
-        margin: 0 0 1.5rem 0;
+        margin: 0;
         min-height: auto;
-        max-height: 320px;
         display: flex !important;
         align-items: center;
         justify-content: center;
         position: relative;
-        width: 320px;
-        height: 320px;
+        width: 240px;
+        height: 240px;
     }
 
     .fullscreen-tree-image img {
@@ -1698,16 +1701,17 @@
         object-fit: contain;
         filter: drop-shadow(0 8px 30px rgba(255, 183, 197, 0.2));
         position: relative;
-        z-index: 2;
+        z-index: 3;
     }
 
     /* 2. Zyklus-Tracker: "Runde X von 4" */
     .fullscreen-cycle-info {
+        grid-row: 2;
         display: flex !important;
         flex-direction: column;
         align-items: center;
         gap: 0.75rem;
-        margin: 0 0 2rem 0;
+        margin: 1.5rem 0 0 0;
         width: auto;
     }
 
@@ -1733,19 +1737,17 @@
         transition: all 0.3s ease;
     }
 
-    /* Ladekreis um den Baum - Timer Display umpositioniert */
+    /* Ladekreis um den Baum */
     .fullscreen-timer-display {
-        position: absolute !important;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        grid-row: 1;
+        width: 320px;
+        height: 320px;
         display: flex !important;
         align-items: center;
         justify-content: center;
         margin: 0 !important;
         pointer-events: none;
-        z-index: 1;
+        z-index: 2;
     }
 
     /* Zeige Ring um den Baum */
@@ -1766,23 +1768,26 @@
         filter: drop-shadow(0 0 8px rgba(255, 183, 197, 0.4)) !important;
     }
 
-    /* 3. Timer-Zeit: Groß und separat unterhalb des Baums */
+    /* 3. Timer-Zeit: Positioniere sie unterhalb des Rings */
     .fullscreen-timer-time {
-        position: static;
-        transform: none;
+        position: absolute !important;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
         font-size: 5.5rem;
         font-weight: 200;
         font-family: 'Poppins', -apple-system, sans-serif;
         color: rgba(92, 107, 192, 0.85);
         text-shadow: 0 2px 20px rgba(255, 183, 197, 0.15);
         letter-spacing: 0.05em;
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
         gap: 0.1em;
-        margin: -1rem 0 3rem 0;
-        order: 3;
-        width: 100%;
+        margin-top: 2rem;
+        width: auto;
+        pointer-events: none;
+        z-index: 10;
     }
 
     .fullscreen-timer-time span {
@@ -1792,6 +1797,7 @@
 
     /* 4. START/PAUSE Button: Hauptaktion mit Glow */
     .fullscreen-controls {
+        grid-row: 4;
         display: flex !important;
         flex-direction: column;
         gap: 1rem;
@@ -1871,17 +1877,19 @@
 
     /* Music Controls: Ganz unten */
     .fullscreen-music-controls {
-        position: fixed;
-        bottom: 1.5rem;
-        left: 50%;
-        transform: translateX(-50%);
+        position: fixed !important;
+        bottom: 1.5rem !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         padding: 0.75rem 1.25rem;
         margin: 0;
-        background: rgba(255, 255, 255, 0.3);
-        border: 1px solid rgba(255, 183, 197, 0.2);
+        background: rgba(255, 255, 255, 0.8) !important;
+        border: 1px solid rgba(255, 183, 197, 0.3);
         backdrop-filter: blur(15px);
         max-width: 280px;
         width: auto;
+        z-index: 100 !important;
+        display: flex !important;
     }
 
     .music-control-title {
