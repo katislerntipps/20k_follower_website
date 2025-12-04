@@ -1198,6 +1198,11 @@ body:has(.fullscreen-overlay.active) .music-volume-control {
     height: 350px;
 }
 
+/* Hide tree image inside timer-display on desktop - it should only show in tree-panel */
+.fullscreen-timer-display .fullscreen-tree-image {
+    display: none;
+}
+
 .fullscreen-timer-ring {
     width: 100%;
     height: 100%;
@@ -1714,6 +1719,11 @@ body:has(.fullscreen-overlay.active) .music-volume-control {
     }
 
     /* Baum - positioniert INNERHALB des gleichen Containers */
+    /* Re-enable tree image inside timer-display for mobile */
+    .fullscreen-timer-display .fullscreen-tree-image {
+        display: flex !important;
+    }
+
     .fullscreen-tree-image {
         position: absolute;
         top: 50%;
@@ -1721,7 +1731,6 @@ body:has(.fullscreen-overlay.active) .music-volume-control {
         transform: translate(-50%, -50%);
         width: 220px;
         height: 220px;
-        display: flex !important;
         align-items: center;
         justify-content: center;
         background: transparent;
