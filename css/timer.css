@@ -1675,7 +1675,7 @@
     }
 
     /* Erstelle neues mobiles Layout */
-    /* 1. Zentrales Visual: Baum */
+    /* 1. Zentrales Visual: Baum mit Ladekreis */
     .fullscreen-tree-image {
         order: 1;
         background: transparent;
@@ -1683,17 +1683,22 @@
         padding: 0;
         margin: 0 0 1.5rem 0;
         min-height: auto;
-        max-height: 280px;
+        max-height: 320px;
         display: flex !important;
         align-items: center;
         justify-content: center;
+        position: relative;
+        width: 320px;
+        height: 320px;
     }
 
     .fullscreen-tree-image img {
-        max-height: 280px;
-        max-width: 280px;
+        max-height: 240px;
+        max-width: 240px;
         object-fit: contain;
         filter: drop-shadow(0 8px 30px rgba(255, 183, 197, 0.2));
+        position: relative;
+        z-index: 2;
     }
 
     /* 2. Zyklus-Tracker: "Runde X von 4" */
@@ -1728,22 +1733,40 @@
         transition: all 0.3s ease;
     }
 
-    /* 3. Timer-Anzeige: Sehr groß und prominent */
+    /* Ladekreis um den Baum - Timer Display umpositioniert */
     .fullscreen-timer-display {
-        width: auto;
-        height: auto;
-        position: relative;
-        margin: 0 0 3rem 0;
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         display: flex !important;
         align-items: center;
         justify-content: center;
+        margin: 0 !important;
+        pointer-events: none;
+        z-index: 1;
     }
 
-    /* Verstecke Ring im mobilen Design */
+    /* Zeige Ring um den Baum */
     .fullscreen-timer-ring {
-        display: none;
+        display: block !important;
+        width: 100%;
+        height: 100%;
     }
 
+    .fullscreen-ring-bg {
+        stroke: rgba(255, 183, 197, 0.15) !important;
+        stroke-width: 8 !important;
+    }
+
+    .fullscreen-ring-progress {
+        stroke: #ffb7c5 !important;
+        stroke-width: 8 !important;
+        filter: drop-shadow(0 0 8px rgba(255, 183, 197, 0.4)) !important;
+    }
+
+    /* 3. Timer-Zeit: Groß und separat unterhalb des Baums */
     .fullscreen-timer-time {
         position: static;
         transform: none;
@@ -1757,6 +1780,9 @@
         align-items: center;
         justify-content: center;
         gap: 0.1em;
+        margin: -1rem 0 3rem 0;
+        order: 3;
+        width: 100%;
     }
 
     .fullscreen-timer-time span {
@@ -1799,10 +1825,10 @@
         width: 100%;
     }
 
+    /* Entferne Emojis von Buttons */
     .fullscreen-btn-start::before,
     .fullscreen-btn-pause::before {
-        content: '🍃';
-        font-size: 1.1rem;
+        content: none;
     }
 
     .fullscreen-btn-start:active,
@@ -1838,17 +1864,9 @@
         border-color: rgba(212, 181, 241, 0.5);
     }
 
-    /* Mode Label: Dezent oben */
+    /* Mode Label: Versteckt im mobilen Design */
     .fullscreen-mode-label {
-        position: absolute;
-        top: 1rem;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: rgba(92, 107, 192, 0.6);
-        text-shadow: none;
-        letter-spacing: 0.5px;
+        display: none !important;
     }
 
     /* Music Controls: Ganz unten */
@@ -1926,13 +1944,15 @@
 
     /* Kleinerer Baum */
     .fullscreen-tree-image {
-        max-height: 240px;
+        max-height: 280px;
+        width: 280px;
+        height: 280px;
         margin: 0 0 1.25rem 0;
     }
 
     .fullscreen-tree-image img {
-        max-height: 240px;
-        max-width: 240px;
+        max-height: 200px;
+        max-width: 200px;
     }
 
     /* Zyklus-Tracker kompakter */
