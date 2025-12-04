@@ -2105,10 +2105,10 @@ body.sakura-theme {
 }
 
 /* ===================================
-   MUSIC TOGGLE BUTTON
+   MUSIC TOGGLE BUTTON (Global floating button only)
    =================================== */
 
-.music-toggle-btn {
+#music-toggle-btn {
     position: fixed;
     bottom: 7rem;
     right: 2rem;
@@ -2127,16 +2127,16 @@ body.sakura-theme {
     z-index: 999;
 }
 
-.music-toggle-btn:hover {
+#music-toggle-btn:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-colored);
 }
 
-.music-toggle-btn:active {
+#music-toggle-btn:active {
     transform: translateY(-2px);
 }
 
-.music-volume-control {
+body > .music-volume-control {
     position: fixed;
     bottom: 7rem;
     right: 4.5rem;
