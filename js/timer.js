@@ -1096,7 +1096,7 @@ function showPhaseTransitionPopup(title, message, buttonText, onConfirm) {
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 10000;
+        z-index: 100000;
         animation: fadeIn 0.3s ease-out;
     `;
 
@@ -1727,25 +1727,21 @@ function initializeFullscreenMode() {
     fullscreenExit.addEventListener('click', exitFullscreen);
 
     // Fullscreen control buttons
-    const fullscreenStartBtn = document.getElementById('fullscreen-start-btn');
-    const fullscreenPauseBtn = document.getElementById('fullscreen-pause-btn');
+    const fullscreenToggleBtn = document.getElementById('fullscreen-toggle-btn');
     const fullscreenResetBtn = document.getElementById('fullscreen-reset-btn');
 
-    if (fullscreenStartBtn) {
-        fullscreenStartBtn.addEventListener('click', () => {
-            startTimer();
+    if (fullscreenToggleBtn) {
+        fullscreenToggleBtn.addEventListener('click', () => {
+            if (timerState.isRunning) {
+                pauseTimer();
+                // Update tree to show pause.png
+                setTimeout(() => updateFullscreenTree(), 50);
+            } else {
+                startTimer();
+                // Update tree immediately to fix pause.png staying visible
+                setTimeout(() => updateFullscreenTree(), 50);
+            }
             updateFullscreenButtons();
-            // Update tree immediately to fix pause.png staying visible
-            setTimeout(() => updateFullscreenTree(), 50);
-        });
-    }
-
-    if (fullscreenPauseBtn) {
-        fullscreenPauseBtn.addEventListener('click', () => {
-            pauseTimer();
-            updateFullscreenButtons();
-            // Update tree to show pause.png
-            setTimeout(() => updateFullscreenTree(), 50);
         });
     }
 
@@ -1951,17 +1947,17 @@ function updateFullscreenTimer() {
 }
 
 function updateFullscreenButtons() {
-    const startBtn = document.getElementById('fullscreen-start-btn');
-    const pauseBtn = document.getElementById('fullscreen-pause-btn');
+    const toggleBtn = document.getElementById('fullscreen-toggle-btn');
+    const toggleText = document.getElementById('fullscreen-toggle-text');
 
-    if (!startBtn || !pauseBtn) return;
+    if (!toggleBtn || !toggleText) return;
 
     if (timerState.isRunning) {
-        startBtn.style.display = 'none';
-        pauseBtn.style.display = 'block';
+        toggleText.textContent = '⏸ Pause';
+        toggleBtn.classList.add('is-running');
     } else {
-        startBtn.style.display = 'block';
-        pauseBtn.style.display = 'none';
+        toggleText.textContent = '▶ Starten';
+        toggleBtn.classList.remove('is-running');
     }
 }
 

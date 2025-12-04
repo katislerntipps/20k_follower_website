@@ -1282,23 +1282,21 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.fullscreen-btn-start {
+.fullscreen-btn-toggle {
     background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
     color: white;
 }
 
-.fullscreen-btn-start:hover {
+.fullscreen-btn-toggle:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
 }
 
-.fullscreen-btn-pause {
+.fullscreen-btn-toggle.is-running {
     background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-    color: white;
 }
 
-.fullscreen-btn-pause:hover {
-    transform: translateY(-2px);
+.fullscreen-btn-toggle.is-running:hover {
     box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
 }
 
@@ -1691,16 +1689,21 @@
         align-items: center;
         justify-content: center;
         position: relative;
-        width: 240px;
-        height: 240px;
+        width: 280px;
+        height: 280px;
     }
 
     .fullscreen-tree-image img {
-        max-height: 240px;
-        max-width: 240px;
+        max-height: 200px;
+        max-width: 200px;
+        width: 200px;
+        height: 200px;
         object-fit: contain;
         filter: drop-shadow(0 8px 30px rgba(255, 183, 197, 0.2));
-        position: relative;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         z-index: 3;
     }
 
@@ -1740,13 +1743,14 @@
     /* Ladekreis um den Baum */
     .fullscreen-timer-display {
         grid-row: 1;
-        width: 320px;
-        height: 320px;
+        width: 280px;
+        height: 280px;
         display: flex !important;
         align-items: center;
         justify-content: center;
         margin: 0 !important;
         pointer-events: none;
+        position: relative;
         z-index: 2;
     }
 
@@ -1755,6 +1759,10 @@
         display: block !important;
         width: 100%;
         height: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 
     .fullscreen-ring-bg {
@@ -1771,10 +1779,10 @@
     /* 3. Timer-Zeit: Positioniere sie unterhalb des Rings */
     .fullscreen-timer-time {
         position: absolute !important;
-        top: 100%;
+        top: calc(100% + 1.5rem);
         left: 50%;
         transform: translateX(-50%);
-        font-size: 5.5rem;
+        font-size: 4.5rem;
         font-weight: 200;
         font-family: 'Poppins', -apple-system, sans-serif;
         color: rgba(92, 107, 192, 0.85);
@@ -1784,7 +1792,6 @@
         align-items: center;
         justify-content: center;
         gap: 0.1em;
-        margin-top: 2rem;
         width: auto;
         pointer-events: none;
         z-index: 10;
@@ -1803,12 +1810,11 @@
         gap: 1rem;
         width: 100%;
         max-width: 320px;
-        margin: 0;
+        margin: 2rem 0 0 0;
         align-items: center;
     }
 
-    .fullscreen-btn-start,
-    .fullscreen-btn-pause {
+    .fullscreen-btn-toggle {
         padding: 1.1rem 2.5rem;
         border: none;
         border-radius: 100px;
@@ -1831,14 +1837,18 @@
         width: 100%;
     }
 
+    .fullscreen-btn-toggle.is-running {
+        background: linear-gradient(135deg, #ffa07a 0%, #ff6b9d 100%);
+        box-shadow: 0 0 30px rgba(255, 160, 122, 0.5),
+                    0 4px 15px rgba(255, 107, 157, 0.3);
+    }
+
     /* Entferne Emojis von Buttons */
-    .fullscreen-btn-start::before,
-    .fullscreen-btn-pause::before {
+    .fullscreen-btn-toggle::before {
         content: none;
     }
 
-    .fullscreen-btn-start:active,
-    .fullscreen-btn-pause:active {
+    .fullscreen-btn-toggle:active {
         transform: scale(0.98);
         box-shadow: 0 0 20px rgba(255, 183, 197, 0.4),
                     0 2px 10px rgba(255, 183, 197, 0.2);
@@ -1878,34 +1888,65 @@
     /* Music Controls: Ganz unten */
     .fullscreen-music-controls {
         position: fixed !important;
-        bottom: 1.5rem !important;
+        bottom: 2rem !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        padding: 0.75rem 1.25rem;
+        padding: 1rem 1.5rem;
         margin: 0;
-        background: rgba(255, 255, 255, 0.8) !important;
-        border: 1px solid rgba(255, 183, 197, 0.3);
-        backdrop-filter: blur(15px);
-        max-width: 280px;
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(255, 248, 250, 0.95) 100%) !important;
+        border: 1.5px solid rgba(255, 183, 197, 0.4);
+        border-radius: 20px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(255, 183, 197, 0.2),
+                    0 2px 8px rgba(0, 0, 0, 0.05);
+        max-width: 320px;
         width: auto;
         z-index: 100 !important;
         display: flex !important;
     }
 
     .music-control-title {
-        font-size: 0.75rem;
-        color: rgba(92, 107, 192, 0.7);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: rgba(92, 107, 192, 0.85);
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
     }
 
     .music-play-pause-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-        background: rgba(255, 183, 197, 0.15);
-        border-color: rgba(255, 183, 197, 0.25);
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #ffb7c5 0%, #ffd4e5 100%);
+        border: 1px solid rgba(255, 183, 197, 0.4);
+        border-radius: 12px;
+        color: rgba(92, 107, 192, 0.9);
+        box-shadow: 0 2px 8px rgba(255, 183, 197, 0.25);
+        transition: all 0.3s ease;
+    }
+
+    .music-play-pause-btn:active {
+        transform: scale(0.98);
+        box-shadow: 0 1px 4px rgba(255, 183, 197, 0.3);
     }
 
     .music-status-text {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: rgba(92, 107, 192, 0.8);
+    }
+
+    .fullscreen-volume-slider {
+        accent-color: #ffb7c5;
+    }
+
+    .fullscreen-volume-label {
         font-size: 0.75rem;
+        font-weight: 600;
+        color: rgba(92, 107, 192, 0.75);
+        min-width: 38px;
+        text-align: right;
     }
 
     /* Dark Mode Anpassungen */
@@ -1931,8 +1972,31 @@
     }
 
     [data-theme="dark"] .fullscreen-music-controls {
-        background: rgba(17, 24, 39, 0.7);
-        border-color: rgba(255, 46, 230, 0.2);
+        background: linear-gradient(135deg,
+            rgba(17, 24, 39, 0.95) 0%,
+            rgba(31, 41, 55, 0.95) 100%) !important;
+        border-color: rgba(255, 183, 197, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                    0 2px 8px rgba(255, 183, 197, 0.1);
+    }
+
+    [data-theme="dark"] .music-control-title {
+        color: rgba(255, 183, 197, 0.9);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .music-play-pause-btn {
+        background: linear-gradient(135deg, rgba(255, 183, 197, 0.25) 0%, rgba(255, 107, 157, 0.25) 100%);
+        border-color: rgba(255, 183, 197, 0.4);
+        color: rgba(255, 183, 197, 0.95);
+    }
+
+    [data-theme="dark"] .music-status-text {
+        color: rgba(255, 183, 197, 0.85);
+    }
+
+    [data-theme="dark"] .fullscreen-volume-label {
+        color: rgba(255, 183, 197, 0.75);
     }
 }
 
@@ -1952,15 +2016,21 @@
 
     /* Kleinerer Baum */
     .fullscreen-tree-image {
-        max-height: 280px;
-        width: 280px;
-        height: 280px;
-        margin: 0 0 1.25rem 0;
+        width: 240px !important;
+        height: 240px !important;
     }
 
     .fullscreen-tree-image img {
-        max-height: 200px;
-        max-width: 200px;
+        max-height: 180px !important;
+        max-width: 180px !important;
+        width: 180px !important;
+        height: 180px !important;
+    }
+
+    /* Timer Display kleiner */
+    .fullscreen-timer-display {
+        width: 240px !important;
+        height: 240px !important;
     }
 
     /* Zyklus-Tracker kompakter */
@@ -1979,8 +2049,8 @@
 
     /* Timer kleiner */
     .fullscreen-timer-time {
-        font-size: 4.5rem;
-        margin: 0 0 2.5rem 0;
+        font-size: 3.5rem !important;
+        top: calc(100% + 1rem) !important;
     }
 
     /* Buttons kompakter */
