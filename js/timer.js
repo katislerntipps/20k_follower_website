@@ -1713,17 +1713,19 @@ const MOTIVATION_QUOTES = [
 ];
 
 function initializeFullscreenMode() {
-    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const fullscreenBtns = document.querySelectorAll('.btn-fullscreen');
     const fullscreenExit = document.getElementById('fullscreen-exit');
     const fullscreenOverlay = document.getElementById('fullscreen-overlay');
 
-    if (!fullscreenBtn || !fullscreenExit || !fullscreenOverlay) {
+    if (fullscreenBtns.length === 0 || !fullscreenExit || !fullscreenOverlay) {
         console.warn('Fullscreen elements not found');
         return;
     }
 
-    // Toggle fullscreen on button click
-    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    // Toggle fullscreen on button click (for all fullscreen buttons)
+    fullscreenBtns.forEach(btn => {
+        btn.addEventListener('click', toggleFullscreen);
+    });
     fullscreenExit.addEventListener('click', exitFullscreen);
 
     // Fullscreen control buttons

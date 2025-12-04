@@ -1906,7 +1906,7 @@ body:has(.fullscreen-overlay.active) .music-volume-control {
         background: linear-gradient(135deg, #ffb7c5 0%, #ffd4e5 100%);
         border: 1px solid rgba(255, 183, 197, 0.4);
         border-radius: 10px;
-        color: rgba(92, 107, 192, 0.9);
+        color: #5a3d5c;
         box-shadow: 0 2px 8px rgba(255, 183, 197, 0.25);
         transition: all 0.3s ease;
         cursor: pointer;
@@ -1935,7 +1935,7 @@ body:has(.fullscreen-overlay.active) .music-volume-control {
     .music-status-text {
         font-size: 0.9rem;
         font-weight: 600;
-        color: rgba(92, 107, 192, 0.85);
+        color: #5a3d5c;
     }
 
     .music-volume-control {
