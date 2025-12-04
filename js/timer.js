@@ -104,11 +104,20 @@ function getRingLength(ringElement, fallback) {
     const storedValue = parseFloat(ringElement.dataset?.circumference);
     if (!Number.isNaN(storedValue)) return storedValue;
 
+    // Check if element is visible before calling getTotalLength
+    const computedStyle = window.getComputedStyle(ringElement);
+    if (computedStyle.display === 'none') return fallback;
+
     if (typeof ringElement.getTotalLength === 'function') {
-        const length = ringElement.getTotalLength();
-        ringElement.dataset.circumference = length;
-        ringElement.style.strokeDasharray = length;
-        return length;
+        try {
+            const length = ringElement.getTotalLength();
+            ringElement.dataset.circumference = length;
+            ringElement.style.strokeDasharray = length;
+            return length;
+        } catch (error) {
+            console.debug('Could not get ring length (element might be hidden):', error.message);
+            return fallback;
+        }
     }
 
     return fallback;
@@ -2026,6 +2035,13 @@ function initializeFullscreenProgressRing() {
     // Skip if already initialized
     if (ring.dataset.circumference) return;
 
+    // Check if element is visible before initializing
+    const computedStyle = window.getComputedStyle(ring);
+    if (computedStyle.display === 'none') {
+        console.debug('Fullscreen ring is hidden, skipping initialization');
+        return;
+    }
+
     try {
         const length = ring.getTotalLength();
         ring.style.strokeDasharray = length;
@@ -2039,6 +2055,11 @@ function initializeFullscreenProgressRing() {
 function updateFullscreenProgressRing() {
     const progressRing = document.getElementById('fullscreen-progress');
     if (!progressRing) return;
+
+    // Check if element is visible (not hidden with display: none)
+    // Skip update if element is hidden to avoid getTotalLength() errors
+    const computedStyle = window.getComputedStyle(progressRing);
+    if (computedStyle.display === 'none') return;
 
     const currentSeconds = (timerState.minutes * 60) + timerState.seconds;
     const progress = 1 - (currentSeconds / timerState.totalSeconds);
