@@ -1614,42 +1614,33 @@
 
     /* Zen-inspirierte vertikale Zentrierung mit Grid Layout */
     .fullscreen-content {
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto auto auto;
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-items: center;
+        justify-content: flex-start;
         gap: 0;
         position: relative;
         min-height: 100vh;
-        padding: 2rem 1.5rem;
+        padding: 2rem 1.5rem 6rem 1.5rem;
     }
 
-    /* Container für Baum + Ring - nutze Grid Overlap */
-    .fullscreen-tree-panel {
-        grid-row: 1;
-        grid-column: 1;
-        display: grid !important;
-        place-items: center;
-        width: 100%;
-        gap: 0;
-        z-index: 2;
-    }
-
+    /* Container für Baum + Ring - ZUSAMMEN in einem Container */
     .fullscreen-timer-section {
-        grid-row: 1 / 5;
-        grid-column: 1;
-        display: grid !important;
-        grid-template-rows: auto 1fr auto auto auto;
+        display: flex !important;
+        flex-direction: column;
         align-items: center;
-        justify-items: center;
+        justify-content: flex-start;
         width: 100%;
         background: transparent !important;
         border: none !important;
         padding: 0 !important;
         box-shadow: none !important;
         gap: 0 !important;
-        z-index: 1;
+        position: relative;
+    }
+
+    .fullscreen-tree-panel {
+        display: none !important;
     }
 
     .fullscreen-tree {
@@ -1677,44 +1668,102 @@
         display: none !important;
     }
 
-    /* Erstelle neues mobiles Layout */
-    /* 1. Zentrales Visual: Baum */
-    .fullscreen-tree-image {
-        background: transparent;
-        border: none;
-        padding: 0;
-        margin: 0;
-        min-height: auto;
+    .fullscreen-mode-label {
+        display: none !important;
+    }
+
+    /* GEMEINSAMER Container für Baum + Ring */
+    .fullscreen-timer-display {
+        width: 300px;
+        height: 300px;
+        position: relative;
         display: flex !important;
         align-items: center;
         justify-content: center;
-        position: relative;
-        width: 280px;
-        height: 280px;
+        margin: 0 0 1rem 0;
     }
 
-    .fullscreen-tree-image img {
-        max-height: 200px;
-        max-width: 200px;
-        width: 200px;
-        height: 200px;
-        object-fit: contain;
-        filter: drop-shadow(0 8px 30px rgba(255, 183, 197, 0.2));
+    /* Ring - positioniert im Container */
+    .fullscreen-timer-ring {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: block !important;
+        pointer-events: none;
+    }
+
+    .fullscreen-ring-bg {
+        stroke: rgba(255, 183, 197, 0.15) !important;
+        stroke-width: 8 !important;
+    }
+
+    .fullscreen-ring-progress {
+        stroke: #ffb7c5 !important;
+        stroke-width: 8 !important;
+        filter: drop-shadow(0 0 8px rgba(255, 183, 197, 0.4)) !important;
+    }
+
+    /* Baum - positioniert INNERHALB des gleichen Containers */
+    .fullscreen-tree-image {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 3;
+        width: 220px;
+        height: 220px;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        padding: 0;
+        margin: 0;
+        pointer-events: none;
     }
 
-    /* 2. Zyklus-Tracker: "Runde X von 4" */
+    .fullscreen-tree-image img {
+        max-width: 180px;
+        max-height: 180px;
+        width: 180px;
+        height: 180px;
+        object-fit: contain;
+        filter: drop-shadow(0 8px 30px rgba(255, 183, 197, 0.2));
+    }
+
+    /* Timer-Zeit: Direkt nach dem Display */
+    .fullscreen-timer-time {
+        font-size: 4.5rem;
+        font-weight: 200;
+        font-family: 'Poppins', -apple-system, sans-serif;
+        color: rgba(92, 107, 192, 0.85);
+        text-shadow: 0 2px 20px rgba(255, 183, 197, 0.15);
+        letter-spacing: 0.05em;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 0.1em;
+        width: auto;
+        margin: 0.5rem 0 1.5rem 0;
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+    }
+
+    .fullscreen-timer-time span {
+        min-width: auto;
+        text-align: center;
+    }
+
+    /* Zyklus-Tracker */
     .fullscreen-cycle-info {
-        grid-row: 2;
         display: flex !important;
         flex-direction: column;
         align-items: center;
         gap: 0.75rem;
-        margin: 1.5rem 0 0 0;
+        margin: 0 0 2rem 0;
         width: auto;
     }
 
@@ -1740,77 +1789,14 @@
         transition: all 0.3s ease;
     }
 
-    /* Ladekreis um den Baum */
-    .fullscreen-timer-display {
-        grid-row: 1;
-        width: 280px;
-        height: 280px;
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        margin: 0 !important;
-        pointer-events: none;
-        position: relative;
-        z-index: 2;
-    }
-
-    /* Zeige Ring um den Baum */
-    .fullscreen-timer-ring {
-        display: block !important;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .fullscreen-ring-bg {
-        stroke: rgba(255, 183, 197, 0.15) !important;
-        stroke-width: 8 !important;
-    }
-
-    .fullscreen-ring-progress {
-        stroke: #ffb7c5 !important;
-        stroke-width: 8 !important;
-        filter: drop-shadow(0 0 8px rgba(255, 183, 197, 0.4)) !important;
-    }
-
-    /* 3. Timer-Zeit: Positioniere sie unterhalb des Rings */
-    .fullscreen-timer-time {
-        position: absolute !important;
-        top: calc(100% + 1.5rem);
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 4.5rem;
-        font-weight: 200;
-        font-family: 'Poppins', -apple-system, sans-serif;
-        color: rgba(92, 107, 192, 0.85);
-        text-shadow: 0 2px 20px rgba(255, 183, 197, 0.15);
-        letter-spacing: 0.05em;
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        gap: 0.1em;
-        width: auto;
-        pointer-events: none;
-        z-index: 10;
-    }
-
-    .fullscreen-timer-time span {
-        min-width: auto;
-        text-align: center;
-    }
-
-    /* 4. START/PAUSE Button: Hauptaktion mit Glow */
+    /* Control Buttons */
     .fullscreen-controls {
-        grid-row: 4;
         display: flex !important;
         flex-direction: column;
         gap: 1rem;
         width: 100%;
         max-width: 320px;
-        margin: 2rem 0 0 0;
+        margin: 0;
         align-items: center;
     }
 
@@ -2014,28 +2000,29 @@
         font-size: 1.2rem;
     }
 
+    /* Timer Display kleiner */
+    .fullscreen-timer-display {
+        width: 260px !important;
+        height: 260px !important;
+        margin: 0 0 0.75rem 0 !important;
+    }
+
     /* Kleinerer Baum */
     .fullscreen-tree-image {
-        width: 240px !important;
-        height: 240px !important;
+        width: 200px !important;
+        height: 200px !important;
     }
 
     .fullscreen-tree-image img {
-        max-height: 180px !important;
-        max-width: 180px !important;
-        width: 180px !important;
-        height: 180px !important;
-    }
-
-    /* Timer Display kleiner */
-    .fullscreen-timer-display {
-        width: 240px !important;
-        height: 240px !important;
+        max-height: 160px !important;
+        max-width: 160px !important;
+        width: 160px !important;
+        height: 160px !important;
     }
 
     /* Zyklus-Tracker kompakter */
     .fullscreen-cycle-info {
-        margin: 0 0 1.5rem 0;
+        margin: 0 0 1.5rem 0 !important;
     }
 
     .fullscreen-cycle-info .cycle-text {
@@ -2050,7 +2037,7 @@
     /* Timer kleiner */
     .fullscreen-timer-time {
         font-size: 3.5rem !important;
-        top: calc(100% + 1rem) !important;
+        margin: 0.25rem 0 1.25rem 0 !important;
     }
 
     /* Buttons kompakter */
@@ -2058,28 +2045,21 @@
         max-width: 280px;
     }
 
-    .fullscreen-btn-start,
-    .fullscreen-btn-pause {
-        padding: 1rem 2rem;
-        font-size: 0.95rem;
+    /* Music controls kleiner */
+    .fullscreen-music-controls {
+        bottom: 1.5rem !important;
+        padding: 0.85rem 1.25rem !important;
+        max-width: 260px !important;
+    }
+
+    .fullscreen-btn-toggle {
+        padding: 1rem 2rem !important;
+        font-size: 0.95rem !important;
     }
 
     .fullscreen-btn-reset {
-        padding: 0.8rem 1.75rem;
-        font-size: 0.85rem;
-    }
-
-    /* Mode Label */
-    .fullscreen-mode-label {
-        font-size: 0.8rem;
-        top: 0.75rem;
-    }
-
-    /* Music Controls */
-    .fullscreen-music-controls {
-        bottom: 1rem;
-        padding: 0.6rem 1rem;
-        max-width: 260px;
+        padding: 0.8rem 1.75rem !important;
+        font-size: 0.85rem !important;
     }
 
     .music-control-title {

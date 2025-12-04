@@ -1778,8 +1778,12 @@ function initializeFullscreenMusicToggle() {
         // Call the global toggleMusic function from shop.js
         if (typeof toggleMusic === 'function') {
             toggleMusic();
-            // Update the fullscreen icon
-            updateFullscreenMusicIcon();
+            // Force update the fullscreen icon after a short delay
+            setTimeout(() => {
+                updateFullscreenMusicIcon();
+            }, 50);
+        } else {
+            console.warn('toggleMusic function not found in shop.js');
         }
     });
 
@@ -1934,6 +1938,9 @@ function syncToFullscreen() {
 
     // Update button visibility
     updateFullscreenButtons();
+
+    // Update music icon
+    updateFullscreenMusicIcon();
 }
 
 function updateFullscreenTimer() {
