@@ -60,16 +60,32 @@
   ],
   "screenshots": [
     {
+      "src": "/image/screenshot-mobile-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "label": "Pomodoro Timer (Mobile)",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/image/screenshot-mobile-2.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "label": "Lerntipps (Mobile)",
+      "form_factor": "narrow"
+    },
+    {
       "src": "/image/screenshot-1.png",
       "sizes": "1280x720",
       "type": "image/png",
-      "label": "Pomodoro Timer - Fokussiert lernen"
+      "label": "Pomodoro Timer - Fokussiert lernen",
+      "form_factor": "wide"
     },
     {
       "src": "/image/screenshot-2.png",
       "sizes": "1280x720",
       "type": "image/png",
-      "label": "Lerntipps - Über 100 Tipps"
+      "label": "Lerntipps - Über 100 Tipps",
+      "form_factor": "wide"
     }
   ],
   "categories": [
